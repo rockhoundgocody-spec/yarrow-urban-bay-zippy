@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "RockHound-GO",
+      "hasCanvas": false,
+      "bodyTextLen": 903,
+      "bodyTextHash": "f67935dadd3dce4b8e58e12495fb46db4936a38e4ca4b77a8ada18a6b7546e76",
+      "bodyTextPrefix": "ROCKHOUND-GO SCAN Photograph a specimen. Get a field report. Clo",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "RockHound-GO",
+      "hasCanvas": false,
+      "bodyTextLen": 903,
+      "bodyTextHash": "f67935dadd3dce4b8e58e12495fb46db4936a38e4ca4b77a8ada18a6b7546e76",
+      "bodyTextPrefix": "ROCKHOUND-GO SCAN Photograph a specimen. Get a field report. Clo",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
