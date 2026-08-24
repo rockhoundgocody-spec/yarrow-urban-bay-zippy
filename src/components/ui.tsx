@@ -48,7 +48,7 @@ export function Button({
     <button
       type="button"
       className={cn(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium tracking-wide transition-colors duration-150 disabled:opacity-40",
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium tracking-wide transition-colors duration-150 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
         variant === "primary" && "bg-fg text-void hover:bg-fg/90",
         variant === "gold" && "bg-gold text-void hover:bg-gold/90",
         variant === "ghost" && "bg-fg/5 text-fg hover:bg-fg/10",

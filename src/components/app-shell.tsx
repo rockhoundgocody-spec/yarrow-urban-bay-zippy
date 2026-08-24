@@ -78,9 +78,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
             <button
               type="button"
+              aria-label={fieldMode ? "Switch to Hub mode" : "Switch to Field mode"}
               onClick={() => setFieldMode(!fieldMode)}
               className={cn(
-                "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em]",
+                "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                 fieldMode
                   ? "border-field/40 bg-field/15 text-field"
                   : "border-line text-muted hover:text-fg",
@@ -90,8 +91,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </button>
             <Link
               to="/clover"
-              aria-label="Clover"
-              className="grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10"
+              aria-label="Clover AGI Assistant"
+              className="grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               <Sparkles className="size-5" />
             </Link>
