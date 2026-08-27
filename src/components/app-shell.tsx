@@ -68,11 +68,11 @@ export function AppShell({ children }: { children: ReactNode }) {
               type="button"
               aria-label={menu ? "Close menu" : "Open menu"}
               onClick={() => setMenu((v) => !v)}
-              className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg"
+              className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               {menu ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
-            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2">
+            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void">
               <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>
               <span className="font-display text-[17px] font-semibold text-amethyst">GO</span>
             </Link>
@@ -113,7 +113,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     key={item.to}
                     to={item.to}
                     className={cn(
-                      "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm",
+                      "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                       active ? "bg-fg/10 text-fg" : "text-muted hover:bg-fg/5 hover:text-fg",
                     )}
                   >
@@ -143,7 +143,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     key={tab.to}
                     to={tab.to}
                     aria-label="Scan specimen"
-                    className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2"
+                    className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                   >
                     <span
                       className={cn(
@@ -161,7 +161,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Link
                   key={tab.to}
                   to={tab.to}
-                  className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1"
+                  className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                 >
                   <Icon className={cn("size-[18px]", active ? "text-fg" : "text-faint")} />
                   <span
