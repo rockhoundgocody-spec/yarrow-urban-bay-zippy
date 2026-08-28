@@ -178,15 +178,19 @@ function IdentifyPage() {
         <p className="mt-1 text-sm text-muted">Center the specimen and fill the frame. One photo is enough.</p>
       </header>
 
-      <div className="grid grid-cols-3 gap-1 rounded-lg bg-stone p-1">
+      <div role="tablist" aria-label="Specimen identification mode" className="grid grid-cols-3 gap-1 rounded-lg bg-stone p-1">
         {(["lens", "key", "sample"] as const).map((t) => (
           <button
             key={t}
+            id={`tab-${t}`}
+            role="tab"
+            aria-selected={tab === t}
+            aria-controls={`panel-${t}`}
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "h-10 rounded-md text-xs font-medium uppercase tracking-[0.12em]",
-              tab === t ? "bg-obsidian text-fg" : "text-muted",
+              "h-10 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              tab === t ? "bg-obsidian text-fg" : "text-muted hover:text-fg",
             )}
           >
             {t === "lens" ? "Lens" : t === "key" ? "Field key" : "Catalog"}
@@ -195,7 +199,7 @@ function IdentifyPage() {
       </div>
 
       {tab === "lens" && (
-        <div className="space-y-3">
+        <div id="panel-lens" role="tabpanel" aria-labelledby="tab-lens" className="space-y-3">
           <div className="relative overflow-hidden rounded-xl border border-line bg-obsidian aspect-[3/4]">
             {photo ? (
               <img src={photo} alt="Capture" className="size-full object-cover" />
@@ -268,7 +272,7 @@ function IdentifyPage() {
       )}
 
       {tab === "key" && (
-        <div className="space-y-4">
+        <div id="panel-key" role="tabpanel" aria-labelledby="tab-key" className="space-y-4">
           <p className="text-sm text-muted">No photo needed. Score the catalog with field tests.</p>
           <FieldChips label="Color" options={COLORS} value={key.color} onPick={(v) => setKey({ ...key, color: v })} />
           <div>
@@ -304,7 +308,7 @@ function IdentifyPage() {
       )}
 
       {tab === "sample" && (
-        <div className="grid grid-cols-2 gap-3">
+        <div id="panel-sample" role="tabpanel" aria-labelledby="tab-sample" className="grid grid-cols-2 gap-3">
           {MINERALS.slice(0, 12).map((m) => (
             <button
               key={m.id}
