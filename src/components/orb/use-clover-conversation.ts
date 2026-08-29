@@ -217,6 +217,10 @@ export function useCloverConversation() {
     [],
   );
 
+  const ensureLive = useCallback(() => {
+    voice.unlock();
+  }, [voice]);
+
   return {
     phase,
     interim,
@@ -225,6 +229,7 @@ export function useCloverConversation() {
     end,
     nudge,
     send,
+    ensureLive,
     voiceSupported: voice.micSupported,
     micError: voice.micError,
     companion,
