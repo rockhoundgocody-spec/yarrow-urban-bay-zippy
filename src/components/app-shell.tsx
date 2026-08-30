@@ -57,6 +57,17 @@ export function AppShell({ children }: { children: ReactNode }) {
     setMenu(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!menu) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenu(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [menu]);
+
   return (
     <div data-mode={fieldMode ? "field" : "home"} className="min-h-dvh bg-void text-fg">
       <div className="rh-grain min-h-dvh">
@@ -67,6 +78,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               aria-label={menu ? "Close menu" : "Open menu"}
+              aria-expanded={menu}
+              aria-controls="main-menu"
               onClick={() => setMenu((v) => !v)}
               className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
@@ -102,6 +115,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         {menu && (
           <div className="fixed inset-0 z-40 bg-void/70" onClick={() => setMenu(false)}>
             <nav
+              id="main-menu"
+              aria-label="Main menu navigation"
               className="absolute left-0 top-14 w-[min(100%,20rem)] border-r border-line bg-obsidian p-3 pb-8 shadow-panel"
               onClick={(e) => e.stopPropagation()}
             >
@@ -112,6 +127,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     key={item.to}
                     to={item.to}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
                       "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                       active ? "bg-fg/10 text-fg" : "text-muted hover:bg-fg/5 hover:text-fg",
@@ -143,6 +159,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     key={tab.to}
                     to={tab.to}
                     aria-label="Scan specimen"
+                    aria-current={active ? "page" : undefined}
                     className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                   >
                     <span
@@ -161,6 +178,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Link
                   key={tab.to}
                   to={tab.to}
+                  aria-current={active ? "page" : undefined}
                   className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                 >
                   <Icon className={cn("size-[18px]", active ? "text-fg" : "text-faint")} />
