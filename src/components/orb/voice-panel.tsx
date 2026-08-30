@@ -84,13 +84,18 @@ export function CloverVoicePanel({
             type="button"
             onClick={onHunt}
             disabled={huntLoading}
-            className="inline-flex min-h-9 items-center gap-1 rounded-md px-2 text-[11px] text-cyan disabled:opacity-40"
-            aria-label="Hunt next"
+            className="inline-flex min-h-9 items-center gap-1 rounded-md px-2 text-[11px] text-cyan disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+            aria-label="Find next hunt suggestion"
           >
             {huntLoading ? <Loader2 className="size-3.5 animate-spin" /> : <Target className="size-3.5" />}
             Hunt
           </button>
-          <button type="button" onClick={onClose} aria-label="End conversation" className="grid size-9 place-items-center text-muted hover:text-fg">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="End conversation"
+            className="grid size-9 place-items-center rounded-md text-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+          >
             <X className="size-4" />
           </button>
         </div>
@@ -153,7 +158,12 @@ export function CloverVoicePanel({
                 </Link>
               ))}
             </div>
-            <button type="button" onClick={onDismissHunt} className="mt-1 w-full py-1 text-[11px] text-faint hover:text-muted">
+            <button
+              type="button"
+              onClick={onDismissHunt}
+              aria-label="Dismiss hunt suggestions"
+              className="mt-1 w-full rounded-md py-1 text-[11px] text-faint hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+            >
               Dismiss
             </button>
           </div>
@@ -173,9 +183,9 @@ export function CloverVoicePanel({
           <button
             type="button"
             onClick={onMic}
-            aria-label={phase === "listening" ? "Listening" : "Talk"}
+            aria-label={phase === "listening" ? "Listening: tap to pause microphone" : "Microphone: tap to speak"}
             className={cn(
-              "grid size-11 shrink-0 place-items-center rounded-full",
+              "grid size-11 shrink-0 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian",
               phase === "listening"
                 ? "bg-field/25 text-field shadow-[0_0_16px_rgb(61_207_138_/_0.45)]"
                 : phase === "speaking"
@@ -190,14 +200,15 @@ export function CloverVoicePanel({
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
+          aria-label="Ask Clover a field question"
           placeholder={voiceSupported ? "Type, or just talk" : "Ask Clover a field question"}
-          className="h-10 min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-faint"
+          className="h-10 min-w-0 flex-1 rounded-md bg-transparent px-2 text-sm text-fg outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
         />
         <button
           type="submit"
           disabled={!draft.trim() || phase === "thinking"}
-          aria-label="Send"
-          className="grid size-10 place-items-center rounded-md text-cyan disabled:opacity-30"
+          aria-label="Send message to Clover"
+          className="grid size-10 place-items-center rounded-md text-cyan disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
         >
           <Send className="size-4" />
         </button>

@@ -10,7 +10,7 @@ export function CloverLiveProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const boot = () => {
-      clover.ensureLive();
+      clover.start();
     };
     const onFirst = () => boot();
     window.addEventListener("pointerdown", onFirst, { once: true, capture: true });
