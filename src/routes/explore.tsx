@@ -61,9 +61,26 @@ function ExplorePage() {
               <g
                 key={s.id}
                 transform={`translate(${px} ${py})`}
-                className="cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label={`${s.name}, ${s.state}${isSaved ? " (Saved)" : ""}`}
+                aria-pressed={active}
+                className="group cursor-pointer focus-visible:outline-none"
                 onClick={() => setPicked(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPicked(s.id);
+                  }
+                }}
               >
+                <circle
+                  r={active ? 6.5 : 4.5}
+                  fill="none"
+                  stroke="#8d7cff"
+                  strokeWidth="0.8"
+                  className="opacity-0 transition-opacity group-focus-visible:opacity-100"
+                />
                 <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
                 <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
               </g>
