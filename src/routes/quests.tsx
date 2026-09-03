@@ -37,8 +37,18 @@ function QuestsPage() {
         </p>
       </header>
       <Panel className="p-4">
-        <div className="h-1.5 overflow-hidden rounded-full bg-fg/10">
-          <div className="h-full bg-gold" style={{ width: `${(done / Math.max(quests.length, 1)) * 100}%` }} />
+        <div
+          role="progressbar"
+          aria-valuenow={done}
+          aria-valuemin={0}
+          aria-valuemax={quests.length}
+          aria-label="Daily briefing progress"
+          className="h-1.5 overflow-hidden rounded-full bg-fg/10"
+        >
+          <div
+            className="h-full bg-gold transition-all duration-300"
+            style={{ width: `${(done / Math.max(quests.length, 1)) * 100}%` }}
+          />
         </div>
       </Panel>
       <ul className="space-y-2">
@@ -48,16 +58,22 @@ function QuestsPage() {
             <li key={q.id}>
               <Link
                 to={LINKS[q.id]}
-                className={cn("rh-panel flex items-center gap-3 rounded-xl p-4", q.done && "opacity-60")}
+                className={cn(
+                  "rh-panel flex items-center gap-3 rounded-xl p-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                  q.done && "opacity-60",
+                )}
               >
                 <span className="grid size-10 place-items-center rounded-md border border-line">
                   {q.done ? <Check className="size-4 text-field" /> : <Icon className="size-4 text-gold" />}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-fg">{q.title}</p>
+                  <p className="text-sm text-fg">
+                    {q.title}
+                    {q.done && <span className="sr-only"> (Completed)</span>}
+                  </p>
                   <p className="text-xs text-muted">{q.detail}</p>
                 </div>
-                <span className="text-xs tabular-nums text-muted">+{q.xp}</span>
+                <span className="text-xs tabular-nums text-muted">+{q.xp} XP</span>
               </Link>
             </li>
           );
