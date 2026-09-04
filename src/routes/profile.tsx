@@ -70,9 +70,11 @@ function ProfilePage() {
         </ul>
       </section>
 
-      <label className="block">
+      <label htmlFor="field-name" className="block">
         <span className="text-[10px] uppercase tracking-[0.16em] text-faint">Field name</span>
         <input
+          id="field-name"
+          aria-label="Field name"
           defaultValue={name}
           onBlur={(e) => completeOnboarding(e.target.value)}
           className="mt-2 h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-amethyst"
