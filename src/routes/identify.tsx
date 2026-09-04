@@ -230,6 +230,7 @@ function IdentifyPage() {
             type="file"
             accept="image/*"
             capture="environment"
+            aria-label="Upload specimen photo"
             className="hidden"
             onChange={(e) => onFile(e.target.files?.[0])}
           />
@@ -279,6 +280,7 @@ function IdentifyPage() {
             <SectionLabel>Mohs hardness {key.hardness ?? ""}</SectionLabel>
             <input
               type="range"
+              aria-label="Mohs hardness"
               min={1}
               max={10}
               step={0.5}

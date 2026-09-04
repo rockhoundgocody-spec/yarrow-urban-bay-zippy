@@ -216,7 +216,14 @@ export function XpRibbon() {
           {into}/{need} XP · {streak}d streak
         </span>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10">
+      <div
+        role="progressbar"
+        aria-valuenow={into}
+        aria-valuemin={0}
+        aria-valuemax={need}
+        aria-label={`Level ${level} XP progress: ${Math.round(pct * 100)}%`}
+        className="mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10"
+      >
         <div className="h-full rounded-full bg-amethyst" style={{ width: `${Math.round(pct * 100)}%` }} />
       </div>
       <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[9px] uppercase tracking-[0.12em] text-faint">
