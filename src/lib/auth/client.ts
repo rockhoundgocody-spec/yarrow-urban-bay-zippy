@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,10 +35,31 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled = (import.meta.env?.VITE_AUTH_ENABLED) !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
+
+/**
+ * Sanitizes redirect URLs to prevent Open Redirects and DOM XSS (e.g. `javascript:` URLs).
+ * Returns safe relative paths for same-origin targets, or fallback for external/malicious URLs.
+ */
+export function sanitizeRedirectUrl(urlStr: string | undefined | null, fallback = "/"): string {
+  if (!urlStr || typeof urlStr !== "string") return fallback;
+  const trimmed = urlStr.trim();
+  if (!trimmed) return fallback;
+  try {
+    const base = typeof window !== "undefined" ? window.location.origin : "https://preview.invalid";
+    const parsed = new URL(trimmed, base);
+    const baseOrigin = new URL(base).origin;
+    if (parsed.origin === baseOrigin && (parsed.protocol === "http:" || parsed.protocol === "https:")) {
+      return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    }
+  } catch {
+    // ignore malformed URLs
+  }
+  return fallback;
+}
 
 // ── Live-preview bearer token ────────────────────────────────────────────────
 // The embedded preview iframe has partitioned cookies, so we keep the session's
@@ -100,8 +121,8 @@ export async function signIn(
   providerId: string,
   opts: { callbackURL?: string; errorCallbackURL?: string } = {},
 ): Promise<void> {
-  const callbackURL = opts.callbackURL ?? "/";
-  const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const callbackURL = sanitizeRedirectUrl(opts.callbackURL ?? "/");
+  const errorCallbackURL = sanitizeRedirectUrl(opts.errorCallbackURL ?? "/");
 
   // Open the popup SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some
@@ -219,6 +240,7 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * preview the local clear is sufficient, so it always resolves.
  */
 export async function signOut(redirectTo = "/"): Promise<void> {
+  const safeRedirectTo = sanitizeRedirectUrl(redirectTo);
   await runSignOut({
     livePreview: inLivePreview(),
     hasBearer: Boolean(getBearerToken()),
@@ -230,7 +252,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      window.location.href = safeRedirectTo;
     },
   });
 }
