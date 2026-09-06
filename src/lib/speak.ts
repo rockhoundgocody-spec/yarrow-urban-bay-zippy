@@ -1,7 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 
+const MAX_AUDIO_DATA_URL_LENGTH = 10 * 1024 * 1024; // 10MB limit to prevent DoS
+
 export const speakClover = createServerFn({ method: "POST" })
-  .validator((input: { text: string }) => input)
+  .validator((input: unknown): { text: string } => {
+    if (!input || typeof input !== "object" || typeof (input as Record<string, unknown>).text !== "string") {
+      throw new Error("Invalid input: text required");
+    }
+    return { text: (input as { text: string }).text };
+  })
   .handler(async ({ data }): Promise<{ ok: true; audio: string } | { ok: false }> => {
     const apiKey = process.env.XAI_API_KEY;
     const text = data.text.trim().slice(0, 800);
@@ -28,7 +35,16 @@ export const speakClover = createServerFn({ method: "POST" })
   });
 
 export const transcribeClover = createServerFn({ method: "POST" })
-  .validator((input: { audioDataUrl: string }) => input)
+  .validator((input: unknown): { audioDataUrl: string } => {
+    if (!input || typeof input !== "object" || typeof (input as Record<string, unknown>).audioDataUrl !== "string") {
+      throw new Error("Invalid input: audioDataUrl required");
+    }
+    const audioDataUrl = (input as { audioDataUrl: string }).audioDataUrl;
+    if (audioDataUrl.length > MAX_AUDIO_DATA_URL_LENGTH) {
+      throw new Error("Audio payload exceeds max size limit");
+    }
+    return { audioDataUrl };
+  })
   .handler(async ({ data }): Promise<{ ok: true; text: string } | { ok: false; error: string }> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "Voice is offline." };
@@ -38,7 +54,11 @@ export const transcribeClover = createServerFn({ method: "POST" })
     if (comma < 0) return { ok: false, error: "No audio." };
     const meta = raw.slice(0, comma);
     const b64 = raw.slice(comma + 1);
-    const mime = /data:([^;]+)/.exec(meta)?.[1] || "audio/webm";
+
+    // Ensure MIME type is restricted to audio formats
+    const parsedMime = /data:(audio\/[a-zA-Z0-9.+_-]+)/.exec(meta)?.[1];
+    const mime = parsedMime || "audio/webm";
+
     const bytes = Buffer.from(b64, "base64");
     if (bytes.byteLength < 400) return { ok: false, error: "Too short." };
 

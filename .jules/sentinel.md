@@ -1,0 +1,4 @@
+## 2025-09-06 - Identity arrow functions in createServerFn validator bypass runtime validation
+**Vulnerability:** Server functions `speakClover` and `transcribeClover` used `(input: { text: string }) => input` as `.validator()`. Because TypeScript types are erased at build time, the runtime validator function returned untyped inputs directly without type or schema checking. Malicious or null inputs caused unhandled TypeError exceptions or unvalidated base64 memory allocations.
+**Learning:** In TanStack Start / React Start, `.validator()` receives raw request payloads at runtime. Using dummy identity functions without explicit runtime checks leaves handlers vulnerable to DoS crashes and unvalidated input handling.
+**Prevention:** Always perform runtime checks inside `.validator()` (or use a schema validator like Zod) to verify types, non-null objects, required string fields, and payload size bounds before reaching `.handler()`.
