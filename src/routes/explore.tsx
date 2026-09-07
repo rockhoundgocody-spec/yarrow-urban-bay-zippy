@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -79,7 +79,8 @@ function ExplorePage() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search sites, states, minerals"
-        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
+        aria-label="Search field sites, states, or minerals"
+        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg placeholder:text-faint focus:border-field focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-field focus-visible:ring-offset-2 focus-visible:ring-offset-void"
       />
 
       <div className="flex gap-1.5 overflow-x-auto">

@@ -68,7 +68,8 @@ function VaultPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search GeoDex"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          aria-label="Search GeoDex specimens"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg placeholder:text-faint focus:border-amethyst focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
         />
       </label>
 
