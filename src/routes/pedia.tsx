@@ -47,7 +47,8 @@ function PediaPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          aria-label="Search species by name, formula, or color"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg placeholder:text-faint focus:border-amethyst focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
         />
       </label>
       <div className="flex gap-1.5 overflow-x-auto pb-1">
