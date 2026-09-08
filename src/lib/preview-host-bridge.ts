@@ -6,13 +6,13 @@
  */
 
 import { z } from "zod";
-import { resolveParentEmbedderOrigin } from "./preview-embedder-origin";
+import { resolveParentEmbedderOrigin } from "./preview-embedder-origin.ts";
 
 export {
   isGrokEmbedderOrigin,
   isSandboxPreviewGuestHost,
   resolveParentEmbedderOrigin,
-} from "./preview-embedder-origin";
+} from "./preview-embedder-origin.ts";
 
 export const PREVIEW_BRIDGE_CHANNEL = "grok-preview-bridge" as const;
 export const PREVIEW_BRIDGE_VERSION = 1 as const;
@@ -44,13 +44,32 @@ export type PreviewHostBridgeOptions = {
   getRoutePaths?: () => string[];
 };
 
+function hasControlChar(str: string): boolean {
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    if (code < 32 || code === 127) return true;
+  }
+  return false;
+}
+
 export function isSafeBridgePath(path: string): boolean {
-  if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) {
+  // Reject non-strings, non-relative paths, protocol-relative paths, backslashes, or control characters
+  if (
+    typeof path !== "string" ||
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.includes("\\") ||
+    hasControlChar(path)
+  ) {
     return false;
   }
   try {
     const resolved = new URL(path, "https://preview.invalid");
-    return resolved.origin === "https://preview.invalid";
+    if (resolved.origin !== "https://preview.invalid") return false;
+    // Disallow scheme or credentials in the first path segment (e.g. /javascript:alert(1), /http://evil.com)
+    const firstSegment = resolved.pathname.slice(1).split("/")[0];
+    if (firstSegment.includes(":") || firstSegment.includes("@")) return false;
+    return true;
   } catch {
     return false;
   }
