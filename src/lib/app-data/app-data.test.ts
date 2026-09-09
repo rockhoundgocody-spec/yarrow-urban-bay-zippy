@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { callTool, failureMemoSize } from "./client.server.ts";
 import { ConnectorType } from "./types.ts";
 import type { ToolArgs } from "./types.ts";
-import { isLoginRequired, redirectToLoginIfRequired } from "./login.ts";
+import { isLoginRequired, isSafeRedirectUrl, redirectToLoginIfRequired } from "./login.ts";
 import type { CallToolResult } from "./types.ts";
 
 type WindowStub = { location: { assign: (url: string) => void; href: string } };
@@ -180,6 +180,22 @@ describe("isLoginRequired", () => {
   });
 });
 
+describe("isSafeRedirectUrl", () => {
+  it("accepts valid http, https, and relative path URLs", () => {
+    assert.equal(isSafeRedirectUrl("https://gate.grok.me/__gate/signin"), true);
+    assert.equal(isSafeRedirectUrl("http://localhost:8080/login"), true);
+    assert.equal(isSafeRedirectUrl("/login?return_to=/dashboard"), true);
+  });
+
+  it("rejects dangerous protocols and protocol-relative URLs", () => {
+    assert.equal(isSafeRedirectUrl("javascript:alert(1)"), false);
+    assert.equal(isSafeRedirectUrl("data:text/html,<script>alert(1)</script>"), false);
+    assert.equal(isSafeRedirectUrl("//attacker.com/login"), false);
+    assert.equal(isSafeRedirectUrl("/\\attacker.com/login"), false);
+    assert.equal(isSafeRedirectUrl("vbscript:msgbox(1)"), false);
+  });
+});
+
 describe("redirectToLoginIfRequired", () => {
   it("no-ops when login is not required", () => {
     let target = "";
@@ -252,5 +268,36 @@ describe("redirectToLoginIfRequired", () => {
       loginUrl: "https://gate.grok.me/__gate/signin?return_to=x",
     });
     assert.equal(did, false);
+  });
+
+  it("rejects unsafe loginUrl values like javascript: or protocol-relative URLs", () => {
+    let target = "";
+    const testWithUrl = (loginUrl: string) =>
+      withWindow(
+        {
+          location: {
+            assign: (u) => {
+              target = u;
+            },
+            href: "https://my-app.grok.me/current",
+          },
+        },
+        () =>
+          redirectToLoginIfRequired({
+            ok: false,
+            data: null,
+            loginRequired: true,
+            loginUrl,
+          }),
+      );
+
+    assert.equal(testWithUrl("javascript:alert(1)"), false);
+    assert.equal(target, "");
+
+    assert.equal(testWithUrl("//attacker.com"), false);
+    assert.equal(target, "");
+
+    assert.equal(testWithUrl("data:text/html,<script>alert(1)</script>"), false);
+    assert.equal(target, "");
   });
 });
