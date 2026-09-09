@@ -37,7 +37,15 @@ function QuestsPage() {
         </p>
       </header>
       <Panel className="p-4">
-        <div className="h-1.5 overflow-hidden rounded-full bg-fg/10">
+        <div
+          role="progressbar"
+          aria-label="Daily quests progress"
+          aria-valuenow={done}
+          aria-valuemin={0}
+          aria-valuemax={quests.length}
+          aria-valuetext={`${done} of ${quests.length} quests completed`}
+          className="h-1.5 overflow-hidden rounded-full bg-fg/10"
+        >
           <div className="h-full bg-gold" style={{ width: `${(done / Math.max(quests.length, 1)) * 100}%` }} />
         </div>
       </Panel>
