@@ -35,7 +35,9 @@ export function Onboarding() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-void/94 p-4">
       <div className="rh-panel rh-hairline w-full max-w-md rounded-2xl p-6">
-        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amethyst">RockHound-GO</p>
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amethyst">
+          RockHound-GO
+        </p>
         <div className="mt-5 grid size-12 place-items-center rounded-lg border border-line bg-stone">
           <Icon className="size-5 text-gold" />
         </div>
@@ -45,7 +47,9 @@ export function Onboarding() {
 
         {last && (
           <label className="mt-5 block">
-            <span className="text-[10px] uppercase tracking-[0.16em] text-faint">What should we call you</span>
+            <span className="text-[10px] uppercase tracking-[0.16em] text-faint">
+              What should we call you
+            </span>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -55,11 +59,21 @@ export function Onboarding() {
           </label>
         )}
 
-        <div className="mt-6 flex items-center gap-2">
+        <div
+          role="progressbar"
+          aria-label="Onboarding step progress"
+          aria-valuenow={i + 1}
+          aria-valuemin={1}
+          aria-valuemax={SLIDES.length}
+          aria-valuetext={`Step ${i + 1} of ${SLIDES.length}`}
+          className="mt-6 flex items-center gap-2"
+        >
           {SLIDES.map((_, idx) => (
             <span
               key={idx}
-              className={`h-1 flex-1 rounded-full ${idx <= i ? "bg-amethyst" : "bg-fg/10"}`}
+              className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+                idx <= i ? "bg-amethyst" : "bg-fg/10"
+              }`}
             />
           ))}
         </div>

@@ -85,8 +85,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             >
               {menu ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
-            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void">
-              <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>
+            <Link
+              to="/"
+              className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+            >
+              <span className="font-display text-[17px] font-semibold tracking-tight text-fg">
+                RockHound
+              </span>
               <span className="font-display text-[17px] font-semibold text-amethyst">GO</span>
             </Link>
             <button
@@ -170,7 +175,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                     >
                       <Icon className="size-6" />
                     </span>
-                    <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-gold">Scan</span>
+                    <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-gold">
+                      Scan
+                    </span>
                   </Link>
                 );
               }
@@ -208,6 +215,7 @@ export function XpRibbon() {
   const scientist = useField((s) => s.scientistXp);
   const explorer = useField((s) => s.explorerXp);
   const { level, pct, into, need } = xpToNext(xp);
+  const percentVal = Math.round(pct * 100);
   return (
     <div className="rh-panel rh-hairline rounded-xl px-4 py-3">
       <div className="flex items-center justify-between text-[11px] text-muted">
@@ -216,8 +224,19 @@ export function XpRibbon() {
           {into}/{need} XP · {streak}d streak
         </span>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10">
-        <div className="h-full rounded-full bg-amethyst" style={{ width: `${Math.round(pct * 100)}%` }} />
+      <div
+        role="progressbar"
+        aria-label="Level progress"
+        aria-valuenow={percentVal}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuetext={`${into} of ${need} XP to level ${level + 1}`}
+        className="mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10"
+      >
+        <div
+          className="h-full rounded-full bg-amethyst transition-all duration-300"
+          style={{ width: `${percentVal}%` }}
+        />
       </div>
       <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[9px] uppercase tracking-[0.12em] text-faint">
         <span>
