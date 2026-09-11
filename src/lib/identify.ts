@@ -111,9 +111,18 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
+export function isValidImageDataUrl(url: string): boolean {
+  // Validate that image data URL starts with data:image/<supported-format>;base64,
+  return /^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test((url || "").trim());
+}
+
 export const identifySpecimen = createServerFn({ method: "POST" })
   .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
   .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
+    if (!data?.imageDataUrl || !isValidImageDataUrl(data.imageDataUrl)) {
+      return { ok: false, error: "Invalid image format. Expected a valid image data URL." };
+    }
+
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
 
