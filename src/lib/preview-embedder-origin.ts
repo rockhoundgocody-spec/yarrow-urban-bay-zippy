@@ -37,13 +37,13 @@ export function resolveParentEmbedderOrigin(
   if (parentIsSelf) return null;
   for (const candidate of [referrer, ancestorOrigin ?? ""].filter(Boolean)) {
     try {
-      const url = new URL(
-        candidate.includes("://") ? candidate : `https://${candidate}`,
-      );
+      const url = new URL(candidate.includes("://") ? candidate : `https://${candidate}`);
       if (url.protocol !== "https:" && url.protocol !== "http:") continue;
       if (isGrokEmbedderOrigin(url.origin)) return url.origin;
+      // Security: validate candidate parent hostname (url.hostname) against allowed sandbox hosts.
+      // Checking guestHostname allowed arbitrary parent origins to hijack the postMessage bridge.
       if (
-        isSandboxPreviewGuestHost(guestHostname) ||
+        isSandboxPreviewGuestHost(url.hostname) ||
         isRemintPreviewPair(guestHostname, url.hostname)
       ) {
         return url.origin;

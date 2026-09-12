@@ -1,0 +1,4 @@
+## 2025-09-12 - Validate Candidate Parent Hostname in PostMessage Origin Resolution
+**Vulnerability:** `resolveParentEmbedderOrigin` validated `guestHostname` instead of candidate `url.hostname` against `isSandboxPreviewGuestHost`. When the guest ran on a `*.grok-sandbox.com` host, any framing origin (e.g., `https://evil.com`) was accepted as a valid parent embedder origin, permitting cross-origin postMessage bridge hijacking.
+**Learning:** Checking the local guest hostname instead of the candidate parent hostname in origin validation helper logic creates a vulnerability where any untrusted parent iframe origin is accepted as trusted.
+**Prevention:** Always validate `url.hostname` (the incoming frame candidate origin) against host allowlists rather than checking local guest environment properties.
