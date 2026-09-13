@@ -83,6 +83,25 @@ function inLivePreview(): boolean {
 type PopupMessage = { source: "grok-auth-popup"; token: string | null; error?: string };
 
 /**
+ * Security: Sanitize redirect URLs to prevent Open Redirect vulnerabilities and
+ * script execution via `javascript:` URIs during auth navigations.
+ */
+export function sanitizeRedirectUrl(url: string, fallback = "/"): string {
+  if (!url || typeof url !== "string") return fallback;
+  if (!url.startsWith("/") || url.startsWith("//") || url.includes("\\")) {
+    return fallback;
+  }
+  try {
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://preview.invalid";
+    const resolved = new URL(url, origin);
+    if (resolved.origin !== origin) return fallback;
+    return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+  } catch {
+    return fallback;
+  }
+}
+
+/**
  * Start sign-in with one upstream provider (`providerId` from `GROK_PROVIDERS`),
  * federating through the Grok auth broker.
  *
@@ -100,8 +119,8 @@ export async function signIn(
   providerId: string,
   opts: { callbackURL?: string; errorCallbackURL?: string } = {},
 ): Promise<void> {
-  const callbackURL = opts.callbackURL ?? "/";
-  const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const callbackURL = sanitizeRedirectUrl(opts.callbackURL ?? "/");
+  const errorCallbackURL = sanitizeRedirectUrl(opts.errorCallbackURL ?? "/");
 
   // Open the popup SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some
@@ -219,6 +238,7 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * preview the local clear is sufficient, so it always resolves.
  */
 export async function signOut(redirectTo = "/"): Promise<void> {
+  const safeRedirect = sanitizeRedirectUrl(redirectTo);
   await runSignOut({
     livePreview: inLivePreview(),
     hasBearer: Boolean(getBearerToken()),
@@ -230,7 +250,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      window.location.href = safeRedirect;
     },
   });
 }
