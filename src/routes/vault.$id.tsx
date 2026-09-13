@@ -1,5 +1,6 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
 import { Button, Panel, RarityChip } from "@/components/ui";
 import { MINERALS } from "@/data/minerals";
@@ -19,6 +20,7 @@ const DISPO_LABEL: Record<string, string> = {
 function SpecimenPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
+  const [confirming, setConfirming] = useState(false);
   const specimen = useField((s) => s.specimens.find((x) => x.id === id));
   const update = useField((s) => s.updateSpecimen);
   const remove = useField((s) => s.removeSpecimen);
@@ -38,7 +40,7 @@ function SpecimenPage() {
     <div className="space-y-5">
       <p className="text-[10px] uppercase tracking-[0.18em] text-cyan">GeoDex specimen</p>
       {specimen.photoDataUrl && (
-        <img src={specimen.photoDataUrl} alt={specimen.name} className="w-full rounded-xl object-cover" />
+        <img src={specimen.photoDataUrl} alt={`Photo of ${specimen.name}`} className="w-full rounded-xl object-cover" />
       )}
       <div className="flex items-start gap-3">
         <CrystalGem hue={mineral?.hue ?? "#8d7cff"} system={specimen.crystalSystem} size={64} />
@@ -105,16 +107,38 @@ function SpecimenPage() {
           Open {mineral.name} in Mineralpedia
         </Link>
       )}
-      <Button
-        variant="line"
-        className="w-full text-danger"
-        onClick={() => {
-          remove(specimen.id);
-          void navigate({ to: "/vault" });
-        }}
-      >
-        <Trash2 className="size-4" /> Remove from GeoDex
-      </Button>
+      {confirming ? (
+        <div className="space-y-3 rounded-xl border border-danger/30 bg-danger/10 p-4 text-center">
+          <p className="text-xs text-fg">Are you sure you want to remove this specimen from your GeoDex?</p>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              className="flex-1 text-xs"
+              onClick={() => setConfirming(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="line"
+              className="flex-1 border-danger text-xs text-danger hover:bg-danger/20"
+              onClick={() => {
+                remove(specimen.id);
+                void navigate({ to: "/vault" });
+              }}
+            >
+              Confirm Removal
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <Button
+          variant="line"
+          className="w-full text-danger"
+          onClick={() => setConfirming(true)}
+        >
+          <Trash2 className="size-4" /> Remove from GeoDex
+        </Button>
+      )}
     </div>
   );
 }
