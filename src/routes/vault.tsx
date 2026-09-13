@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, Outlet, useMatches } from "@tanstack/react-router";
 import { Camera, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
@@ -27,6 +27,7 @@ const DISPO: { k: DiscoveryDisposition | "all"; l: string }[] = [
 ];
 
 function VaultPage() {
+  const matches = useMatches();
   const specimens = useField((s) => s.specimens);
   const [q, setQ] = useState("");
   const [rarity, setRarity] = useState<Rarity | "all">("all");
@@ -46,6 +47,11 @@ function VaultPage() {
       return true;
     });
   }, [specimens, q, rarity, dispo]);
+
+  const isChild = matches.some((m) => m.routeId === "/vault/$id");
+  if (isChild) {
+    return <Outlet />;
+  }
 
   return (
     <div className="space-y-5">
@@ -68,6 +74,7 @@ function VaultPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search GeoDex"
+          aria-label="Search GeoDex"
           className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
         />
       </label>
@@ -119,7 +126,7 @@ function VaultPage() {
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel block rounded-xl p-3">
                   {s.photoDataUrl ? (
-                    <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
+                    <img src={s.photoDataUrl} alt={`Photo of ${s.name}`} className="mb-2 h-24 w-full rounded-md object-cover" />
                   ) : (
                     <div className="mb-2 grid h-24 place-items-center">
                       <CrystalGem hue={m?.hue ?? "#8d7cff"} system={s.crystalSystem} size={56} />
