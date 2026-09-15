@@ -1,8 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Camera, Search } from "lucide-react";
+import { Camera } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
-import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
+import { Panel, RarityChip, SearchInput, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { formatUsd } from "@/lib/utils";
@@ -62,15 +62,12 @@ function VaultPage() {
       </Panel>
       <p className="text-xs text-faint">Collected value estimate {formatUsd(value)} · in-place finds are not priced.</p>
 
-      <label className="relative block">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search GeoDex"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
-        />
-      </label>
+      <SearchInput
+        value={q}
+        onChange={setQ}
+        placeholder="Search GeoDex"
+        label="Search GeoDex"
+      />
 
       <div className="flex gap-1.5 overflow-x-auto pb-1">
         {DISPO.map((f) => (
