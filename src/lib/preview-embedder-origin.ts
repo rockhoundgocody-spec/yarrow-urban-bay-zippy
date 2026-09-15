@@ -42,8 +42,10 @@ export function resolveParentEmbedderOrigin(
       );
       if (url.protocol !== "https:" && url.protocol !== "http:") continue;
       if (isGrokEmbedderOrigin(url.origin)) return url.origin;
+      // Ensure the parent URL hostname is a trusted preview host or remint pair,
+      // rather than blindly trusting any parent origin when the guest is on sandbox.
       if (
-        isSandboxPreviewGuestHost(guestHostname) ||
+        isSandboxPreviewGuestHost(url.hostname) ||
         isRemintPreviewPair(guestHostname, url.hostname)
       ) {
         return url.origin;
