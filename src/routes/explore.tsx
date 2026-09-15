@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { Panel, SearchInput, SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -75,11 +75,11 @@ function ExplorePage() {
         </p>
       </div>
 
-      <input
+      <SearchInput
         value={q}
-        onChange={(e) => setQ(e.target.value)}
+        onChange={setQ}
         placeholder="Search sites, states, minerals"
-        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
+        label="Search localities"
       />
 
       <div className="flex gap-1.5 overflow-x-auto">
