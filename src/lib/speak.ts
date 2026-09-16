@@ -1,10 +1,30 @@
 import { createServerFn } from "@tanstack/react-start";
+import { assertSameSiteRequest } from "./auth/isolation.server.ts";
+
+export function validateSpeakInput(input: unknown): { text: string } {
+  if (!input || typeof input !== "object") throw new Error("Invalid request payload");
+  const obj = input as Record<string, unknown>;
+  const text = typeof obj.text === "string" ? obj.text.trim() : "";
+  if (!text) throw new Error("Text parameter is required");
+  return { text: text.slice(0, 800) };
+}
+
+export function validateTranscribeInput(input: unknown): { audioDataUrl: string } {
+  if (!input || typeof input !== "object") throw new Error("Invalid request payload");
+  const obj = input as Record<string, unknown>;
+  const audioDataUrl = typeof obj.audioDataUrl === "string" ? obj.audioDataUrl.trim() : "";
+  if (!audioDataUrl || !audioDataUrl.startsWith("data:")) {
+    throw new Error("Valid audio data URL is required");
+  }
+  return { audioDataUrl };
+}
 
 export const speakClover = createServerFn({ method: "POST" })
-  .validator((input: { text: string }) => input)
+  .validator(validateSpeakInput)
   .handler(async ({ data }): Promise<{ ok: true; audio: string } | { ok: false }> => {
+    assertSameSiteRequest();
     const apiKey = process.env.XAI_API_KEY;
-    const text = data.text.trim().slice(0, 800);
+    const text = data.text;
     if (!apiKey || !text) return { ok: false };
 
     const res = await fetch("https://api.x.ai/v1/tts", {
@@ -28,8 +48,9 @@ export const speakClover = createServerFn({ method: "POST" })
   });
 
 export const transcribeClover = createServerFn({ method: "POST" })
-  .validator((input: { audioDataUrl: string }) => input)
+  .validator(validateTranscribeInput)
   .handler(async ({ data }): Promise<{ ok: true; text: string } | { ok: false; error: string }> => {
+    assertSameSiteRequest();
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "Voice is offline." };
 
