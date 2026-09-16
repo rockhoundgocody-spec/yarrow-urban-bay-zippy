@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
 import { RarityChip, SectionLabel } from "@/components/ui";
@@ -41,24 +41,37 @@ function PediaPage() {
         <h1 className="mt-1 font-display text-2xl text-fg">Mineralpedia</h1>
         <p className="mt-1 text-sm text-muted">{MINERALS.length} field species with tests, lookalikes, and hardness.</p>
       </header>
-      <label className="relative block">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
+      <div className="relative flex items-center">
+        <Search className="pointer-events-none absolute left-3 size-4 text-faint" />
         <input
+          type="search"
+          aria-label="Search minerals"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-10 text-sm text-fg placeholder:text-faint focus:border-amethyst focus:outline-none focus-visible:ring-2 focus-visible:ring-amethyst [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
         />
-      </label>
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+        {q && (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={() => setQ("")}
+            className="absolute right-3 grid size-7 place-items-center rounded-full text-muted hover:bg-fg/10 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
+          >
+            <X className="size-3.5" />
+          </button>
+        )}
+      </div>
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Mineral category filters">
         {CATS.map((c) => (
           <button
             key={c.k}
             type="button"
+            aria-pressed={cat === c.k}
             onClick={() => setCat(c.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {c.l}
