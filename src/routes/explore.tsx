@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -61,8 +61,18 @@ function ExplorePage() {
               <g
                 key={s.id}
                 transform={`translate(${px} ${py})`}
-                className="cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={`Select site ${s.name}, ${s.state}${isSaved ? " (Saved)" : ""}`}
+                aria-pressed={active}
+                className="cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
                 onClick={() => setPicked(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPicked(s.id);
+                  }
+                }}
               >
                 <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
                 <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
@@ -79,7 +89,8 @@ function ExplorePage() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search sites, states, minerals"
-        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
+        aria-label="Search sites, states, or minerals"
+        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus-visible:border-field focus-visible:ring-2 focus-visible:ring-amethyst"
       />
 
       <div className="flex gap-1.5 overflow-x-auto">
@@ -87,9 +98,10 @@ function ExplorePage() {
           <button
             key={a.k}
             type="button"
+            aria-pressed={access === a.k}
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst",
               access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
             )}
           >
@@ -102,9 +114,10 @@ function ExplorePage() {
           <button
             key={d}
             type="button"
+            aria-pressed={diff === d}
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize",
+              "rounded-full border px-3 py-1.5 text-xs capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst",
               diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
             )}
           >
