@@ -226,6 +226,29 @@ describe("redirectToLoginIfRequired", () => {
     assert.equal(target, "https://gate.grok.me/__gate/signin?return_to=x");
   });
 
+  it("rejects unsafe URI schemes like javascript: to prevent DOM XSS", () => {
+    let target = "";
+    const did = withWindow(
+      {
+        location: {
+          assign: (u) => {
+            target = u;
+          },
+          href: "https://my-app.grok.me/current",
+        },
+      },
+      () =>
+        redirectToLoginIfRequired({
+          ok: false,
+          data: null,
+          loginRequired: true,
+          loginUrl: "javascript:alert(1)",
+        }),
+    );
+    assert.equal(did, false);
+    assert.equal(target, "");
+  });
+
   it("returns false when the result has no loginUrl", () => {
     let target = "";
     const did = withWindow(
