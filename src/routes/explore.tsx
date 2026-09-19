@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SearchInput, SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -75,11 +75,11 @@ function ExplorePage() {
         </p>
       </div>
 
-      <input
+      <SearchInput
         value={q}
-        onChange={(e) => setQ(e.target.value)}
+        onChange={setQ}
         placeholder="Search sites, states, minerals"
-        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
+        ariaLabel="Search field sites"
       />
 
       <div className="flex gap-1.5 overflow-x-auto">
@@ -87,9 +87,10 @@ function ExplorePage() {
           <button
             key={a.k}
             type="button"
+            aria-pressed={access === a.k}
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian",
               access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
             )}
           >
@@ -102,9 +103,10 @@ function ExplorePage() {
           <button
             key={d}
             type="button"
+            aria-pressed={diff === d}
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize",
+              "rounded-full border px-3 py-1.5 text-xs capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian",
               diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
             )}
           >

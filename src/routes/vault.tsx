@@ -1,8 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Camera, Search } from "lucide-react";
+import { Camera } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
-import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
+import { Panel, RarityChip, SearchInput, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { formatUsd } from "@/lib/utils";
@@ -62,23 +62,21 @@ function VaultPage() {
       </Panel>
       <p className="text-xs text-faint">Collected value estimate {formatUsd(value)} · in-place finds are not priced.</p>
 
-      <label className="relative block">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search GeoDex"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
-        />
-      </label>
+      <SearchInput
+        value={q}
+        onChange={setQ}
+        placeholder="Search GeoDex"
+        ariaLabel="Search GeoDex collection"
+      />
 
       <div className="flex gap-1.5 overflow-x-auto pb-1">
         {DISPO.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={dispo === f.k}
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian ${
               dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -92,8 +90,9 @@ function VaultPage() {
           <button
             key={f.k}
             type="button"
+            aria-pressed={rarity === f.k}
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian ${
               rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -119,7 +118,7 @@ function VaultPage() {
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel block rounded-xl p-3">
                   {s.photoDataUrl ? (
-                    <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
+                    <img src={s.photoDataUrl} alt={`Photo of ${s.name}`} className="mb-2 h-24 w-full rounded-md object-cover" />
                   ) : (
                     <div className="mb-2 grid h-24 place-items-center">
                       <CrystalGem hue={m?.hue ?? "#8d7cff"} system={s.crystalSystem} size={56} />
