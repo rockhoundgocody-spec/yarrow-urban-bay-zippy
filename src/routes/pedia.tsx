@@ -1,8 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
-import { RarityChip, SectionLabel } from "@/components/ui";
+import { RarityChip, SearchInput, SectionLabel } from "@/components/ui";
 import { MINERALS, type MineralCategory } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -41,23 +40,21 @@ function PediaPage() {
         <h1 className="mt-1 font-display text-2xl text-fg">Mineralpedia</h1>
         <p className="mt-1 text-sm text-muted">{MINERALS.length} field species with tests, lookalikes, and hardness.</p>
       </header>
-      <label className="relative block">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Name, formula, color"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
-        />
-      </label>
+      <SearchInput
+        value={q}
+        onChange={setQ}
+        placeholder="Name, formula, color"
+        ariaLabel="Search Mineralpedia"
+      />
       <div className="flex gap-1.5 overflow-x-auto pb-1">
         {CATS.map((c) => (
           <button
             key={c.k}
             type="button"
+            aria-pressed={cat === c.k}
             onClick={() => setCat(c.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian",
               cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
             )}
           >

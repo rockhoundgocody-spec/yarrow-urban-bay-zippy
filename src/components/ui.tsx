@@ -1,5 +1,6 @@
 import type { Rarity } from "@/data/minerals";
 import { cn } from "@/lib/utils";
+import { Search, X } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 const RARITY_CLASS: Record<Rarity, string> = {
@@ -74,5 +75,43 @@ export function Stat({ label, value }: { label: string; value: string | number }
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-faint">{children}</p>
+  );
+}
+
+export function SearchInput({
+  value,
+  onChange,
+  placeholder,
+  ariaLabel,
+  className,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  ariaLabel: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("relative block", className)}>
+      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
+      <input
+        type="search"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
+        className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-9 text-sm text-fg outline-none placeholder:text-faint focus-visible:border-amethyst focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+      />
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          aria-label="Clear search"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
+        >
+          <X className="size-3.5" />
+        </button>
+      )}
+    </div>
   );
 }
