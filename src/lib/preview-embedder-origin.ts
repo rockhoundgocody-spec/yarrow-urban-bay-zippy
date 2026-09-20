@@ -42,8 +42,11 @@ export function resolveParentEmbedderOrigin(
       );
       if (url.protocol !== "https:" && url.protocol !== "http:") continue;
       if (isGrokEmbedderOrigin(url.origin)) return url.origin;
+      // SECURITY: Must check the candidate parent's hostname (url.hostname),
+      // not guestHostname, to prevent untrusted parents from embedding the app
+      // and receiving sensitive postMessage updates via the preview bridge.
       if (
-        isSandboxPreviewGuestHost(guestHostname) ||
+        isSandboxPreviewGuestHost(url.hostname) ||
         isRemintPreviewPair(guestHostname, url.hostname)
       ) {
         return url.origin;
