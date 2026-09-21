@@ -96,11 +96,12 @@ export function DiscoveryChoice({
               key={o.id}
               type="button"
               disabled={blocked}
+              title={blocked ? "Confirm legal access above to collect specimen" : undefined}
               onClick={() => setPicked(o.id)}
               className={cn(
-                "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors duration-150",
+                "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
                 active ? "border-gold/50 bg-gold/10" : "border-line bg-void/30 hover:bg-fg/5",
-                blocked && "opacity-40",
+                blocked && "opacity-40 cursor-not-allowed",
               )}
             >
               <Icon className={cn("mt-0.5 size-4 shrink-0", active ? "text-gold" : "text-muted")} />
