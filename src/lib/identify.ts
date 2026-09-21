@@ -1,6 +1,35 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { z } from "zod";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
+
+export const IdentifyInputSchema = z.object({
+  imageDataUrl: z.string().min(1, "imageDataUrl is required"),
+  notes: z.string().max(1000).optional(),
+  locality: z.string().max(500).optional(),
+});
+
+export const CompanionSchema = z.object({
+  name: z.string().max(100),
+  level: z.number(),
+  mood: z.string().max(50),
+  energy: z.number(),
+  streak: z.number(),
+  todaysFinds: z.number(),
+  collection: z.array(z.string().max(100)),
+});
+
+export const HistoryItemSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  text: z.string().max(2000),
+});
+
+export const AskCloverInputSchema = z.object({
+  question: z.string().min(1, "question is required").max(1000),
+  history: z.array(HistoryItemSchema).optional(),
+  companion: CompanionSchema.optional(),
+  mode: z.enum(["voice", "text"]).optional(),
+});
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -112,7 +141,7 @@ function extractJson(text: string): Record<string, unknown> | null {
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
 export const identifySpecimen = createServerFn({ method: "POST" })
-  .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
+  .validator((input: unknown) => IdentifyInputSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
@@ -199,14 +228,7 @@ export type CloverCompanion = {
 };
 
 export const askClover = createServerFn({ method: "POST" })
-  .validator(
-    (input: {
-      question: string;
-      history?: { role: "user" | "assistant"; text: string }[];
-      companion?: CloverCompanion;
-      mode?: "voice" | "text";
-    }) => input,
-  )
+  .validator((input: unknown) => AskCloverInputSchema.parse(input))
   .handler(
     async ({
       data,
