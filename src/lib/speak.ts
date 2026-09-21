@@ -1,7 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+export const SpeakInputSchema = z.object({
+  text: z.string().min(1, "text is required").max(1000),
+});
+
+export const TranscribeInputSchema = z.object({
+  audioDataUrl: z.string().min(1, "audioDataUrl is required"),
+});
 
 export const speakClover = createServerFn({ method: "POST" })
-  .validator((input: { text: string }) => input)
+  .validator((input: unknown) => SpeakInputSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true; audio: string } | { ok: false }> => {
     const apiKey = process.env.XAI_API_KEY;
     const text = data.text.trim().slice(0, 800);
@@ -28,7 +37,7 @@ export const speakClover = createServerFn({ method: "POST" })
   });
 
 export const transcribeClover = createServerFn({ method: "POST" })
-  .validator((input: { audioDataUrl: string }) => input)
+  .validator((input: unknown) => TranscribeInputSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: true; text: string } | { ok: false; error: string }> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "Voice is offline." };
