@@ -9,6 +9,7 @@ import {
   verifyGateIdentityToken,
   type GateJwks,
 } from "./gate-identity.server.ts";
+import { sanitizeRedirectUrl } from "./sanitize-redirect.ts";
 
 const ISSUER = "https://gate.app-builder-testing.com";
 const AUDIENCE = "app:proj-123";
@@ -322,5 +323,31 @@ describe("sessionBoundToGateIdentity", () => {
       false,
     );
     assert.equal(sessionBoundToGateIdentity([], "user-1", provider), false);
+  });
+});
+
+describe("sanitizeRedirectUrl", () => {
+  it("allows safe relative paths", () => {
+    assert.equal(sanitizeRedirectUrl("/"), "/");
+    assert.equal(sanitizeRedirectUrl("/vault"), "/vault");
+    assert.equal(sanitizeRedirectUrl("/explore?id=123"), "/explore?id=123");
+    assert.equal(sanitizeRedirectUrl("/profile#settings"), "/profile#settings");
+  });
+
+  it("blocks open redirects and protocol execution payloads", () => {
+    assert.equal(sanitizeRedirectUrl("https://attacker.com"), "/");
+    assert.equal(sanitizeRedirectUrl("http://attacker.com"), "/");
+    assert.equal(sanitizeRedirectUrl("//attacker.com"), "/");
+    assert.equal(sanitizeRedirectUrl("/\\attacker.com"), "/");
+    assert.equal(sanitizeRedirectUrl("javascript:alert(1)"), "/");
+    assert.equal(sanitizeRedirectUrl("javascript:alert(document.cookie)"), "/");
+    assert.equal(sanitizeRedirectUrl("data:text/html,xss"), "/");
+  });
+
+  it("falls back for non-string inputs", () => {
+    assert.equal(sanitizeRedirectUrl(null), "/");
+    assert.equal(sanitizeRedirectUrl(undefined), "/");
+    assert.equal(sanitizeRedirectUrl(123), "/");
+    assert.equal(sanitizeRedirectUrl({}), "/");
   });
 });
