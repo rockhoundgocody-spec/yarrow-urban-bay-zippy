@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -111,15 +111,33 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
-export const identifySpecimen = createServerFn({ method: "POST" })
-  .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
-  .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
-    const apiKey = process.env.XAI_API_KEY;
-    if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
+export async function processIdentifySpecimen(data: {
+  imageDataUrl: string;
+  notes?: string;
+  locality?: string;
+}): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> {
+  const apiKey = process.env.XAI_API_KEY;
+  if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
 
-    const prompt = `You are a professional mineralogist assisting a field rockhound.
+  const imageDataUrl = typeof data.imageDataUrl === "string" ? data.imageDataUrl.trim() : "";
+  if (
+    !imageDataUrl ||
+    (!imageDataUrl.startsWith("data:image/") &&
+      !imageDataUrl.startsWith("http://") &&
+      !imageDataUrl.startsWith("https://"))
+  ) {
+    return { ok: false, error: "Invalid image format provided." };
+  }
+  if (imageDataUrl.length > 15 * 1024 * 1024) {
+    return { ok: false, error: "Image payload is too large." };
+  }
+
+  const locality = typeof data.locality === "string" ? data.locality.trim().slice(0, 200) : "";
+  const notes = typeof data.notes === "string" ? data.notes.trim().slice(0, 500) : "";
+
+  const prompt = `You are a professional mineralogist assisting a field rockhound.
 Identify the rock, mineral, or fossil in the photo.
-Locality hint: ${data.locality || "unknown"}. Collector notes: ${data.notes || "none"}.
+Locality hint: ${locality || "unknown"}. Collector notes: ${notes || "none"}.
 Prefer a common name from this catalog when it reasonably fits: ${CATALOG}.
 If the image is not geological, say so.
 Return ONLY compact JSON with keys:
@@ -128,65 +146,68 @@ hardness, luster, crystalSystem, streak, color, valueLow, valueHigh, fieldNotes 
 keyFeatures (array of strings), alternatives (array of {name, confidence}), notGeological (boolean).
 Never invent certainty. If unsure, lower confidence and list alternatives.`;
 
-    const res = await fetch("https://api.x.ai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "grok-4.5",
-        max_tokens: 700,
-        temperature: 0.2,
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              { type: "image_url", image_url: { url: data.imageDataUrl } },
-            ],
-          },
-        ],
-      }),
-    });
-
-    if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      return { ok: false, error: `Identification failed (${res.status}). ${t.slice(0, 140)}` };
-    }
-
-    const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-    const text = body.choices?.[0]?.message?.content ?? "";
-    const parsed = extractJson(text);
-    if (!parsed) return { ok: false, error: "The model returned an unreadable report. Try another photo." };
-
-    const altsRaw = Array.isArray(parsed.alternatives) ? parsed.alternatives : [];
-    const result: IdentifyResult = mergeCatalog({
-      name: String(parsed.name || "Unknown"),
-      scientificName: parsed.scientificName ? String(parsed.scientificName) : undefined,
-      family: String(parsed.family || "Undetermined"),
-      formula: parsed.formula ? String(parsed.formula) : undefined,
-      confidence: Math.max(0, Math.min(1, Number(parsed.confidence) || 0.4)),
-      rarity: asRarity(String(parsed.rarity || ""), "common"),
-      hardness: parsed.hardness ? String(parsed.hardness) : undefined,
-      luster: parsed.luster ? String(parsed.luster) : undefined,
-      crystalSystem: parsed.crystalSystem ? String(parsed.crystalSystem) : undefined,
-      streak: parsed.streak ? String(parsed.streak) : undefined,
-      color: parsed.color ? String(parsed.color) : undefined,
-      valueLow: Number.isFinite(Number(parsed.valueLow)) ? Number(parsed.valueLow) : undefined,
-      valueHigh: Number.isFinite(Number(parsed.valueHigh)) ? Number(parsed.valueHigh) : undefined,
-      fieldNotes: String(parsed.fieldNotes || ""),
-      keyFeatures: Array.isArray(parsed.keyFeatures) ? parsed.keyFeatures.map(String).slice(0, 6) : [],
-      alternatives: altsRaw.slice(0, 4).map((a) => {
-        const o = a as { name?: string; confidence?: number };
-        return { name: String(o.name || "alt"), confidence: Number(o.confidence) || 0.2 };
-      }),
-      notGeological: Boolean(parsed.notGeological),
-      source: "ai",
-    });
-
-    return { ok: true, result };
+  const res = await fetch("https://api.x.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "grok-4.5",
+      max_tokens: 700,
+      temperature: 0.2,
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            { type: "image_url", image_url: { url: imageDataUrl } },
+          ],
+        },
+      ],
+    }),
   });
+
+  if (!res.ok) {
+    return { ok: false, error: "Identification failed. Please try again with a clear photo." };
+  }
+
+  const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+  const text = body.choices?.[0]?.message?.content ?? "";
+  const parsed = extractJson(text);
+  if (!parsed) return { ok: false, error: "The model returned an unreadable report. Try another photo." };
+
+  const altsRaw = Array.isArray(parsed.alternatives) ? parsed.alternatives : [];
+  const result: IdentifyResult = mergeCatalog({
+    name: String(parsed.name || "Unknown"),
+    scientificName: parsed.scientificName ? String(parsed.scientificName) : undefined,
+    family: String(parsed.family || "Undetermined"),
+    formula: parsed.formula ? String(parsed.formula) : undefined,
+    confidence: Math.max(0, Math.min(1, Number(parsed.confidence) || 0.4)),
+    rarity: asRarity(String(parsed.rarity || ""), "common"),
+    hardness: parsed.hardness ? String(parsed.hardness) : undefined,
+    luster: parsed.luster ? String(parsed.luster) : undefined,
+    crystalSystem: parsed.crystalSystem ? String(parsed.crystalSystem) : undefined,
+    streak: parsed.streak ? String(parsed.streak) : undefined,
+    color: parsed.color ? String(parsed.color) : undefined,
+    valueLow: Number.isFinite(Number(parsed.valueLow)) ? Number(parsed.valueLow) : undefined,
+    valueHigh: Number.isFinite(Number(parsed.valueHigh)) ? Number(parsed.valueHigh) : undefined,
+    fieldNotes: String(parsed.fieldNotes || ""),
+    keyFeatures: Array.isArray(parsed.keyFeatures) ? parsed.keyFeatures.map(String).slice(0, 6) : [],
+    alternatives: altsRaw.slice(0, 4).map((a) => {
+      const o = a as { name?: string; confidence?: number };
+      return { name: String(o.name || "alt"), confidence: Number(o.confidence) || 0.2 };
+    }),
+    notGeological: Boolean(parsed.notGeological),
+    source: "ai",
+  });
+
+  return { ok: true, result };
+}
+
+export const identifySpecimen = createServerFn({ method: "POST" })
+  .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
+  .handler(async ({ data }) => processIdentifySpecimen(data));
 
 export type CloverCompanion = {
   name: string;
