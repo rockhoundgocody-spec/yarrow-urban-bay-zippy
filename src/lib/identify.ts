@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -111,15 +111,33 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
+export function sanitizeInput(text: string | undefined, maxLen = 300): string {
+  if (!text) return "";
+  // Remove non-printable control characters (except newline \n, CR \r, tab \t) and slice to max length
+  // eslint-disable-next-line no-control-regex
+  return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "").slice(0, maxLen);
+}
+
 export const identifySpecimen = createServerFn({ method: "POST" })
   .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
   .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
 
+    if (!data.imageDataUrl || typeof data.imageDataUrl !== "string" || !data.imageDataUrl.startsWith("data:image/")) {
+      return { ok: false, error: "Invalid image input." };
+    }
+    // Limit data URL length to ~10MB to prevent DoS via payload size
+    if (data.imageDataUrl.length > 10 * 1024 * 1024) {
+      return { ok: false, error: "Image payload is too large." };
+    }
+
+    const locality = sanitizeInput(data.locality, 300);
+    const notes = sanitizeInput(data.notes, 300);
+
     const prompt = `You are a professional mineralogist assisting a field rockhound.
 Identify the rock, mineral, or fossil in the photo.
-Locality hint: ${data.locality || "unknown"}. Collector notes: ${data.notes || "none"}.
+Locality hint: ${locality || "unknown"}. Collector notes: ${notes || "none"}.
 Prefer a common name from this catalog when it reasonably fits: ${CATALOG}.
 If the image is not geological, say so.
 Return ONLY compact JSON with keys:
