@@ -2,7 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
-import { RarityChip, SectionLabel } from "@/components/ui";
+import { Panel, RarityChip, SectionLabel } from "@/components/ui";
 import { MINERALS, type MineralCategory } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -42,12 +42,14 @@ function PediaPage() {
         <p className="mt-1 text-sm text-muted">{MINERALS.length} field species with tests, lookalikes, and hardness.</p>
       </header>
       <label className="relative block">
+        <span className="sr-only">Search minerals</span>
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
         <input
+          type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void focus:border-amethyst"
         />
       </label>
       <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -55,10 +57,11 @@ function PediaPage() {
           <button
             key={c.k}
             type="button"
+            aria-pressed={cat === c.k}
             onClick={() => setCat(c.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {c.l}
@@ -66,28 +69,44 @@ function PediaPage() {
         ))}
       </div>
       <SectionLabel>{list.length} entries</SectionLabel>
-      <ul className="space-y-2">
-        {list.map((m) => (
-          <li key={m.id}>
-            <Link
-              to="/pedia/$id"
-              params={{ id: m.id }}
-              onClick={() => complete("pedia")}
-              className="rh-panel flex items-center gap-3 rounded-xl p-3"
-            >
-              <CrystalGem hue={m.hue} system={m.crystalSystem} size={44} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-sm text-fg">{m.name}</p>
-                <p className="truncate text-[11px] text-faint">
-                  {m.formula} · Mohs {m.hardnessMin}
-                  {m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}
-                </p>
-              </div>
-              <RarityChip rarity={m.rarity} />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {list.length === 0 ? (
+        <Panel className="p-6 text-center">
+          <p className="text-sm text-muted">No species found matching your filters.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setCat("all");
+            }}
+            className="mt-3 text-xs font-medium text-amethyst hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst rounded px-2 py-1"
+          >
+            Clear search and filters
+          </button>
+        </Panel>
+      ) : (
+        <ul className="space-y-2">
+          {list.map((m) => (
+            <li key={m.id}>
+              <Link
+                to="/pedia/$id"
+                params={{ id: m.id }}
+                onClick={() => complete("pedia")}
+                className="rh-panel flex items-center gap-3 rounded-xl p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              >
+                <CrystalGem hue={m.hue} system={m.crystalSystem} size={44} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-display text-sm text-fg">{m.name}</p>
+                  <p className="truncate text-[11px] text-faint">
+                    {m.formula} · Mohs {m.hardnessMin}
+                    {m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}
+                  </p>
+                </div>
+                <RarityChip rarity={m.rarity} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
