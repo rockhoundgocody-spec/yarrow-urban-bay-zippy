@@ -9,6 +9,16 @@ export function redirectToLoginIfRequired(result: CallToolResult): boolean {
   const url = result.loginUrl;
   if (!url) return false;
   if (typeof window === "undefined") return false;
-  window.location.assign(url);
-  return true;
+
+  // Security: Validate protocol to prevent DOM XSS via javascript: or data: URIs
+  try {
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return false;
+    }
+    window.location.assign(parsed.href);
+    return true;
+  } catch {
+    return false;
+  }
 }
