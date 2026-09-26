@@ -5,6 +5,7 @@ import { ConnectorType } from "./types.ts";
 import type { ToolArgs } from "./types.ts";
 import { isLoginRequired, redirectToLoginIfRequired } from "./login.ts";
 import type { CallToolResult } from "./types.ts";
+import { sanitizeRedirectUrl } from "../auth/client.ts";
 
 type WindowStub = { location: { assign: (url: string) => void; href: string } };
 
@@ -275,5 +276,49 @@ describe("redirectToLoginIfRequired", () => {
       loginUrl: "https://gate.grok.me/__gate/signin?return_to=x",
     });
     assert.equal(did, false);
+  });
+});
+
+describe("sanitizeRedirectUrl", () => {
+  it("allows valid relative and http/https URLs", () => {
+    withWindow(
+      {
+        location: {
+          assign: () => {},
+          href: "https://my-app.grok.me/current",
+          origin: "https://my-app.grok.me",
+        } as unknown as Location,
+      },
+      () => {
+        assert.equal(
+          sanitizeRedirectUrl("/dashboard"),
+          "https://my-app.grok.me/dashboard",
+        );
+        assert.equal(
+          sanitizeRedirectUrl("https://gate.grok.me/login"),
+          "https://gate.grok.me/login",
+        );
+      },
+    );
+  });
+
+  it("rejects javascript: and data: URIs and falls back to /", () => {
+    withWindow(
+      {
+        location: {
+          assign: () => {},
+          href: "https://my-app.grok.me/current",
+          origin: "https://my-app.grok.me",
+        } as unknown as Location,
+      },
+      () => {
+        assert.equal(sanitizeRedirectUrl("javascript:alert(1)"), "/");
+        assert.equal(sanitizeRedirectUrl("data:text/html,hack"), "/");
+      },
+    );
+  });
+
+  it("returns fallback on the server when window is undefined", () => {
+    assert.equal(sanitizeRedirectUrl("/dashboard", "/fallback"), "/fallback");
   });
 });
