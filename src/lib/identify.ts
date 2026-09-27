@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
+import { assertSameSiteRequest } from "./auth/isolation.server.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -111,9 +112,40 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
+export function validateIdentifyInput(input: unknown): { imageDataUrl: string; notes?: string; locality?: string } {
+  if (!input || typeof input !== "object") throw new Error("Invalid request payload");
+  const obj = input as Record<string, unknown>;
+  const imageDataUrl = typeof obj.imageDataUrl === "string" ? obj.imageDataUrl.trim() : "";
+  if (!imageDataUrl || (!imageDataUrl.startsWith("data:") && !imageDataUrl.startsWith("http://") && !imageDataUrl.startsWith("https://"))) {
+    throw new Error("A valid image data URL or HTTP URL is required");
+  }
+  return {
+    imageDataUrl,
+    notes: typeof obj.notes === "string" ? obj.notes.slice(0, 500) : undefined,
+    locality: typeof obj.locality === "string" ? obj.locality.slice(0, 200) : undefined,
+  };
+}
+
+export function validateAskCloverInput(input: unknown): {
+  question: string;
+  history?: { role: "user" | "assistant"; text: string }[];
+  companion?: CloverCompanion;
+  mode?: "voice" | "text";
+} {
+  if (!input || typeof input !== "object") throw new Error("Invalid request payload");
+  const obj = input as Record<string, unknown>;
+  const question = typeof obj.question === "string" ? obj.question.trim() : "";
+  if (!question) throw new Error("Question is required");
+  return {
+    ...(obj as any),
+    question: question.slice(0, 800),
+  };
+}
+
 export const identifySpecimen = createServerFn({ method: "POST" })
-  .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
+  .validator(validateIdentifyInput)
   .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
+    assertSameSiteRequest();
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
 
@@ -151,8 +183,7 @@ Never invent certainty. If unsure, lower confidence and list alternatives.`;
     });
 
     if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      return { ok: false, error: `Identification failed (${res.status}). ${t.slice(0, 140)}` };
+      return { ok: false, error: `Identification failed (HTTP ${res.status}). Please try again.` };
     }
 
     const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
@@ -199,20 +230,14 @@ export type CloverCompanion = {
 };
 
 export const askClover = createServerFn({ method: "POST" })
-  .validator(
-    (input: {
-      question: string;
-      history?: { role: "user" | "assistant"; text: string }[];
-      companion?: CloverCompanion;
-      mode?: "voice" | "text";
-    }) => input,
-  )
+  .validator(validateAskCloverInput)
   .handler(
     async ({
       data,
     }): Promise<
       { ok: true; text: string; logFind: boolean; findDetails: string | null } | { ok: false; error: string }
     > => {
+      assertSameSiteRequest();
       const apiKey = process.env.XAI_API_KEY;
       if (!apiKey) return { ok: false, error: "Clover is offline in this environment." };
 
