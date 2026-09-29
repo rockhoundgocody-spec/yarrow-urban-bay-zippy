@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,7 +35,7 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled = import.meta?.env?.VITE_AUTH_ENABLED !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
@@ -218,7 +218,41 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * a hand-rolled control must catch it and let the visitor retry. In the live
  * preview the local clear is sufficient, so it always resolves.
  */
+/**
+ * Security: Validate redirect target protocol and origin to prevent
+ * open redirects and DOM XSS (e.g. `javascript:` URIs).
+ */
+export function isSafeRedirectUrl(url: string): boolean {
+  if (!url || typeof url !== "string") return false;
+  // Disallow protocol-relative URLs like //attacker.com or /\attacker.com
+  if (url.startsWith("//") || url.startsWith("/\\")) {
+    return false;
+  }
+  const baseOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost";
+  try {
+    const parsed = new URL(url, baseOrigin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return false;
+    }
+    // If running in browser, enforce same origin
+    if (typeof window !== "undefined") {
+      if (parsed.origin !== window.location.origin) {
+        return false;
+      }
+    } else {
+      // Server / test context
+      if (!url.startsWith("/") && parsed.origin !== baseOrigin) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function signOut(redirectTo = "/"): Promise<void> {
+  const safeRedirect = isSafeRedirectUrl(redirectTo) ? redirectTo : "/";
   await runSignOut({
     livePreview: inLivePreview(),
     hasBearer: Boolean(getBearerToken()),
@@ -230,7 +264,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      window.location.href = safeRedirect;
     },
   });
 }

@@ -229,6 +229,19 @@ test("pre-sign-in: the preview skips the request when there is no bearer", async
   assert.equal(h.cleared, 1);
 });
 
+test("isSafeRedirectUrl allows safe paths/same-origin URLs and blocks malicious ones", async () => {
+  const { isSafeRedirectUrl } = await import("../src/lib/auth/client.ts");
+  // Relative safe paths
+  assert.equal(isSafeRedirectUrl("/"), true);
+  assert.equal(isSafeRedirectUrl("/dashboard?foo=bar#baz"), true);
+
+  // Dangerous schemes / open redirects
+  assert.equal(isSafeRedirectUrl("javascript:alert(1)"), false);
+  assert.equal(isSafeRedirectUrl("data:text/html,<script>alert(1)</script>"), false);
+  assert.equal(isSafeRedirectUrl("https://attacker.com"), false);
+  assert.equal(isSafeRedirectUrl("http://evil.com/phishing"), false);
+});
+
 test("every sign-out bound comes from one rule", () => {
   assert.equal(signOutTimeoutMs(true), PREVIEW_SIGN_OUT_TIMEOUT_MS);
   assert.equal(signOutTimeoutMs(false), DEPLOYED_SIGN_OUT_TIMEOUT_MS);
