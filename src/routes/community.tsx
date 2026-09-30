@@ -38,8 +38,13 @@ function CommunityPage() {
               <div className="mt-3 flex items-center justify-between">
                 <button
                   type="button"
+                  aria-pressed={p.liked}
+                  aria-label={p.liked ? `Unlike post by ${p.author}` : `Like post by ${p.author}`}
                   onClick={() => toggle(p.id)}
-                  className={cn("inline-flex min-h-11 items-center gap-2 text-sm", p.liked ? "text-gold" : "text-muted")}
+                  className={cn(
+                    "inline-flex min-h-11 items-center gap-2 rounded-md px-2 text-sm hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                    p.liked ? "text-gold" : "text-muted",
+                  )}
                 >
                   <Heart className={cn("size-4", p.liked && "fill-gold")} />
                   <span className="tabular-nums">{p.likes}</span>
