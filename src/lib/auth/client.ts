@@ -185,6 +185,8 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
       resolve(token);
     };
     const onMessage = (event: MessageEvent) => {
+      // Security: verify the event comes from the expected popup window object
+      if (event.source !== popup) return;
       if (event.origin !== origin) return;
       const data = event.data as PopupMessage | undefined;
       if (!data || data.source !== "grok-auth-popup") return;
