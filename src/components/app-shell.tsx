@@ -79,6 +79,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               type="button"
               aria-label={menu ? "Close menu" : "Open menu"}
               aria-expanded={menu}
+              aria-haspopup="dialog"
               aria-controls="main-menu"
               onClick={() => setMenu((v) => !v)}
               className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
@@ -116,6 +117,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="fixed inset-0 z-40 bg-void/70" onClick={() => setMenu(false)}>
             <nav
               id="main-menu"
+              role="dialog"
+              aria-modal="true"
               aria-label="Main menu navigation"
               className="absolute left-0 top-14 w-[min(100%,20rem)] border-r border-line bg-obsidian p-3 pb-8 shadow-panel"
               onClick={(e) => e.stopPropagation()}
