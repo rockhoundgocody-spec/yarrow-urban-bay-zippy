@@ -42,7 +42,7 @@ export function HeroCloverOrb({
         onMouseDown={(e) => e.preventDefault()}
         onClick={handleTap}
         aria-label={clover.open ? "Talk to Clover" : "Wake Clover"}
-        className="orb-stage grid place-items-center transition-transform duration-150 ease-out active:scale-[0.97]"
+        className="orb-stage grid place-items-center rounded-full transition-transform duration-150 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
         style={{ width: size + pad, height: size + pad }}
       >
         <LiquidMetalOrb size={size} state={clover.phase} level={clover.companion.level} />
