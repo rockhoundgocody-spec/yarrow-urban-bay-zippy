@@ -5,7 +5,7 @@ import { CrystalGem } from "@/components/crystal-gem";
 import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
-import { formatUsd } from "@/lib/utils";
+import { cn, formatUsd } from "@/lib/utils";
 import type { DiscoveryDisposition } from "@/lib/types";
 
 export const Route = createFileRoute("/vault")({ component: VaultPage });
@@ -73,30 +73,34 @@ function VaultPage() {
         />
       </label>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter specimens by disposition">
         {DISPO.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={dispo === f.k}
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
-            }`}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
+            )}
           >
             {f.l}
           </button>
         ))}
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter specimens by rarity">
         {FILTERS.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={rarity === f.k}
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
-            }`}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
+            )}
           >
             {f.l}
           </button>
