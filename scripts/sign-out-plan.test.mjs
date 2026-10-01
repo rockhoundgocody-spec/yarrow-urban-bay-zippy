@@ -5,6 +5,7 @@ import {
   PREVIEW_SIGN_OUT_TIMEOUT_MS,
   runPreSignInSignOut,
   runSignOut,
+  sanitizeRedirectUrl,
   settleWithin,
   signOutTimeoutMs,
 } from "./sign-out-plan.mjs";
@@ -93,6 +94,55 @@ test("preview: a sign-out that never settles clears and redirects once the wait 
   t.mock.timers.tick(1);
   await done;
   assert.deepEqual(h.order, ["clear", "redirect"]);
+});
+
+// ── sanitizeRedirectUrl ──────────────────────────────────────────────────────
+
+test("sanitizeRedirectUrl allows valid same-origin relative paths", () => {
+  const origin = "http://localhost:8080";
+  assert.equal(sanitizeRedirectUrl("/", origin), "/");
+  assert.equal(sanitizeRedirectUrl("/dashboard", origin), "/dashboard");
+  assert.equal(
+    sanitizeRedirectUrl("/profile?tab=1#top", origin),
+    "/profile?tab=1#top",
+  );
+  assert.equal(
+    sanitizeRedirectUrl("http://localhost:8080/settings", origin),
+    "/settings",
+  );
+});
+
+test("sanitizeRedirectUrl rejects javascript: and data: URIs (DOM XSS)", () => {
+  const origin = "http://localhost:8080";
+  assert.equal(sanitizeRedirectUrl("javascript:alert(1)", origin), "/");
+  assert.equal(
+    sanitizeRedirectUrl("javascript:console.log(document.cookie)", origin),
+    "/",
+  );
+  assert.equal(
+    sanitizeRedirectUrl("data:text/html,<script>alert(1)</script>", origin),
+    "/",
+  );
+  assert.equal(
+    sanitizeRedirectUrl("vbscript:msgbox(1)", origin),
+    "/",
+  );
+});
+
+test("sanitizeRedirectUrl rejects cross-origin URLs and protocol-relative URLs (Open Redirect)", () => {
+  const origin = "http://localhost:8080";
+  assert.equal(
+    sanitizeRedirectUrl("https://attacker.com/phishing", origin),
+    "/",
+  );
+  assert.equal(
+    sanitizeRedirectUrl("//attacker.com/phishing", origin),
+    "/",
+  );
+  assert.equal(
+    sanitizeRedirectUrl("http://attacker.com:8080/path", origin),
+    "/",
+  );
 });
 
 test("preview: no bearer means nothing to invalidate, so no request is made", async () => {
