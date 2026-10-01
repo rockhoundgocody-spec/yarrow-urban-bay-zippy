@@ -302,14 +302,17 @@ export function resolveOgTitle(
   appName = DEFAULT_APP_NAME,
   host = "",
   documentTitle = "",
+  siteExplicit = false,
 ) {
-  const fromSite = String(site.title ?? "").trim();
-  if (fromSite) return fromSite;
   const fromDoc = String(documentTitle ?? "").trim();
   if (fromDoc) return fromDoc;
+  const fromArg = String(appName ?? "").trim();
+  const fromSite = String(site.title ?? "").trim();
+  if (siteExplicit && fromSite) return fromSite;
+  if (fromArg && fromArg !== DEFAULT_APP_NAME) return fromArg;
+  if (fromSite) return fromSite;
   const fromHost = appNameFromHost(host);
   if (fromHost && fromHost !== DEFAULT_APP_NAME) return fromHost;
-  const fromArg = String(appName ?? "").trim();
   return fromArg || DEFAULT_APP_NAME;
 }
 
@@ -406,11 +409,18 @@ export function normalizeHeadContext(ctx = {}) {
   // public/og.jpg generated after that snapshot (or missed by a wrong cwd)
   // wins over the og.grok.me placeholder. Vercel has no public/ to read, so
   // a correct bake is unchanged.
+  const siteExplicit = ctx.site !== undefined;
   const site = applyCustomCardFromFs(
-    ctx.site !== undefined ? ctx.site : snapshotOgIdentity(cwd).site,
+    siteExplicit ? ctx.site : snapshotOgIdentity(cwd).site,
     cwd,
   );
-  const appName = resolveOgTitle(site, ctx.appName ?? DEFAULT_APP_NAME, ctx.host ?? "");
+  const appName = resolveOgTitle(
+    site,
+    ctx.appName ?? DEFAULT_APP_NAME,
+    ctx.host ?? "",
+    "",
+    siteExplicit,
+  );
   return {
     appName,
     projectId: ctx.projectId ?? readGrokProjectId(),
@@ -419,18 +429,21 @@ export function normalizeHeadContext(ctx = {}) {
     host: ctx.host ?? "",
     cwd,
     site,
+    siteExplicit,
   };
 }
 
 export function injectGrokPwaHead(html, ctx = {}) {
   if (typeof html !== "string") return html;
-  const { site, projectId, creator, creatorId, host, cwd } = normalizeHeadContext(ctx);
+  const { site, projectId, creator, creatorId, host, cwd, siteExplicit } =
+    normalizeHeadContext(ctx);
   const documentTitle = titleFromDocument(html);
   const appName = resolveOgTitle(
     site,
     ctx.appName ?? DEFAULT_APP_NAME,
     host,
     documentTitle,
+    siteExplicit,
   );
   let next = stripShareMetaTags(html);
 
