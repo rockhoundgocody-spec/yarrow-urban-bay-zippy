@@ -6,13 +6,13 @@
  */
 
 import { z } from "zod";
-import { resolveParentEmbedderOrigin } from "./preview-embedder-origin";
+import { resolveParentEmbedderOrigin } from "./preview-embedder-origin.ts";
 
 export {
   isGrokEmbedderOrigin,
   isSandboxPreviewGuestHost,
   resolveParentEmbedderOrigin,
-} from "./preview-embedder-origin";
+} from "./preview-embedder-origin.ts";
 
 export const PREVIEW_BRIDGE_CHANNEL = "grok-preview-bridge" as const;
 export const PREVIEW_BRIDGE_VERSION = 1 as const;
@@ -45,12 +45,25 @@ export type PreviewHostBridgeOptions = {
 };
 
 export function isSafeBridgePath(path: string): boolean {
-  if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) {
+  if (
+    typeof path !== "string" ||
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.includes("\\")
+  ) {
     return false;
+  }
+  for (let i = 0; i < path.length; i++) {
+    const code = path.charCodeAt(i);
+    if (code < 32 || code === 127) return false;
   }
   try {
     const resolved = new URL(path, "https://preview.invalid");
-    return resolved.origin === "https://preview.invalid";
+    if (resolved.origin !== "https://preview.invalid") return false;
+    if (resolved.pathname.startsWith("//") || resolved.pathname.includes("\\")) return false;
+    const decoded = decodeURIComponent(resolved.pathname);
+    if (decoded.startsWith("//") || decoded.includes("\\")) return false;
+    return true;
   } catch {
     return false;
   }
