@@ -91,7 +91,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
             <button
               type="button"
-              aria-label={fieldMode ? "Switch to Hub mode" : "Switch to Field mode"}
+              aria-label={fieldMode ? "Switch to Hub mode (currently in Field mode)" : "Switch to Field mode (currently in Hub mode)"}
+              title={fieldMode ? "Field mode active — tap to switch to Hub mode" : "Hub mode active — tap to switch to Field mode"}
               onClick={() => setFieldMode(!fieldMode)}
               className={cn(
                 "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
