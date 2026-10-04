@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,7 +35,7 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled = import.meta.env?.VITE_AUTH_ENABLED !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
@@ -134,10 +134,15 @@ export async function signIn(
       /* session store will recover on next useSession fetch */
     }
     if (typeof window !== "undefined") {
-      const dest = new URL(callbackURL, window.location.origin);
-      const here = window.location;
-      if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
-        window.location.href = callbackURL;
+      try {
+        const dest = new URL(callbackURL, window.location.origin);
+        if (dest.protocol !== "http:" && dest.protocol !== "https:") return;
+        const here = window.location;
+        if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
+          safeRedirect(dest.href);
+        }
+      } catch {
+        /* invalid callbackURL */
       }
     }
     return;
@@ -149,7 +154,7 @@ export async function signIn(
     errorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url) safeRedirect(data.url);
 }
 
 /**
@@ -218,6 +223,37 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * a hand-rolled control must catch it and let the visitor retry. In the live
  * preview the local clear is sufficient, so it always resolves.
  */
+/**
+ * Safely redirects window.location to a given URL if it uses an http: or https: scheme.
+ * Prevents DOM-based Cross-Site Scripting (XSS) via unsafe schemes like javascript: or data:.
+ */
+export function safeRedirect(url: string, fallback = "/"): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const origin = window.location.origin;
+    const parsed = new URL(url, origin);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      window.location.href = parsed.href;
+      return true;
+    }
+  } catch {
+    /* ignore invalid URL */
+  }
+
+  if (fallback) {
+    try {
+      const fallbackParsed = new URL(fallback, window.location.origin);
+      if (fallbackParsed.protocol === "http:" || fallbackParsed.protocol === "https:") {
+        window.location.href = fallbackParsed.href;
+        return true;
+      }
+    } catch {
+      /* ignore invalid fallback */
+    }
+  }
+  return false;
+}
+
 export async function signOut(redirectTo = "/"): Promise<void> {
   await runSignOut({
     livePreview: inLivePreview(),
@@ -230,7 +266,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      safeRedirect(redirectTo, "/");
     },
   });
 }
