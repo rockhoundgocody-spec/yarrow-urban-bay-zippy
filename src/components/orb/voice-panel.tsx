@@ -162,7 +162,7 @@ export function CloverVoicePanel({
               type="button"
               onClick={onDismissHunt}
               aria-label="Dismiss hunt suggestions"
-              className="mt-1 w-full rounded-md py-1 text-[11px] text-faint hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+              className="mt-2 w-full rounded-md border border-line bg-void/30 py-1.5 text-xs font-medium text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
             >
               Dismiss
             </button>
