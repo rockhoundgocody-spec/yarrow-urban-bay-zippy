@@ -8,7 +8,8 @@ services:
       - "3000:8080"
     environment:
       # Vite >= 6.1 appends this to its allowedHosts so the preview proxy host is accepted.
-      __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS: ${BASE44_PUBLIC_HOST_SUFFIX}
+      # The platform sets this to the sandbox domain wildcard (e.g. ".e2b.app"); pass it through.
+      __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS: ${__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS}
       BASE44_PUBLIC_HOST_SUFFIX: ${BASE44_PUBLIC_HOST_SUFFIX}
       BASE44_SANDBOX_HOST_DOMAIN: ${BASE44_SANDBOX_HOST_DOMAIN}
     env_file:
