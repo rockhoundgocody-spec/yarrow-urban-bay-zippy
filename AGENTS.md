@@ -340,3 +340,26 @@ auth/db: OFF by default — sign-in, @/lib/db or migrations ONLY on an accounts 
 never:   build an app for a greeting/number/question; invent imagine_* calls;
          ask the user to run commands; delete or abandon /workspace/startup.sh
 ```
+
+---
+
+## Base44 dev environment
+
+This repo also runs under **Base44** via `docker-compose.base44.yml` (Node 22
+image, source bind-mounted, dev server on internal port 8080 mapped to host
+3000).
+
+**Use pnpm, not npm ci.** The committed `package-lock.json` is stale and out of
+sync with `package.json` (transitive `ajv`/`json-schema-traverse` version
+mismatches), so `npm ci` fails. The canonical lockfile is `pnpm-lock.yaml`
+(more recently updated). The compose startup runs `corepack enable pnpm && pnpm
+install --frozen-lockfile && exec pnpm run dev`.
+
+**Pre-existing test failures:** 8 tests in `scripts/grok-pwa-plugin.test.mjs`
+fail because the OG-title injector always emits the app name ("RockHound-GO")
+instead of the generic document titles those tests expect. These are unrelated
+to app functionality and existed before the Base44 import.
+
+**Verify:** `docker compose -f docker-compose.base44.yml up -d`, then curl
+`http://localhost:3000/` for a 200 with real HTML. Typecheck and build pass
+inside the container via `pnpm run typecheck` / `pnpm run build`.
