@@ -45,6 +45,26 @@ export function signOutTimeoutMs(livePreview) {
 }
 
 /**
+ * Validate and sanitize a candidate redirect URL. Enforces http: or https:
+ * protocol to prevent DOM XSS via unsafe schemes like javascript: or data:.
+ * @param {string | undefined | null} rawUrl
+ * @param {string} [baseOrigin]
+ * @returns {string}
+ */
+export function sanitizeRedirectUrl(rawUrl, baseOrigin) {
+  if (!rawUrl || typeof rawUrl !== "string") return "/";
+  try {
+    const parsed = new URL(rawUrl, baseOrigin || "http://localhost");
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.href;
+    }
+  } catch {
+    /* invalid URL format */
+  }
+  return "/";
+}
+
+/**
  * Run `start()` but give up after `timeoutMs`, reporting which happened. Never
  * rejects — callers decide what a failure means, and a `try/catch` around an
  * `await` does nothing for a promise that never settles.

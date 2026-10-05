@@ -7,6 +7,7 @@ import {
   runSignOut,
   settleWithin,
   signOutTimeoutMs,
+  sanitizeRedirectUrl,
 } from "./sign-out-plan.mjs";
 
 const TEST_TIMEOUT_MS = 20;
@@ -227,6 +228,33 @@ test("pre-sign-in: the preview skips the request when there is no bearer", async
   await h.done;
   assert.equal(requests, 0);
   assert.equal(h.cleared, 1);
+});
+
+// ── sanitizeRedirectUrl ──────────────────────────────────────────────────────
+
+test("sanitizeRedirectUrl: accepts relative path and resolves against baseOrigin", () => {
+  assert.equal(sanitizeRedirectUrl("/dashboard", "https://example.com"), "https://example.com/dashboard");
+  assert.equal(sanitizeRedirectUrl("/", "https://example.com"), "https://example.com/");
+});
+
+test("sanitizeRedirectUrl: accepts valid absolute http and https URLs", () => {
+  assert.equal(sanitizeRedirectUrl("https://example.com/login"), "https://example.com/login");
+  assert.equal(sanitizeRedirectUrl("http://localhost:8080/home"), "http://localhost:8080/home");
+});
+
+test("sanitizeRedirectUrl: blocks javascript: and data: URIs and falls back to '/'", () => {
+  assert.equal(sanitizeRedirectUrl("javascript:alert(1)"), "/");
+  assert.equal(sanitizeRedirectUrl("javascript:alert(document.cookie)"), "/");
+  assert.equal(sanitizeRedirectUrl("data:text/html,<script>alert(1)</script>"), "/");
+  assert.equal(sanitizeRedirectUrl("file:///etc/passwd"), "/");
+});
+
+test("sanitizeRedirectUrl: handles null, undefined, empty, or non-string input safely", () => {
+  assert.equal(sanitizeRedirectUrl(undefined), "/");
+  assert.equal(sanitizeRedirectUrl(null), "/");
+  assert.equal(sanitizeRedirectUrl(""), "/");
+  // @ts-ignore
+  assert.equal(sanitizeRedirectUrl(123), "/");
 });
 
 test("every sign-out bound comes from one rule", () => {
