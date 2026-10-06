@@ -42,10 +42,9 @@ export function resolveParentEmbedderOrigin(
       );
       if (url.protocol !== "https:" && url.protocol !== "http:") continue;
       if (isGrokEmbedderOrigin(url.origin)) return url.origin;
-      if (
-        isSandboxPreviewGuestHost(guestHostname) ||
-        isRemintPreviewPair(guestHostname, url.hostname)
-      ) {
+      // Security: Strictly validate parent embedder origins to prevent untrusted
+      // cross-origin sites framing the app from acting as the postMessage parent.
+      if (isRemintPreviewPair(guestHostname, url.hostname)) {
         return url.origin;
       }
     } catch {
