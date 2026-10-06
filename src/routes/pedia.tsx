@@ -51,15 +51,16 @@ function PediaPage() {
           className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
         />
       </label>
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div role="group" aria-label="Filter by category" className="flex gap-1.5 overflow-x-auto pb-1">
         {CATS.map((c) => (
           <button
             key={c.k}
             type="button"
+            aria-pressed={cat === c.k}
             onClick={() => setCat(c.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {c.l}

@@ -73,14 +73,15 @@ function VaultPage() {
         />
       </label>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div role="group" aria-label="Filter by path" className="flex gap-1.5 overflow-x-auto pb-1">
         {DISPO.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={dispo === f.k}
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian ${
+              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg"
             }`}
           >
             {f.l}
@@ -88,14 +89,15 @@ function VaultPage() {
         ))}
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div role="group" aria-label="Filter by rarity" className="flex gap-1.5 overflow-x-auto pb-1">
         {FILTERS.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={rarity === f.k}
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian ${
+              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg"
             }`}
           >
             {f.l}
