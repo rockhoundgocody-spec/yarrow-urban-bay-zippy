@@ -43,7 +43,7 @@ export function resolveParentEmbedderOrigin(
       if (url.protocol !== "https:" && url.protocol !== "http:") continue;
       if (isGrokEmbedderOrigin(url.origin)) return url.origin;
       if (
-        isSandboxPreviewGuestHost(guestHostname) ||
+        isSandboxPreviewGuestHost(url.hostname) ||
         isRemintPreviewPair(guestHostname, url.hostname)
       ) {
         return url.origin;
