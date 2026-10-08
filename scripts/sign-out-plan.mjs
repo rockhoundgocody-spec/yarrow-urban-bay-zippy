@@ -45,6 +45,34 @@ export function signOutTimeoutMs(livePreview) {
 }
 
 /**
+ * Validate redirect URLs to prevent DOM XSS (e.g., javascript: or data: URIs)
+ * and open redirects to untrusted external origins.
+ * @param {string} url
+ * @param {boolean} [allowExternal=false]
+ * @param {string} [baseOrigin]
+ * @returns {boolean}
+ */
+export function isSafeRedirectUrl(url, allowExternal = false, baseOrigin) {
+  if (!url || typeof url !== "string") return false;
+  if (url.includes("\\")) return false;
+  const origin =
+    baseOrigin ?? (typeof window !== "undefined" ? window.location.origin : undefined);
+  if (!origin) return false;
+  try {
+    const parsed = new URL(url, origin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return false;
+    }
+    if (!allowExternal && parsed.origin !== new URL(origin).origin) {
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Run `start()` but give up after `timeoutMs`, reporting which happened. Never
  * rejects — callers decide what a failure means, and a `try/catch` around an
  * `await` does nothing for a promise that never settles.

@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   DEPLOYED_SIGN_OUT_TIMEOUT_MS,
   PREVIEW_SIGN_OUT_TIMEOUT_MS,
+  isSafeRedirectUrl,
   runPreSignInSignOut,
   runSignOut,
   settleWithin,
@@ -227,6 +228,25 @@ test("pre-sign-in: the preview skips the request when there is no bearer", async
   await h.done;
   assert.equal(requests, 0);
   assert.equal(h.cleared, 1);
+});
+
+test("isSafeRedirectUrl validates relative and same-origin URLs and blocks javascript/data schemes or open redirects", () => {
+  const origin = "https://example.com";
+  assert.equal(isSafeRedirectUrl("/", false, origin), true);
+  assert.equal(isSafeRedirectUrl("/dashboard", false, origin), true);
+  assert.equal(isSafeRedirectUrl("/login?ref=1", false, origin), true);
+  assert.equal(isSafeRedirectUrl("https://example.com/home", false, origin), true);
+
+  // Unsafe / malicious URLs
+  assert.equal(isSafeRedirectUrl("javascript:alert(1)", false, origin), false);
+  assert.equal(isSafeRedirectUrl("data:text/html,<script>alert(1)</script>", false, origin), false);
+  assert.equal(isSafeRedirectUrl("//evil.com/phish", false, origin), false);
+  assert.equal(isSafeRedirectUrl("https://evil.com", false, origin), false);
+  assert.equal(isSafeRedirectUrl("/\\evil.com", false, origin), false);
+
+  // External redirects allowed when flag is true
+  assert.equal(isSafeRedirectUrl("https://auth.grok.com/login", true, origin), true);
+  assert.equal(isSafeRedirectUrl("javascript:alert(1)", true, origin), false);
 });
 
 test("every sign-out bound comes from one rule", () => {

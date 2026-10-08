@@ -1,6 +1,10 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
+import {
+  isSafeRedirectUrl,
+  runPreSignInSignOut,
+  runSignOut,
+} from "../../../scripts/sign-out-plan.mjs";
 import { GROK_PROVIDERS } from "./providers";
 
 /**
@@ -39,6 +43,7 @@ export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
+export { isSafeRedirectUrl };
 
 // ── Live-preview bearer token ────────────────────────────────────────────────
 // The embedded preview iframe has partitioned cookies, so we keep the session's
@@ -100,8 +105,12 @@ export async function signIn(
   providerId: string,
   opts: { callbackURL?: string; errorCallbackURL?: string } = {},
 ): Promise<void> {
-  const callbackURL = opts.callbackURL ?? "/";
-  const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const safeCallbackURL = isSafeRedirectUrl(opts.callbackURL ?? "/", false)
+    ? (opts.callbackURL ?? "/")
+    : "/";
+  const safeErrorCallbackURL = isSafeRedirectUrl(opts.errorCallbackURL ?? "/", false)
+    ? (opts.errorCallbackURL ?? "/")
+    : "/";
 
   // Open the popup SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some
@@ -134,10 +143,10 @@ export async function signIn(
       /* session store will recover on next useSession fetch */
     }
     if (typeof window !== "undefined") {
-      const dest = new URL(callbackURL, window.location.origin);
+      const dest = new URL(safeCallbackURL, window.location.origin);
       const here = window.location;
       if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
-        window.location.href = callbackURL;
+        window.location.href = safeCallbackURL;
       }
     }
     return;
@@ -145,11 +154,13 @@ export async function signIn(
 
   const { data, error } = await authClient.signIn.oauth2({
     providerId,
-    callbackURL,
-    errorCallbackURL,
+    callbackURL: safeCallbackURL,
+    errorCallbackURL: safeErrorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url && isSafeRedirectUrl(data.url, true)) {
+    window.location.href = data.url;
+  }
 }
 
 /**
@@ -219,6 +230,7 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * preview the local clear is sufficient, so it always resolves.
  */
 export async function signOut(redirectTo = "/"): Promise<void> {
+  const safeRedirectTo = isSafeRedirectUrl(redirectTo, false) ? redirectTo : "/";
   await runSignOut({
     livePreview: inLivePreview(),
     hasBearer: Boolean(getBearerToken()),
@@ -230,7 +242,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      window.location.href = safeRedirectTo;
     },
   });
 }
