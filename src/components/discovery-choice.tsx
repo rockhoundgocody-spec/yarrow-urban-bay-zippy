@@ -77,16 +77,16 @@ export function DiscoveryChoice({
       <p className="text-sm leading-relaxed text-muted">
         Collecting is a legal and ethical decision. Reward documentation more than extraction.
       </p>
-      <label className="flex min-h-11 items-start gap-3 rounded-lg border border-line bg-void/40 px-3 py-3 text-sm text-fg">
+      <label className="flex min-h-11 items-start gap-3 rounded-lg border border-line bg-void/40 px-3 py-3 text-sm text-fg cursor-pointer hover:bg-fg/5 transition-colors">
         <input
           type="checkbox"
           checked={legal}
           onChange={(e) => setLegal(e.target.checked)}
-          className="mt-1 size-4 accent-gold"
+          className="mt-1 size-4 accent-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         />
         <span>I had legal access to this ground and will follow posted rules.</span>
       </label>
-      <div className="space-y-2">
+      <div className="space-y-2" role="radiogroup" aria-label="Discovery collection disposition">
         {OPTIONS.map((o) => {
           const Icon = o.icon;
           const active = picked === o.id;
@@ -95,17 +95,26 @@ export function DiscoveryChoice({
             <button
               key={o.id}
               type="button"
+              role="radio"
+              aria-checked={active}
+              aria-disabled={blocked}
               disabled={blocked}
+              title={blocked ? "Check the legal access confirmation above to enable collecting" : undefined}
               onClick={() => setPicked(o.id)}
               className={cn(
-                "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors duration-150",
+                "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                 active ? "border-gold/50 bg-gold/10" : "border-line bg-void/30 hover:bg-fg/5",
-                blocked && "opacity-40",
+                blocked && "opacity-40 cursor-not-allowed",
               )}
             >
               <Icon className={cn("mt-0.5 size-4 shrink-0", active ? "text-gold" : "text-muted")} />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-fg">{o.title}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-fg">{o.title}</p>
+                  {blocked && (
+                    <span className="text-[10px] text-gold/80 font-normal">Requires legal access check</span>
+                  )}
+                </div>
                 <p className="mt-1 text-xs leading-relaxed text-muted">{o.body}</p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-faint">
                   +{o.xp} XP · {o.lane}
