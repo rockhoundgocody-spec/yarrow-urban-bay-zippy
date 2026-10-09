@@ -90,20 +90,21 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-expanded={menu}
               aria-controls="main-menu"
               onClick={() => setMenu((v) => !v)}
-              className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              className="grid size-12 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               {menu ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
-            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void">
-              <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>
+            <Link to="/" className="flex min-h-12 min-w-0 flex-1 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void">
+              <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>{" "}
               <span className="font-display text-[17px] font-semibold text-frost">GO</span>
             </Link>
             <button
               type="button"
-              aria-label={fieldMode ? "Switch to Hub mode" : "Switch to Field mode"}
+              aria-label={fieldMode ? "Field mode: high-contrast for outdoors. Tap for Hub mode" : "Hub mode. Tap for Field mode, high-contrast for outdoors"}
+              aria-pressed={fieldMode}
               onClick={() => setFieldMode(!fieldMode)}
               className={cn(
-                "h-8 rounded-full border px-3 text-[12px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                "h-12 rounded-full border px-4 text-[12px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                 fieldMode
                   ? "border-field/40 bg-field/15 text-field"
                   : "border-line text-muted hover:text-fg",
@@ -114,7 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               to="/clover"
               aria-label="Clover AGI Assistant"
-              className="grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              className="grid size-12 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               <Sparkles className="size-5" />
             </Link>
