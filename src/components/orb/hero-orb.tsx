@@ -12,20 +12,6 @@ export function HeroCloverOrb({
 }) {
   const clover = useCloverConversation();
 
-  useEffect(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
-    if (sessionStorage.getItem("rhgo_last_gps")) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) =>
-        sessionStorage.setItem(
-          "rhgo_last_gps",
-          JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        ),
-      () => {},
-      { timeout: 8000, maximumAge: 600_000 },
-    );
-  }, []);
-
   function handleTap(e: MouseEvent<HTMLButtonElement>) {
     e.currentTarget.focus({ preventScroll: true });
     if (!clover.open) clover.start();
