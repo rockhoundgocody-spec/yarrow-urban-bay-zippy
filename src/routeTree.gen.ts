@@ -19,6 +19,7 @@ import { Route as PediaRouteImport } from './routes/pedia'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuestsRouteImport } from './routes/quests'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as VaultRouteImport } from './routes/vault'
 import { Route as ExploreIdRouteImport } from './routes/explore.$id'
@@ -75,6 +76,11 @@ const SafetyRoute = SafetyRouteImport.update({
   path: '/safety',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TripsRoute = TripsRouteImport.update({
   id: '/trips',
   path: '/trips',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/quests': typeof QuestsRoute
   '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trips': typeof TripsRoute
   '/vault': typeof VaultRouteWithChildren
   '/explore/$id': typeof ExploreIdRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/quests': typeof QuestsRoute
   '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trips': typeof TripsRoute
   '/vault': typeof VaultRouteWithChildren
   '/explore/$id': typeof ExploreIdRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/quests': typeof QuestsRoute
   '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trips': typeof TripsRoute
   '/vault': typeof VaultRouteWithChildren
   '/explore/$id': typeof ExploreIdRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quests'
     | '/safety'
+    | '/sitemap.xml'
     | '/trips'
     | '/vault'
     | '/explore/$id'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quests'
     | '/safety'
+    | '/sitemap.xml'
     | '/trips'
     | '/vault'
     | '/explore/$id'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quests'
     | '/safety'
+    | '/sitemap.xml'
     | '/trips'
     | '/vault'
     | '/explore/$id'
@@ -218,6 +230,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   QuestsRoute: typeof QuestsRoute
   SafetyRoute: typeof SafetyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TripsRoute: typeof TripsRoute
   VaultRoute: typeof VaultRouteWithChildren
 }
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/safety'
       fullPath: '/safety'
       preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trips': {
@@ -374,6 +394,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   QuestsRoute: QuestsRoute,
   SafetyRoute: SafetyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TripsRoute: TripsRoute,
   VaultRoute: VaultRouteWithChildren,
 }

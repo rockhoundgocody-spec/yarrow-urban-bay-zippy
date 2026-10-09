@@ -5,7 +5,6 @@ import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/loc
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { pageHead } from "@/lib/seo";
-import { SITES } from "@/data/locations";
 
 export const Route = createFileRoute("/explore")({
   head: () =>
