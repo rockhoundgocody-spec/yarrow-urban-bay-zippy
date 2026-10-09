@@ -65,7 +65,7 @@ function SafetyPage() {
         ))}
       </ul>
 
-      <Link to="/explore" className="block text-center text-sm text-cyan">
+      <Link to="/explore" className="flex min-h-12 items-center justify-center text-sm text-cyan">
         Open the field map
       </Link>
     </div>

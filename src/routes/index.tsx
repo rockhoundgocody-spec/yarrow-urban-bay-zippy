@@ -180,7 +180,7 @@ function Home() {
       <section>
         <div className="mb-3 flex items-center justify-between">
           <SectionLabel>Recent GeoDex</SectionLabel>
-          <Link to="/vault" className="text-xs text-muted hover:text-fg">
+          <Link to="/vault" className="inline-flex min-h-11 min-w-11 items-center justify-end text-xs text-muted hover:text-fg">
             Open
           </Link>
         </div>

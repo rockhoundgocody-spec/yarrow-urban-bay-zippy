@@ -159,7 +159,7 @@ function SitePage() {
           <Compass className="size-4" /> Plan trip
         </Button>
       </div>
-      <Link to="/trips" className="block text-center text-xs text-muted">
+      <Link to="/trips" className="flex min-h-12 items-center justify-center text-sm text-muted">
         Open trip planner
       </Link>
     </div>
