@@ -6,7 +6,7 @@
  *
  * script-src keeps 'unsafe-inline' because TanStack Start streams inline
  * hydration scripts; everything else is locked to first-party plus the few
- * hosts the app actually loads from.
+ * hosts the app actually loads from (Google Fonts).
  */
 
 /** Origins allowed to frame the app. Production: same-origin only. */
@@ -15,15 +15,15 @@ const DEV_FRAME_ANCESTORS = ["'self'", "https://*.base44.com", "https://*.base44
 export function contentSecurityPolicy({ dev = false } = {}) {
   const directives = {
     "default-src": ["'self'"],
-    "script-src": ["'self'", "'unsafe-inline'", "https://grok.com"],
-    "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://grok.com"],
+    "script-src": ["'self'", "'unsafe-inline'"],
+    "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
-    "img-src": ["'self'", "data:", "blob:", "https://grok.com", "https://og.grok.me"],
+    "img-src": ["'self'", "data:", "blob:"],
     "media-src": ["'self'", "data:", "blob:"],
-    "connect-src": ["'self'", "https://grok.com", ...(dev ? ["ws:", "wss:"] : [])],
+    "connect-src": ["'self'", ...(dev ? ["ws:", "wss:"] : [])],
     "worker-src": ["'self'", "blob:"],
     "manifest-src": ["'self'"],
-    "frame-src": ["'self'", "https://grok.com"],
+    "frame-src": ["'none'"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
     "form-action": ["'self'"],
