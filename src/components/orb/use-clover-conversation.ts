@@ -5,7 +5,6 @@ import { useField } from "@/lib/store";
 import type { OrbState } from "@/components/orb/liquid-metal-orb";
 import { useCloverVoice } from "@/components/orb/use-clover-voice";
 
-const MAX_QUIET_TURNS = 6;
 
 const REMARKS = [
   "Still here. What did you pick up?",

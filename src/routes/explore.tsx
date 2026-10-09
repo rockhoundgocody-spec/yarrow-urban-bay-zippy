@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";

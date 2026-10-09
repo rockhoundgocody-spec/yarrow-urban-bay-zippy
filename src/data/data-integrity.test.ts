@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MINERALS, MINERAL_BY_ID } from "@/data/minerals";
 import { SITES } from "@/data/locations";
-import { CHAINS } from "@/data/chains";
+import { DISCOVERY_CHAINS } from "@/data/chains";
 
 describe("mineral catalog", () => {
   it("has unique ids and names", () => {
@@ -29,7 +29,7 @@ describe("mineral catalog", () => {
   });
 
   it("discovery chains only point at real minerals", () => {
-    for (const c of CHAINS) for (const id of c.mineralIds) expect(MINERAL_BY_ID[id], `${c.name}: ${id}`).toBeDefined();
+    for (const c of DISCOVERY_CHAINS) for (const id of c.mineralIds) expect(MINERAL_BY_ID[id], `${c.name}: ${id}`).toBeDefined();
   });
 });
 

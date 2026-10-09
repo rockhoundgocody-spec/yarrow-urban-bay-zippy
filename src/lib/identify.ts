@@ -31,7 +31,7 @@ const IdentifyInput = z.object({
 });
 
 function clean(s: string | undefined, max: number): string {
-  return (s ?? "").replace(/[\u0000-\u001f]/g, " ").slice(0, max).trim();
+  return (s ?? "").replace(/\p{Cc}/gu, " ").slice(0, max).trim();
 }
 
 export const identifySpecimen = createServerFn({ method: "POST" })
