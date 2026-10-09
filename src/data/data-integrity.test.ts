@@ -60,3 +60,15 @@ describe("field localities", () => {
     }
   });
 });
+
+describe("catalog links", () => {
+  it("every locality find is a Mineralpedia species", async () => {
+    const { MINERALS: all } = await import("@/data/minerals");
+    const names = new Set(all.map((m) => m.name));
+    for (const s of SITES) for (const f of s.finds) expect(names.has(f), `${s.id}: ${f}`).toBe(true);
+  });
+
+  it("includes the brand gemstone, Red beryl, under that exact name", () => {
+    expect(MINERAL_BY_ID["red-beryl"]?.name).toBe("Red beryl");
+  });
+});
