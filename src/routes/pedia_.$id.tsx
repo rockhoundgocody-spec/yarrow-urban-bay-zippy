@@ -11,7 +11,7 @@ import { XP_REWARDS } from "@/lib/xp";
 import { toast } from "sonner";
 import { pageHead, canonicalUrl, clamp } from "@/lib/seo";
 
-export const Route = createFileRoute("/pedia/$id")({
+export const Route = createFileRoute("/pedia_/$id")({
   loader: ({ params }) => {
     const mineral = MINERAL_BY_ID[params.id];
     if (!mineral) throw notFound();

@@ -8,7 +8,7 @@ import { useField } from "@/lib/store";
 import { formatUsd } from "@/lib/utils";
 import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/vault/$id")({
+export const Route = createFileRoute("/vault_/$id")({
   head: () => privateHead("Specimen", "/vault/$id"),
   component: SpecimenPage,
 });

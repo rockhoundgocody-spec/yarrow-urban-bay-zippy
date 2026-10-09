@@ -8,7 +8,7 @@ import { useField } from "@/lib/store";
 import { toast } from "sonner";
 import { pageHead, canonicalUrl, clamp } from "@/lib/seo";
 
-export const Route = createFileRoute("/explore/$id")({
+export const Route = createFileRoute("/explore_/$id")({
   loader: ({ params }) => {
     const site = SITE_BY_ID[params.id];
     if (!site) throw notFound();
