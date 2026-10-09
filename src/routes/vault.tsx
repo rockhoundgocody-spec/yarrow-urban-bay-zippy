@@ -5,7 +5,6 @@ import { CrystalGem } from "@/components/crystal-gem";
 import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
-import { formatUsd } from "@/lib/utils";
 import type { DiscoveryDisposition } from "@/lib/types";
 import { privateHead } from "@/lib/seo";
 
@@ -36,9 +35,6 @@ function VaultPage() {
   const [rarity, setRarity] = useState<Rarity | "all">("all");
   const [dispo, setDispo] = useState<DiscoveryDisposition | "all">("all");
 
-  const value = specimens
-    .filter((s) => s.collected)
-    .reduce((a, s) => a + ((s.valueLow ?? 0) + (s.valueHigh ?? 0)) / 2, 0);
   const unique = new Set(specimens.map((s) => s.mineralId || s.name)).size;
   const inPlace = specimens.filter((s) => s.disposition === "affixed_logged").length;
 
@@ -64,7 +60,6 @@ function VaultPage() {
         <Stat label="Species" value={unique} />
         <Stat label="In place" value={inPlace} />
       </Panel>
-      <p className="text-xs text-faint">Collected value estimate {formatUsd(value)} · in-place finds are not priced.</p>
 
       <label className="relative block">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />

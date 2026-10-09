@@ -3,7 +3,6 @@ import { Button, Panel, Stat } from "@/components/ui";
 import { BADGE_CATALOG } from "@/data/badges";
 import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
-import { formatUsd } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { privateHead } from "@/lib/seo";
 
@@ -26,9 +25,7 @@ function ProfilePage() {
   const completeOnboarding = useField((s) => s.completeOnboarding);
   const reset = useField((s) => s.resetLocal);
   const { level } = xpToNext(xp);
-  const value = specimens
-    .filter((s) => s.collected)
-    .reduce((a, s) => a + ((s.valueLow ?? 0) + (s.valueHigh ?? 0)) / 2, 0);
+  const species = new Set(specimens.map((s) => s.mineralId || s.name.toLowerCase())).size;
   const earned = new Set(badges.map((b) => b.id));
 
   return (
@@ -44,7 +41,7 @@ function ProfilePage() {
         <Stat label="XP" value={xp} />
         <Stat label="Streak" value={`${streak}d`} />
         <Stat label="GeoDex" value={specimens.length} />
-        <Stat label="Collected value" value={formatUsd(value)} />
+        <Stat label="Species" value={species} />
         <Stat label="Saved sites" value={saved.length} />
         <Stat label="Badges" value={`${earned.size}/${BADGE_CATALOG.length}`} />
       </Panel>

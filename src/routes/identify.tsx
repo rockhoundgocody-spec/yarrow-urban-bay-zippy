@@ -12,7 +12,7 @@ import { identifySpecimen, matchFieldKey, mineralToResult } from "@/lib/identify
 import { useField } from "@/lib/store";
 import type { IdentifyResult } from "@/lib/types";
 import { XP_REWARDS } from "@/lib/xp";
-import { cn, formatUsd } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/identify")({
@@ -151,8 +151,6 @@ function IdentifyPage() {
       hardness: r.hardness,
       luster: r.luster,
       crystalSystem: r.crystalSystem,
-      valueLow: r.valueLow,
-      valueHigh: r.valueHigh,
       fieldNotes: r.fieldNotes,
       alternatives: r.alternatives,
       source: src,
@@ -432,10 +430,6 @@ function ResultCard({
           ["System", result.crystalSystem],
           ["Streak", result.streak],
           ["Color", result.color],
-          [
-            "Value",
-            result.valueLow != null ? `${formatUsd(result.valueLow)}–${formatUsd(result.valueHigh ?? result.valueLow)}` : null,
-          ],
         ]
           .filter(([, v]) => v)
           .map(([k, v]) => (

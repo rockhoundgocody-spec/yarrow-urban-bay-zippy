@@ -13,8 +13,6 @@ export type IdentifyResult = {
   crystalSystem?: string;
   streak?: string;
   color?: string;
-  valueLow?: number;
-  valueHigh?: number;
   fieldNotes: string;
   keyFeatures: string[];
   alternatives: { name: string; confidence: number }[];
@@ -47,8 +45,6 @@ export type Specimen = {
   hardness?: string;
   luster?: string;
   crystalSystem?: string;
-  valueLow?: number;
-  valueHigh?: number;
   fieldNotes?: string;
   alternatives?: { name: string; confidence: number }[];
   createdAt: number;

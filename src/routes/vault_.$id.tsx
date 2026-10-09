@@ -5,7 +5,6 @@ import { Button, Panel, RarityChip } from "@/components/ui";
 import { MINERALS } from "@/data/minerals";
 import { nextInChain } from "@/data/chains";
 import { useField } from "@/lib/store";
-import { formatUsd } from "@/lib/utils";
 import { privateHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/vault_/$id")({
@@ -66,14 +65,7 @@ function SpecimenPage() {
           ["Hardness", specimen.hardness],
           ["Luster", specimen.luster],
           ["System", specimen.crystalSystem],
-          [
-            "Est. value",
-            specimen.collected && specimen.valueLow != null
-              ? `${formatUsd(specimen.valueLow)}–${formatUsd(specimen.valueHigh ?? specimen.valueLow)}`
-              : specimen.collected
-                ? null
-                : "Not collected",
-          ],
+          ["Collected", specimen.collected ? "Yes" : "No — left or observed"],
           ["Source", specimen.source],
           ["Legal", specimen.legalStatus?.replace("_", " ")],
           ["Privacy", specimen.geoPrivacy?.replace("_", " ")],

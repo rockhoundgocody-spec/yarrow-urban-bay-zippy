@@ -173,8 +173,6 @@ function MineralPage() {
             hardness: r.hardness,
             luster: r.luster,
             crystalSystem: r.crystalSystem,
-            valueLow: m.valueLow,
-            valueHigh: m.valueHigh,
             fieldNotes: m.blurb,
             source: "sample",
             disposition: "chattel_collected",
