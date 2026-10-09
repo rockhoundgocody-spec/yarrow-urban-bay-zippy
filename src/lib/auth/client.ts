@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,7 +35,10 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled =
+  typeof import.meta !== "undefined" && import.meta.env
+    ? import.meta.env.VITE_AUTH_ENABLED !== "false"
+    : true;
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
@@ -100,8 +103,8 @@ export async function signIn(
   providerId: string,
   opts: { callbackURL?: string; errorCallbackURL?: string } = {},
 ): Promise<void> {
-  const callbackURL = opts.callbackURL ?? "/";
-  const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const callbackURL = getSafeRedirectUrl(opts.callbackURL ?? "/", "/");
+  const errorCallbackURL = getSafeRedirectUrl(opts.errorCallbackURL ?? "/", "/");
 
   // Open the popup SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some
@@ -149,7 +152,9 @@ export async function signIn(
     errorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url) {
+    window.location.href = getSafeRedirectUrl(data.url, "/");
+  }
 }
 
 /**
@@ -218,7 +223,25 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * a hand-rolled control must catch it and let the visitor retry. In the live
  * preview the local clear is sufficient, so it always resolves.
  */
+/**
+ * Security: Validate protocol scheme to prevent DOM-based XSS via unsafe URIs
+ * (e.g. `javascript:alert(1)` or `data:text/html,...`). Returns `fallback` if invalid.
+ */
+export function getSafeRedirectUrl(url: string, fallback = "/"): string {
+  const base = typeof window !== "undefined" ? window.location.origin : "https://preview.invalid";
+  try {
+    const parsed = new URL(url, base);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return url;
+    }
+  } catch {
+    /* ignore parse errors and fall through */
+  }
+  return fallback;
+}
+
 export async function signOut(redirectTo = "/"): Promise<void> {
+  const safeRedirect = getSafeRedirectUrl(redirectTo, "/");
   await runSignOut({
     livePreview: inLivePreview(),
     hasBearer: Boolean(getBearerToken()),
@@ -230,7 +253,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      window.location.href = safeRedirect;
     },
   });
 }
