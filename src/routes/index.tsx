@@ -25,6 +25,7 @@ import { pageHead, SITE_NAME, SITE_URL } from "@/lib/seo";
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead({
+      title: "Rock & mineral ID, field map and GeoDex",
       path: "/",
       description:
         "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding.",
