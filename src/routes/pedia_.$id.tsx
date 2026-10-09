@@ -129,7 +129,7 @@ function MineralPage() {
               return (
                 <li key={s.name} className="rounded-xl border border-line p-3 text-sm">
                   {alt ? (
-                    <Link to="/pedia/$id" params={{ id: alt.id }} className="inline-flex min-h-11 items-center text-fg">
+                    <Link to="/pedia/$id" params={{ id: alt.id }} className="inline-flex min-h-12 items-center text-fg">
                       {s.name}
                     </Link>
                   ) : (
@@ -148,7 +148,7 @@ function MineralPage() {
           <ul className="space-y-2">
             {sites.map((s) => (
               <li key={s.id}>
-                <Link to="/explore/$id" params={{ id: s.id }} className="flex min-h-11 items-center text-sm text-fg">
+                <Link to="/explore/$id" params={{ id: s.id }} className="flex min-h-12 items-center text-sm text-fg">
                   {s.name}
                   <span className="text-muted"> · {s.state}</span>
                 </Link>

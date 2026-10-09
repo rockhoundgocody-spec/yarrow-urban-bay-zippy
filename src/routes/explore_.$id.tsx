@@ -80,7 +80,7 @@ function SitePage() {
         {site.legalityCheckedAt && site.legalitySource ? (
           <p className="mt-2 text-[13px] text-muted">
             Checked {site.legalityCheckedAt} ·{" "}
-            <a href={site.legalitySource} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-cyan underline">
+            <a href={site.legalitySource} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center text-cyan underline">
               source
             </a>
           </p>
@@ -117,7 +117,7 @@ function SitePage() {
                 key={name}
                 to="/pedia/$id"
                 params={{ id: m.id }}
-                className="inline-flex min-h-11 items-center rounded-full border border-line px-3 py-1.5 text-xs text-fg"
+                className="inline-flex min-h-12 items-center rounded-full border border-line px-3 py-1.5 text-xs text-fg"
               >
                 {name}
               </Link>

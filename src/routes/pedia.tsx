@@ -67,7 +67,7 @@ function PediaPage() {
             type="button"
             onClick={() => setCat(c.k)}
             className={cn(
-              "shrink-0 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs",
               cat === c.k ? "border-frost/40 bg-frost/10 text-fg" : "border-line text-muted",
             )}
           >

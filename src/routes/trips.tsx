@@ -105,7 +105,7 @@ function TripsPage() {
               </ul>
               <div className="mt-3 space-y-1">
                 {t.gear.map((g) => (
-                  <label key={g.id} className="flex min-h-11 items-center gap-2 text-sm">
+                  <label key={g.id} className="flex min-h-12 items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={g.packed}

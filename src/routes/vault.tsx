@@ -80,7 +80,7 @@ function VaultPage() {
             key={f.k}
             type="button"
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs ${
               dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -95,7 +95,7 @@ function VaultPage() {
             key={f.k}
             type="button"
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs ${
               rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -109,7 +109,7 @@ function VaultPage() {
           <p className="text-sm text-muted">
             {specimens.length === 0 ? "GeoDex is empty." : "Nothing matches those filters."}
           </p>
-          <Link to="/identify" className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-gold">
+          <Link to="/identify" className="mt-4 inline-flex min-h-12 items-center gap-2 text-sm text-gold">
             <Camera className="size-4" /> Scan a specimen
           </Link>
         </Panel>

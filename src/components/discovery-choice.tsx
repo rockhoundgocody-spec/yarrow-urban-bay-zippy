@@ -77,7 +77,7 @@ export function DiscoveryChoice({
       <p className="text-sm leading-relaxed text-muted">
         Collecting is a legal and ethical decision. Reward documentation more than extraction.
       </p>
-      <label className="flex min-h-11 items-start gap-3 rounded-lg border border-line bg-void/40 px-3 py-3 text-sm text-fg">
+      <label className="flex min-h-12 items-start gap-3 rounded-lg border border-line bg-void/40 px-3 py-3 text-sm text-fg">
         <input
           type="checkbox"
           checked={legal}
