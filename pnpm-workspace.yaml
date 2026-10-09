@@ -1,0 +1,5 @@
+# esbuild (pulled in by vitest) needs its install script to fetch its platform binary.
+onlyBuiltDependencies:
+  - esbuild
+allowBuilds:
+  esbuild: true
