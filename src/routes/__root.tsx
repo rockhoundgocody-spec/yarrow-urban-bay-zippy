@@ -1,5 +1,4 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth/provider";
 import { AppShell } from "@/components/app-shell";
 import { ServiceWorker } from "@/components/service-worker";
 import { Toaster } from "sonner";
@@ -48,7 +47,6 @@ function Root() {
       </head>
       <body className="bg-void text-fg antialiased">
         <ServiceWorker />
-        <AuthProvider>
           <AppShell>
             <Outlet />
           </AppShell>
@@ -63,7 +61,6 @@ function Root() {
               },
             }}
           />
-        </AuthProvider>
         <Scripts />
       </body>
     </html>
