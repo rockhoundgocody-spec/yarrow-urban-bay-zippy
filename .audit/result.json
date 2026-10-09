@@ -1,0 +1,534 @@
+{
+ "routes": {
+  "/": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 17,
+   "under44": 3,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "a \"Open\" 30x16"
+   ],
+   "under48": 5,
+   "textNodes": 39,
+   "lt11": 19,
+   "lt12": 21,
+   "lt14": 25,
+   "headings": "H1",
+   "ld": [
+    "ok",
+    "ok"
+   ],
+   "overflow": 0,
+   "dom": 206
+  },
+  "/explore": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 44,
+   "under44": 11,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "button \"Any access\" 85x30",
+    "button \"Public\" 58x30",
+    "button \"Fee dig\" 65x30",
+    "button \"Permit\" 61x30",
+    "button \"Ask first\" 69x30",
+    "button \"all\" 40x30"
+   ],
+   "under48": 14,
+   "textNodes": 94,
+   "lt11": 9,
+   "lt12": 9,
+   "lt14": 66,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 369
+  },
+  "/explore/crater-diamonds": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 16,
+   "under44": 6,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "a \"Quartz\" 63x30",
+    "a \"Pyrite\" 57x30",
+    "a \"Amethyst\" 76x30",
+    "a \"Open trip planner\" 358x16"
+   ],
+   "under48": 10,
+   "textNodes": 29,
+   "lt11": 12,
+   "lt12": 12,
+   "lt14": 19,
+   "headings": "H1",
+   "ld": [
+    "ok"
+   ],
+   "overflow": 0,
+   "dom": 142
+  },
+  "/identify": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 14,
+   "under44": 5,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "button \"Lens\" 114x40",
+    "button \"Field key\" 114x40",
+    "button \"Catalog\" 114x40"
+   ],
+   "under48": 9,
+   "textNodes": 17,
+   "lt11": 7,
+   "lt12": 7,
+   "lt14": 11,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 115
+  },
+  "/pedia": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 79,
+   "under44": 9,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "button \"All\" 40x30",
+    "button \"Silicates\" 70x30",
+    "button \"Carbonates\" 89x30",
+    "button \"Sulfides\" 67x30",
+    "button \"Oxides\" 63x30",
+    "button \"Rocks\" 58x30"
+   ],
+   "under48": 12,
+   "textNodes": 202,
+   "lt11": 69,
+   "lt12": 130,
+   "lt14": 137,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 1125
+  },
+  "/pedia/quartz": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 30,
+   "under44": 20,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "a \"Calcite\" 44x18",
+    "a \"Feldspar\" 55x18",
+    "a \"Crater of Diamonds State\" 262x18",
+    "a \"Ouachita Quartz Veins · \" 207x18",
+    "a \"Herkimer Diamond Mines ·\" 228x18",
+    "a \"Lake Superior Agate Shor\" 245x18"
+   ],
+   "under48": 23,
+   "textNodes": 78,
+   "lt11": 21,
+   "lt12": 21,
+   "lt14": 31,
+   "headings": "H1",
+   "ld": [
+    "ok"
+   ],
+   "overflow": 0,
+   "dom": 229
+  },
+  "/safety": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 11,
+   "under44": 3,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "a \"Open the field map\" 358x20"
+   ],
+   "under48": 5,
+   "textNodes": 24,
+   "lt11": 8,
+   "lt12": 8,
+   "lt14": 8,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 132
+  },
+  "/trips": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    },
+    {
+     "id": "label",
+     "impact": "critical",
+     "n": 1,
+     "sample": [
+      "input[type=\"date\"] ::   Element does not have an implicit (wrapped) <label>"
+     ]
+    },
+    {
+     "id": "select-name",
+     "impact": "critical",
+     "n": 1,
+     "sample": [
+      "select ::   Element does not have an implicit (wrapped) <label>"
+     ]
+    }
+   ],
+   "interactive": 14,
+   "under44": 2,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32"
+   ],
+   "under48": 8,
+   "textNodes": 14,
+   "lt11": 8,
+   "lt12": 8,
+   "lt14": 8,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 140
+  },
+  "/quests": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 15,
+   "under44": 2,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32"
+   ],
+   "under48": 4,
+   "textNodes": 26,
+   "lt11": 7,
+   "lt12": 7,
+   "lt14": 17,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 165
+  },
+  "/profile": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 12,
+   "under44": 2,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32"
+   ],
+   "under48": 6,
+   "textNodes": 53,
+   "lt11": 19,
+   "lt12": 31,
+   "lt14": 31,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 182
+  },
+  "/vault": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 22,
+   "under44": 12,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "button \"Any path\" 75x30",
+    "button \"Collected\" 76x30",
+    "button \"In place\" 68x30",
+    "button \"Observed\" 78x30",
+    "button \"All\" 40x30",
+    "button \"Common\" 75x30"
+   ],
+   "under48": 16,
+   "textNodes": 28,
+   "lt11": 11,
+   "lt12": 11,
+   "lt14": 22,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 145
+  },
+  "/clover": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 10,
+   "under44": 2,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32"
+   ],
+   "under48": 4,
+   "textNodes": 9,
+   "lt11": 6,
+   "lt12": 6,
+   "lt14": 6,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 114
+  },
+  "/community": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 21,
+   "under44": 12,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "button \"48\" 40x44",
+    "a \"Species\" 40x16",
+    "a \"Species\" 40x16",
+    "button \"76\" 40x44",
+    "a \"Species\" 40x16",
+    "button \"91\" 40x44"
+   ],
+   "under48": 15,
+   "textNodes": 52,
+   "lt11": 7,
+   "lt12": 13,
+   "lt14": 24,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 265
+  },
+  "/market": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 18,
+   "under44": 10,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32",
+    "a \"Study Amethyst\" 83x16",
+    "a \"Study Quartz\" 70x16",
+    "a \"Study Fluorite\" 74x16",
+    "a \"Study Agate\" 65x16",
+    "a \"Study Pyrite\" 64x16",
+    "a \"Study Malachite\" 86x16"
+   ],
+   "under48": 12,
+   "textNodes": 59,
+   "lt11": 15,
+   "lt12": 15,
+   "lt14": 31,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 284
+  },
+  "/no-such-page": {
+   "v": [
+    {
+     "id": "label-content-name-mismatch",
+     "impact": "serious",
+     "n": 1,
+     "sample": [
+      ".h-8 ::   Text inside the element is not included in the accessible name"
+     ]
+    }
+   ],
+   "interactive": 12,
+   "under44": 2,
+   "under44s": [
+    "a \"RockHoundGO\" 184x26",
+    "button[Switch to Field mode] \"Hub\" 50x32"
+   ],
+   "under48": 4,
+   "textNodes": 13,
+   "lt11": 7,
+   "lt12": 7,
+   "lt14": 7,
+   "headings": "H1",
+   "ld": [],
+   "overflow": 0,
+   "dom": 114
+  }
+ },
+ "perf": {
+  "/": {
+   "fcp": 688,
+   "lcp": 688,
+   "cls": 0.009,
+   "ttfb": 9,
+   "domInteractive": 688,
+   "load": 2101,
+   "kbTransferred": 266,
+   "requests": 13,
+   "scripts": 8
+  },
+  "/pedia/quartz": {
+   "fcp": 660,
+   "lcp": 660,
+   "cls": 0.001,
+   "ttfb": 7,
+   "domInteractive": 661,
+   "load": 2109,
+   "kbTransferred": 280,
+   "requests": 14,
+   "scripts": 8
+  },
+  "/explore": {
+   "fcp": 652,
+   "lcp": 652,
+   "cls": 0,
+   "ttfb": 6,
+   "domInteractive": 655,
+   "load": 2074,
+   "kbTransferred": 272,
+   "requests": 12,
+   "scripts": 7
+  },
+  "/identify": {
+   "fcp": 688,
+   "lcp": 688,
+   "cls": 0,
+   "ttfb": 6,
+   "domInteractive": 691,
+   "load": 2106,
+   "kbTransferred": 264,
+   "requests": 13,
+   "scripts": 8
+  },
+  "/pedia": {
+   "fcp": 740,
+   "lcp": 740,
+   "cls": 0.037,
+   "ttfb": 9,
+   "domInteractive": 816,
+   "load": 2206,
+   "kbTransferred": 328,
+   "requests": 13,
+   "scripts": 8
+  }
+ }
+}
