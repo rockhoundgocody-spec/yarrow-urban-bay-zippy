@@ -1,6 +1,6 @@
 import { h as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { u as Shield } from "../_libs/lucide-react.mjs";
-import { _ as Panel, y as SectionLabel } from "./router-CMQznpBx2.mjs";
+import { _ as Panel, y as SectionLabel } from "./router-zv3UGgEF2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/safety-DKRvsBoS.js
 var import_jsx_runtime = require_jsx_runtime();
 var RULES = [

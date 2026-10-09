@@ -158,7 +158,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="mx-auto w-full max-w-lg overflow-x-clip px-4 pb-28 pt-5">{children}</main>
         <FloatingCloverOrb />
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-void/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-void/97 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
           <div className="mx-auto flex max-w-lg items-end px-2">
             {TABS.map((tab) => {
               const Icon = tab.icon;

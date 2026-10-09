@@ -2,10 +2,10 @@ import { i as __toESM } from "../_runtime.mjs";
 import { _ as require_react, h as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-E6H8ZwFP.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
-import { i as Route$2 } from "./router-CMQznpBx.mjs";
+import { i as Route$2 } from "./router-zv3UGgEF.mjs";
 import { A as BookmarkCheck, E as Compass, k as Bookmark } from "../_libs/lucide-react.mjs";
-import { _ as Panel, a as siteHazards, g as Button, m as useField, r as SITE_BY_ID } from "./router-CMQznpBx2.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/explore_._id-CPbfzjDj.js
+import { _ as Panel, a as siteHazards, g as Button, m as useField, r as SITE_BY_ID } from "./router-zv3UGgEF2.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/explore_._id-DW9XpcVj.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function SitePage() {

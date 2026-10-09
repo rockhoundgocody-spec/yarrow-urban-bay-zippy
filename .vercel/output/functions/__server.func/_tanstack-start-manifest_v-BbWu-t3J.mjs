@@ -1,4 +1,4 @@
-//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-DjYtMoxd.js
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-BbWu-t3J.js
 var tsrStartManifest = () => ({ routes: {
 	__root__: {
 		filePath: "/workspace/src/routes/__root.tsx",
@@ -22,7 +22,7 @@ var tsrStartManifest = () => ({ routes: {
 			"/vault_/$id"
 		],
 		preloads: [
-			"/assets/index-D5GPlmK4.js",
+			"/assets/index-CQhulmS-.js",
 			"/assets/jsx-runtime-Cltr0gcK.js",
 			"/assets/link-Cw7wnb7z.js",
 			"/assets/invariant-DEEwAagU.js",
@@ -31,23 +31,23 @@ var tsrStartManifest = () => ({ routes: {
 		scripts: [{ attrs: {
 			type: "module",
 			async: !0,
-			src: "/assets/index-D5GPlmK4.js"
+			src: "/assets/index-CQhulmS-.js"
 		} }]
 	},
 	"/": {
 		filePath: "/workspace/src/routes/index.tsx",
 		children: void 0,
-		preloads: ["/assets/routes-D4X_GR_i.js", "/assets/hero-orb-DJRRpMmZ.js"]
+		preloads: ["/assets/routes-IddH5NGK.js", "/assets/hero-orb-CfEaqtc8.js"]
 	},
 	"/clover": {
 		filePath: "/workspace/src/routes/clover.tsx",
 		children: void 0,
-		preloads: ["/assets/clover-0nu6bSAS.js", "/assets/hero-orb-DJRRpMmZ.js"]
+		preloads: ["/assets/clover-Cp5BNQ01.js", "/assets/hero-orb-CfEaqtc8.js"]
 	},
 	"/community": {
 		filePath: "/workspace/src/routes/community.tsx",
 		children: void 0,
-		preloads: ["/assets/community-DpzyBqLI.js"]
+		preloads: ["/assets/community-Bh-UgSy1.js"]
 	},
 	"/data": {
 		filePath: "/workspace/src/routes/data.tsx",
@@ -57,77 +57,77 @@ var tsrStartManifest = () => ({ routes: {
 	"/explore": {
 		filePath: "/workspace/src/routes/explore.tsx",
 		children: void 0,
-		preloads: ["/assets/explore-C1-J-Fap.js"]
+		preloads: ["/assets/explore-CgWG1mXI.js"]
 	},
 	"/identify": {
 		filePath: "/workspace/src/routes/identify.tsx",
 		children: void 0,
 		preloads: [
-			"/assets/identify-CBCDImTh.js",
+			"/assets/identify-lUjy8GKX.js",
 			"/assets/chains-CsGA-RcJ.js",
-			"/assets/field-key-87Qwu6sT.js"
+			"/assets/field-key-BWFZj4bW.js"
 		]
 	},
 	"/market": {
 		filePath: "/workspace/src/routes/market.tsx",
 		children: void 0,
-		preloads: ["/assets/market-Bw14yLZ9.js"]
+		preloads: ["/assets/market-BHMpbpZY.js"]
 	},
 	"/pedia": {
 		filePath: "/workspace/src/routes/pedia.tsx",
 		children: void 0,
-		preloads: ["/assets/pedia-VQm2acRZ.js", "/assets/search-GIT7H3jU.js"]
+		preloads: ["/assets/pedia-BQgQgrJ7.js", "/assets/search-DLqXdqat.js"]
 	},
 	"/profile": {
 		filePath: "/workspace/src/routes/profile.tsx",
 		children: void 0,
-		preloads: ["/assets/profile-Nq6mfmuC.js"]
+		preloads: ["/assets/profile-PX73_S9y.js"]
 	},
 	"/quests": {
 		filePath: "/workspace/src/routes/quests.tsx",
 		children: void 0,
-		preloads: ["/assets/quests-DURazsHK.js"]
+		preloads: ["/assets/quests-RmT8Vc67.js"]
 	},
 	"/safety": {
 		filePath: "/workspace/src/routes/safety.tsx",
 		children: void 0,
-		preloads: ["/assets/safety-BTDcocbI.js"]
+		preloads: ["/assets/safety--LGxJCOp.js"]
 	},
 	"/trips": {
 		filePath: "/workspace/src/routes/trips.tsx",
 		children: void 0,
-		preloads: ["/assets/trips-CXml-xqF.js"]
+		preloads: ["/assets/trips-n-M-pysE.js"]
 	},
 	"/vault": {
 		filePath: "/workspace/src/routes/vault.tsx",
 		children: void 0,
 		preloads: [
-			"/assets/vault-D6gtVaPb.js",
-			"/assets/search-GIT7H3jU.js",
-			"/assets/use-photo-CEGpuD7z.js"
+			"/assets/vault-zLaBzdfk.js",
+			"/assets/search-DLqXdqat.js",
+			"/assets/use-photo-BJ6oP7kx.js"
 		]
 	},
 	"/explore_/$id": {
 		filePath: "/workspace/src/routes/explore_.$id.tsx",
 		children: void 0,
-		preloads: ["/assets/explore_._id-CHaeNAda.js"]
+		preloads: ["/assets/explore_._id-CQRqoK4X.js"]
 	},
 	"/pedia_/$id": {
 		filePath: "/workspace/src/routes/pedia_.$id.tsx",
 		children: void 0,
 		preloads: [
-			"/assets/pedia_._id-BamNZCWg.js",
+			"/assets/pedia_._id-DWHxHtXn.js",
 			"/assets/chains-CsGA-RcJ.js",
-			"/assets/field-key-87Qwu6sT.js"
+			"/assets/field-key-BWFZj4bW.js"
 		]
 	},
 	"/vault_/$id": {
 		filePath: "/workspace/src/routes/vault_.$id.tsx",
 		children: void 0,
 		preloads: [
-			"/assets/vault_._id-DKT9Aka-.js",
+			"/assets/vault_._id-BxJS896e.js",
 			"/assets/chains-CsGA-RcJ.js",
-			"/assets/use-photo-CEGpuD7z.js"
+			"/assets/use-photo-BJ6oP7kx.js"
 		]
 	}
 } });

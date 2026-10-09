@@ -1,6 +1,6 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { _ as require_react, h as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-import { S as cn, i as projectSite, m as useField, n as SITES, y as SectionLabel } from "./router-CMQznpBx2.mjs";
+import { S as cn, i as projectSite, m as useField, n as SITES, y as SectionLabel } from "./router-zv3UGgEF2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/explore-CHkIAwSA.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
