@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button, Panel, Stat } from "@/components/ui";
+import { Panel, Stat } from "@/components/ui";
 import { BADGE_CATALOG } from "@/data/badges";
 import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
