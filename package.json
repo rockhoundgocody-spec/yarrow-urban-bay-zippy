@@ -16,7 +16,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "qa:routes": "node scripts/qa-routes.mjs",
-    "qa:offline": "node scripts/qa-offline.mjs"
+    "qa:offline": "node scripts/qa-offline.mjs",
+    "qa:data": "node scripts/qa-data.mjs",
+    "qa:migrate": "node scripts/qa-migrate.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",

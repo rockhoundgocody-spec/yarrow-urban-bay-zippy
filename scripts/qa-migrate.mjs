@@ -1,7 +1,8 @@
-import { chromium } from "/workspace/node_modules/playwright/index.mjs";
+/** End-to-end: old (v0–v2) saved data migrates without losing finds or photos. Usage: node scripts/qa-migrate.mjs <base-url> */
+import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
-const base = "http://127.0.0.1:8081";
-const photo = "data:image/png;base64," + readFileSync("/workspace/public/icons/icon-192.png").toString("base64");
+const base = (process.argv[2] || "http://127.0.0.1:8081").replace(/\/$/, "");
+const photo = "data:image/png;base64," + readFileSync(new URL("../public/icons/icon-192.png", import.meta.url)).toString("base64");
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 390, height: 844 } });
 const errs = []; p.on("pageerror", (e) => errs.push(e.message));
 await p.goto(base + "/data", { waitUntil: "networkidle" });

@@ -51,7 +51,8 @@ Run inside the container (`docker exec app-web-1 sh -c "cd /workspace && …"`):
 1. `pnpm typecheck`, `pnpm lint` (zero problems) and `pnpm test` all pass.
 2. `pnpm build`, then `pnpm preview` and:
    `node scripts/qa-routes.mjs http://127.0.0.1:8081` (statuses, h1, console errors, dead links)
-   and `node scripts/qa-offline.mjs http://127.0.0.1:8081` (airplane-mode reloads).
+   `node scripts/qa-offline.mjs …` (airplane-mode reloads), `node scripts/qa-data.mjs …`
+   (photos, undo, export, erase, import) and `node scripts/qa-migrate.mjs …` (old saved data).
 3. No secrets or personal emails in `.vercel/output/static`.
 
 ## Open decisions (owner)

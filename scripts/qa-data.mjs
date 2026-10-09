@@ -1,5 +1,6 @@
-import { chromium } from "/workspace/node_modules/playwright/index.mjs";
-const base = "http://127.0.0.1:8081";
+/** End-to-end: photo storage, undo, export, two-tap erase and import. Usage: node scripts/qa-data.mjs <base-url> */
+import { chromium } from "playwright";
+const base = (process.argv[2] || "http://127.0.0.1:8081").replace(/\/$/, "");
 const b = await chromium.launch();
 const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
 const p = await ctx.newPage();
@@ -10,7 +11,7 @@ await p.evaluate(() => localStorage.setItem("rhgo-field-v2", JSON.stringify({ st
 
 // 1. Save a photographed find
 await p.goto(base + "/identify", { waitUntil: "networkidle" });
-await p.setInputFiles('input[type="file"]', "/workspace/public/icons/icon-192.png");
+await p.setInputFiles('input[type="file"]', new URL("../public/icons/icon-192.png", import.meta.url).pathname);
 await p.getByRole("tab", { name: "Catalog" }).or(p.getByRole("button", { name: "Catalog" })).first().click();
 await p.locator("#panel-sample button").first().click();
 await p.getByRole("checkbox").check();
@@ -34,7 +35,7 @@ step(await p.locator("main h1").textContent() !== "No outcrop here" && await p.l
 // 3. Export
 await p.goto(base + "/profile", { waitUntil: "networkidle" });
 const [dl] = await Promise.all([p.waitForEvent("download"), p.getByRole("button", { name: "Export" }).click()]);
-const path = "/tmp/geodex-export.json"; await dl.saveAs(path);
+const path = `${(await import("node:os")).tmpdir()}/geodex-export.json`; await dl.saveAs(path);
 const exp = JSON.parse(await (await import("node:fs/promises")).readFile(path, "utf8"));
 step(exp.format === "rockhound-go-geodex" && exp.data.specimens.length === 1 && Object.keys(exp.photos).length === 1, `export has 1 specimen + 1 photo (${dl.suggestedFilename()})`);
 
