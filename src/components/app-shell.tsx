@@ -49,7 +49,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   const fieldMode = useField((s) => s.fieldMode);
   const setFieldMode = useField((s) => s.setFieldMode);
 
+  // Overlays depend on per-device state, so they mount after hydration only.
+  // Rendering them on the server put the onboarding <h1> at the top of every
+  // page's HTML (duplicate content for crawlers, flash for returning users).
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     useField.getState().hydrateDay();
   }, []);
 
@@ -71,8 +77,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div data-mode={fieldMode ? "field" : "home"} className="min-h-dvh bg-void text-fg">
       <div className="rh-grain min-h-dvh">
-        {!onboarded && <Onboarding />}
-        {onboarded && !openerSeen && <CinematicOpener />}
+        {mounted && !onboarded && <Onboarding />}
+        {mounted && onboarded && !openerSeen && <CinematicOpener />}
         <header className="sticky top-0 z-30 border-b border-line bg-void/80 backdrop-blur-md">
           <div className="mx-auto flex h-14 max-w-lg items-center gap-3 px-4">
             <button
