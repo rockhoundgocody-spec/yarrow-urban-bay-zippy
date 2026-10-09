@@ -385,7 +385,7 @@ function FieldChips({
             aria-pressed={value === o}
             onClick={() => onPick(o)}
             className={cn(
-              "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
               value === o ? "border-frost bg-frost/15 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
