@@ -36,7 +36,7 @@ async function precache() {
   );
   const shell = await caches.open(SHELL);
   await Promise.all(
-    ["/favicon.svg", "/__grok/icon-180.png"].map((u) => shell.add(u).catch(() => undefined)),
+    ["/favicon.svg", "/icons/icon-192.png", "/manifest.webmanifest"].map((u) => shell.add(u).catch(() => undefined)),
   );
 }
 

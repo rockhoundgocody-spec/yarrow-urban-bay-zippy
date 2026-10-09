@@ -1,11 +1,13 @@
 import { n as __exportAll } from "../_runtime.mjs";
-import { g as require_jsx_runtime, n as defineHandlerCallback, s as RouterProvider, t as renderRouterToStream, v as require_react } from "../_libs/@tanstack/react-router+[...].mjs";
+import { _ as require_react, h as require_jsx_runtime, n as defineHandlerCallback, s as RouterProvider, t as renderRouterToStream } from "../_libs/@tanstack/react-router+[...].mjs";
 import { PassThrough, Readable } from "node:stream";
 import { AsyncLocalStorage } from "node:async_hooks";
 //#region node_modules/.nitro/vite/services/ssr/index.js
 var ssr_exports = /* @__PURE__ */ __exportAll({
+	a: () => getRequestIP,
 	createServerEntry: () => createServerEntry,
 	default: () => server_default,
+	i: () => getRequestHeader,
 	n: () => TSS_SERVER_FUNCTION,
 	r: () => getServerFnById,
 	t: () => createServerFn
@@ -548,6 +550,16 @@ function errorResponse(error, debug, errHeaders) {
 		headers
 	});
 }
+function getRequestIP$1(event, opts = {}) {
+	if (opts.xForwardedFor) {
+		const _header = event.req.headers.get("x-forwarded-for");
+		if (_header) {
+			const xForwardedFor = _header.split(",")[0].trim();
+			if (xForwardedFor) return xForwardedFor;
+		}
+	}
+	return event.req.context?.clientAddress || event.req.ip || void 0;
+}
 var GLOBAL_EVENT_STORAGE_KEY = Symbol.for("tanstack-start:event-storage");
 var globalObj$1 = globalThis;
 if (!globalObj$1[GLOBAL_EVENT_STORAGE_KEY]) globalObj$1[GLOBAL_EVENT_STORAGE_KEY] = new AsyncLocalStorage();
@@ -597,6 +609,15 @@ function getH3Event() {
 	const event = eventStorage.getStore();
 	if (!event) throw new Error(`No StartEvent found in AsyncLocalStorage. Make sure you are using the function within the server runtime.`);
 	return event.h3Event;
+}
+function getRequestHeaders() {
+	return getH3Event().req.headers;
+}
+function getRequestHeader(name) {
+	return getRequestHeaders().get(name) || void 0;
+}
+function getRequestIP(opts) {
+	return getRequestIP$1(getH3Event(), opts);
 }
 function getResponse() {
 	return getH3Event().res;
@@ -4105,7 +4126,7 @@ var defaultSerovalPlugins = [
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-B4pwL2AK.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-DjYtMoxd.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -4127,19 +4148,19 @@ async function getStartManifest(matchedRoutes) {
 var manifest = {
 	"042763fd345a97f0345dc0cd42b9436661ff0d26a355cf8c24dd7b66626f4b22": {
 		functionName: "transcribeClover_createServerFn_handler",
-		importer: () => import("./speak-DmILtAo5.mjs")
+		importer: () => import("./speak-DboMNlLv.mjs")
 	},
 	"7e21a7c7dfbe6a11dec545ec79c9ac91890a8f328b0decb36744ebd1fc131d3a": {
 		functionName: "identifySpecimen_createServerFn_handler",
-		importer: () => import("./identify-PDw0Nz56.mjs")
+		importer: () => import("./identify-OsZGrk5o.mjs")
 	},
 	"b2e0318fa02b334f5ed76157bb1657ac522da5d9d53a2faa5ef81db85048b334": {
 		functionName: "speakClover_createServerFn_handler",
-		importer: () => import("./speak-DmILtAo5.mjs")
+		importer: () => import("./speak-DboMNlLv.mjs")
 	},
 	"c70c46c50fe1438464e51a0cdbbd58cd880dd95e147db9e66685ea9eb551bf66": {
 		functionName: "askClover_createServerFn_handler",
-		importer: () => import("./identify-PDw0Nz56.mjs")
+		importer: () => import("./identify-OsZGrk5o.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -6050,8 +6071,8 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-DhVK4TbJ2.mjs").then((n) => n.t),
-		import("./start-d3N1JdIl.mjs"),
+		import("./router-CMQznpBx2.mjs").then((n) => n.t),
+		import("./start-BHBt9rKO.mjs"),
 		import("./empty-plugin-adapters-BJ4m9L8g.mjs")
 	]);
 	return {
@@ -6496,4 +6517,4 @@ function createServerEntry(entry) {
 }
 var server_default = createServerEntry({ fetch: fetch$1 });
 //#endregion
-export { ssr_exports as i, createServerFn as n, getServerFnById as r, TSS_SERVER_FUNCTION as t };
+export { getServerFnById as a, getRequestIP as i, createServerFn as n, ssr_exports as o, getRequestHeader as r, TSS_SERVER_FUNCTION as t };
