@@ -197,7 +197,7 @@ function IdentifyPage() {
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "h-10 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              "h-12 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
               tab === t ? "bg-obsidian text-fg" : "text-muted hover:text-fg",
             )}
           >
@@ -221,7 +221,7 @@ function IdentifyPage() {
                   <p className="mt-3 text-sm text-muted">Open the camera or upload from the roll.</p>
                   <p className="mt-2 text-[13px] text-faint">
                     Photos are sent to xAI to identify them.{" "}
-                    <Link to="/data" className="text-cyan underline">
+                    <Link to="/data" className="inline-flex min-h-11 items-center text-cyan underline">
                       How your data is handled
                     </Link>
                   </p>
@@ -385,7 +385,7 @@ function FieldChips({
             aria-pressed={value === o}
             onClick={() => onPick(o)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
               value === o ? "border-frost bg-frost/15 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >

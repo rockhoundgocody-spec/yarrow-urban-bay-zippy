@@ -99,7 +99,7 @@ function ExplorePage() {
             type="button"
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs",
               access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
             )}
           >
@@ -114,7 +114,7 @@ function ExplorePage() {
             type="button"
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize",
+              "inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs capitalize",
               diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
             )}
           >

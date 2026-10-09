@@ -80,7 +80,7 @@ function VaultPage() {
             key={f.k}
             type="button"
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs ${
               dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -95,7 +95,7 @@ function VaultPage() {
             key={f.k}
             type="button"
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs ${
               rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
