@@ -2,6 +2,7 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-r
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { AppShell } from "@/components/app-shell";
+import { ServiceWorker } from "@/components/service-worker";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
@@ -43,6 +44,7 @@ function Root() {
       </head>
       <body className="bg-void text-fg antialiased">
         <PreviewHostBridge />
+        <ServiceWorker />
         <AuthProvider>
           <AppShell>
             <Outlet />
