@@ -12,7 +12,7 @@ import type {
   Trip,
   XpLane,
 } from "@/lib/types";
-import { XP_REWARDS, levelFromXp } from "@/lib/xp";
+import { XP_REWARDS } from "@/lib/xp";
 import { todayKey, uid } from "@/lib/utils";
 
 const QUEST_DEFS: Omit<DailyQuest, "done">[] = [
