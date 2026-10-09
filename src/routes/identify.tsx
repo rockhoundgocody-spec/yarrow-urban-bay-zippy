@@ -127,8 +127,8 @@ function IdentifyPage() {
       addXp(XP_REWARDS.scan);
       completeQuest("scan");
       awardBadge("first-scan");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Scan failed.");
+    } catch {
+      setError("Scan failed. Check your signal and try again, or use the field key.");
     } finally {
       setBusy(false);
     }
