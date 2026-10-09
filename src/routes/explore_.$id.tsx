@@ -77,6 +77,19 @@ function SitePage() {
       <div className="rounded-xl border border-gold/25 bg-gold/5 p-4">
         <p className="text-[10px] uppercase tracking-[0.16em] text-gold">Land status</p>
         <p className="mt-2 text-sm leading-relaxed text-fg/90">{site.legality}</p>
+        {site.legalityCheckedAt && site.legalitySource ? (
+          <p className="mt-2 text-[13px] text-muted">
+            Checked {site.legalityCheckedAt} ·{" "}
+            <a href={site.legalitySource} target="_blank" rel="noopener noreferrer" className="text-cyan underline">
+              source
+            </a>
+          </p>
+        ) : (
+          <p className="mt-2 text-[13px] font-medium text-gold">
+            Unverified. Rules change and claims move — confirm with the land manager or posted signs before you
+            collect.
+          </p>
+        )}
       </div>
 
       <div>
