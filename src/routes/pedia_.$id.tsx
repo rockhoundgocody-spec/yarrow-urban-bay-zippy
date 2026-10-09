@@ -5,7 +5,7 @@ import { Button, Panel, RarityChip } from "@/components/ui";
 import { MINERAL_BY_ID, findMineralByName } from "@/data/minerals";
 import { SITES } from "@/data/locations";
 import { nextInChain } from "@/data/chains";
-import { mineralToResult } from "@/lib/identify";
+import { mineralToResult } from "@/lib/field-key";
 import { useField } from "@/lib/store";
 import { XP_REWARDS } from "@/lib/xp";
 import { toast } from "sonner";

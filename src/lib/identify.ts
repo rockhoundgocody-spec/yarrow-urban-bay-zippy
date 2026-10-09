@@ -5,7 +5,6 @@ import { MINERALS } from "@/data/minerals";
 import { asRarity, mergeCatalog } from "@/lib/field-key";
 import type { IdentifyResult } from "@/lib/types";
 
-export { matchFieldKey, mergeCatalog, mineralToResult, type FieldKey } from "@/lib/field-key";
 
 function extractJson(text: string): Record<string, unknown> | null {
   const fenced = text.match(/```json\s*([\s\S]*?)```/i);
