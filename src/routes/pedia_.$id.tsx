@@ -129,7 +129,7 @@ function MineralPage() {
               return (
                 <li key={s.name} className="rounded-xl border border-line p-3 text-sm">
                   {alt ? (
-                    <Link to="/pedia/$id" params={{ id: alt.id }} className="inline-flex min-h-12 items-center text-fg">
+                    <Link to="/pedia/$id" params={{ id: alt.id }} className="inline-flex min-h-12 min-w-12 items-center text-fg">
                       {s.name}
                     </Link>
                   ) : (
