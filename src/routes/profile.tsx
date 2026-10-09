@@ -31,7 +31,7 @@ function ProfilePage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-frost">Progress</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-frost">Progress</p>
         <h1 className="mt-1 font-display text-2xl text-fg">{name}</h1>
         <p className="mt-1 text-sm text-muted">
           {rankFromLevel(level)} · Level {level}
@@ -54,7 +54,7 @@ function ProfilePage() {
       </Panel>
 
       <section>
-        <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-faint">Credentials</p>
+        <p className="mb-3 text-[12px] uppercase tracking-[0.16em] text-faint">Credentials</p>
         <ul className="grid grid-cols-2 gap-2">
           {BADGE_CATALOG.map((b) => (
             <li
@@ -65,14 +65,14 @@ function ProfilePage() {
               )}
             >
               <p className="text-sm text-fg">{b.name}</p>
-              <p className="mt-1 text-[11px] text-muted">{b.detail}</p>
+              <p className="mt-1 text-xs text-muted">{b.detail}</p>
             </li>
           ))}
         </ul>
       </section>
 
       <label className="block">
-        <span className="text-[10px] uppercase tracking-[0.16em] text-faint">Field name</span>
+        <span className="text-[12px] uppercase tracking-[0.16em] text-faint">Field name</span>
         <input
           defaultValue={name}
           onBlur={(e) => completeOnboarding(e.target.value)}

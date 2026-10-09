@@ -76,7 +76,7 @@ export function CloverVoicePanel({
     >
       <div className="flex items-center justify-between border-b border-line px-3 py-2">
         <div className="flex items-center gap-2">
-          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-frost">Clover · field AGI</p>
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-frost">Clover · field AGI</p>
           {(phase === "listening" || phase === "speaking") && <Wave mode={phase} />}
         </div>
         <div className="flex items-center gap-1">
@@ -84,7 +84,7 @@ export function CloverVoicePanel({
             type="button"
             onClick={onHunt}
             disabled={huntLoading}
-            className="inline-flex min-h-9 items-center gap-1 rounded-md px-2 text-[11px] text-cyan disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+            className="inline-flex min-h-9 items-center gap-1 rounded-md px-2 text-xs text-cyan disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
             aria-label="Find next hunt suggestion"
           >
             {huntLoading ? <Loader2 className="size-3.5 animate-spin" /> : <Target className="size-3.5" />}
@@ -132,7 +132,7 @@ export function CloverVoicePanel({
         )}
         {hunt && (
           <div className="rounded-xl border border-frost/25 bg-frost/10 p-2">
-            <p className="px-1 text-[10px] font-medium uppercase tracking-[0.14em] text-frost">
+            <p className="px-1 text-[12px] font-medium uppercase tracking-[0.14em] text-frost">
               Hunt next · {hunt.collection_size} logged
             </p>
             <p className="mt-1 px-1 text-xs leading-relaxed text-muted">{hunt.clover_intro}</p>
@@ -147,14 +147,14 @@ export function CloverVoicePanel({
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-xs font-medium text-fg">{s.mineral_name}</span>
                     {s.distance_mi != null && (
-                      <span className="font-mono text-[10px] text-cyan">{s.distance_mi} mi</span>
+                      <span className="font-mono text-[12px] text-cyan">{s.distance_mi} mi</span>
                     )}
                   </div>
-                  <p className="mt-0.5 flex items-center gap-1 text-[11px] text-cyan">
+                  <p className="mt-0.5 flex items-center gap-1 text-xs text-cyan">
                     <Compass className="size-3" /> {s.hotspot_name}
                   </p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted">{s.what_to_look_for}</p>
-                  <p className="mt-0.5 text-[11px] italic text-faint">{s.why}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted">{s.what_to_look_for}</p>
+                  <p className="mt-0.5 text-xs italic text-faint">{s.why}</p>
                 </Link>
               ))}
             </div>
@@ -162,7 +162,7 @@ export function CloverVoicePanel({
               type="button"
               onClick={onDismissHunt}
               aria-label="Dismiss hunt suggestions"
-              className="mt-1 w-full rounded-md py-1 text-[11px] text-faint hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
+              className="mt-1 w-full rounded-md py-1 text-xs text-faint hover:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian"
             >
               Dismiss
             </button>
@@ -213,7 +213,7 @@ export function CloverVoicePanel({
           <Send className="size-4" />
         </button>
       </form>
-      <p className="px-3 pb-2 text-center text-[10px] text-faint">
+      <p className="px-3 pb-2 text-center text-[12px] text-faint">
         {micError ?? PHASE_TEXT[phase]}
       </p>
     </div>

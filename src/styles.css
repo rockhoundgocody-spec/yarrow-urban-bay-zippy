@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 
 @theme {
+  /* Field-readable minimum: text-xs is 13px (Tailwind default is 12px). */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
   --color-void: #07090b;
   --color-obsidian: #0d1114;
   --color-stone: #141a1f;
@@ -755,4 +758,17 @@ body::-webkit-scrollbar,
 .orb-line-compact {
   font-size: 0.8rem;
   max-width: 14rem;
+}
+
+
+/* Respect reduced-motion: stop the orb, caustics and wave animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

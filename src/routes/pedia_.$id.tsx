@@ -71,7 +71,7 @@ function MineralPage() {
       <div className="flex items-start gap-4">
         <CrystalGem hue={m.hue} system={m.crystalSystem} size={80} />
         <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-frost">{m.family}</p>
+          <p className="text-[12px] uppercase tracking-[0.18em] text-frost">{m.family}</p>
           <h1 className="mt-1 font-display text-2xl text-fg">{m.name}</h1>
           <p className="mt-1 font-mono text-sm text-muted">{m.formula}</p>
           <div className="mt-2">
@@ -92,20 +92,20 @@ function MineralPage() {
           ["Color", m.colors.slice(0, 4).join(", ")],
         ].map(([k, v]) => (
           <div key={k} className="rounded-xl border border-line bg-obsidian p-3">
-            <dt className="text-[10px] uppercase tracking-[0.14em] text-faint">{k}</dt>
+            <dt className="text-[12px] uppercase tracking-[0.14em] text-faint">{k}</dt>
             <dd className="mt-1 capitalize text-fg">{v}</dd>
           </div>
         ))}
       </dl>
       {chain && nextMin && (
         <Link to="/pedia/$id" params={{ id: nextMin.id }} className="rh-panel block rounded-xl p-4">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-cyan">Discovery chain · {chain.chain.name}</p>
+          <p className="text-[12px] uppercase tracking-[0.16em] text-cyan">Discovery chain · {chain.chain.name}</p>
           <p className="mt-2 text-sm text-fg">Related: {nextMin.name}</p>
           <p className="mt-1 text-xs leading-relaxed text-muted">{chain.chain.note}</p>
         </Link>
       )}
       <section>
-        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-faint">Key features</p>
+        <p className="mb-2 text-[12px] uppercase tracking-[0.16em] text-faint">Key features</p>
         <ul className="space-y-1 text-sm text-muted">
           {m.keyFeatures.map((f) => (
             <li key={f}>· {f}</li>
@@ -113,7 +113,7 @@ function MineralPage() {
         </ul>
       </section>
       <section>
-        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-faint">Field tests</p>
+        <p className="mb-2 text-[12px] uppercase tracking-[0.16em] text-faint">Field tests</p>
         <ul className="space-y-1 text-sm text-muted">
           {m.fieldTests.map((f) => (
             <li key={f}>· {f}</li>
@@ -122,7 +122,7 @@ function MineralPage() {
       </section>
       {m.similar.length > 0 && (
         <section>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-gold">Often confused with</p>
+          <p className="mb-2 text-[12px] uppercase tracking-[0.16em] text-gold">Often confused with</p>
           <ul className="space-y-2">
             {m.similar.map((s) => {
               const alt = findMineralByName(s.name);
@@ -144,7 +144,7 @@ function MineralPage() {
       )}
       {sites.length > 0 && (
         <section>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-field">Where to look</p>
+          <p className="mb-2 text-[12px] uppercase tracking-[0.16em] text-field">Where to look</p>
           <ul className="space-y-2">
             {sites.map((s) => (
               <li key={s.id}>

@@ -44,7 +44,7 @@ function SpecimenPage() {
 
   return (
     <div className="space-y-5">
-      <p className="text-[10px] uppercase tracking-[0.18em] text-cyan">GeoDex specimen</p>
+      <p className="text-[12px] uppercase tracking-[0.18em] text-cyan">GeoDex specimen</p>
       {photo && <img src={photo} alt={specimen.name} className="w-full rounded-xl object-cover" />}
       <div className="flex items-start gap-3">
         <CrystalGem hue={mineral?.hue ?? "#bfe9ff"} system={specimen.crystalSystem} size={64} />
@@ -56,7 +56,7 @@ function SpecimenPage() {
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <RarityChip rarity={specimen.rarity} />
-            <span className="text-[10px] uppercase tracking-[0.14em] text-faint">
+            <span className="text-[12px] uppercase tracking-[0.14em] text-faint">
               {DISPO_LABEL[specimen.disposition] ?? specimen.disposition}
             </span>
           </div>
@@ -76,7 +76,7 @@ function SpecimenPage() {
           .filter(([, v]) => v)
           .map(([k, v]) => (
             <div key={k} className="rounded-xl border border-line bg-obsidian p-3">
-              <dt className="text-[10px] uppercase tracking-[0.14em] text-faint">{k}</dt>
+              <dt className="text-[12px] uppercase tracking-[0.14em] text-faint">{k}</dt>
               <dd className="mt-1 capitalize text-fg">{v}</dd>
             </div>
           ))}
@@ -84,13 +84,13 @@ function SpecimenPage() {
       {specimen.fieldNotes && <p className="text-sm leading-relaxed text-muted">{specimen.fieldNotes}</p>}
       {chain && nextMin && (
         <Link to="/pedia/$id" params={{ id: nextMin.id }} className="rh-panel block rounded-xl p-4">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-cyan">Discovery chain · {chain.chain.name}</p>
+          <p className="text-[12px] uppercase tracking-[0.16em] text-cyan">Discovery chain · {chain.chain.name}</p>
           <p className="mt-2 text-sm text-fg">Next observation: {nextMin.name}</p>
           <p className="mt-1 text-xs leading-relaxed text-muted">{chain.chain.note}</p>
         </Link>
       )}
       <label className="block">
-        <span className="text-[10px] uppercase tracking-[0.16em] text-faint">Field notes</span>
+        <span className="text-[12px] uppercase tracking-[0.16em] text-faint">Field notes</span>
         <textarea
           value={specimen.notes}
           onChange={(e) => update(specimen.id, { notes: e.target.value })}

@@ -181,7 +181,7 @@ function IdentifyPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-gold">Identify</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-gold">Identify</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Specimen lens</h1>
         <p className="mt-1 text-sm text-muted">Center the specimen and fill the frame. One photo is enough.</p>
       </header>
@@ -300,7 +300,7 @@ function IdentifyPage() {
               onChange={(e) => setKey({ ...key, hardness: Number(e.target.value) })}
               className="w-full accent-frost"
             />
-            <div className="mt-1 flex justify-between text-[10px] text-faint">
+            <div className="mt-1 flex justify-between text-[12px] text-faint">
               <span>Talc 1</span>
               <span>Diamond 10</span>
             </div>
@@ -338,7 +338,7 @@ function IdentifyPage() {
             >
               <CrystalGem hue={m.hue} system={m.crystalSystem} size={48} />
               <p className="mt-2 truncate text-sm text-fg">{m.name}</p>
-              <p className="text-[11px] text-faint">{m.formula}</p>
+              <p className="text-xs text-faint">{m.formula}</p>
             </button>
           ))}
         </div>
@@ -440,7 +440,7 @@ function ResultCard({
           .filter(([, v]) => v)
           .map(([k, v]) => (
             <div key={k} className="rounded-md border border-line bg-void/40 p-2.5">
-              <dt className="text-[10px] uppercase tracking-[0.14em] text-faint">{k}</dt>
+              <dt className="text-[12px] uppercase tracking-[0.14em] text-faint">{k}</dt>
               <dd className="mt-1 capitalize text-fg">{v}</dd>
             </div>
           ))}

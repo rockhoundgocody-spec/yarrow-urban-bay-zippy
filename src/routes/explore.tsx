@@ -45,7 +45,7 @@ function ExplorePage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-field">Explore</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-field">Explore</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Field map</h1>
         <p className="mt-1 text-sm text-muted">Verified-style localities. Always confirm land status before you go.</p>
       </header>
@@ -79,7 +79,7 @@ function ExplorePage() {
             );
           })}
         </svg>
-        <p className="absolute bottom-2 left-3 text-[10px] uppercase tracking-[0.14em] text-faint">
+        <p className="absolute bottom-2 left-3 text-[12px] uppercase tracking-[0.14em] text-faint">
           {list.length} sites · gold = saved
         </p>
       </div>
@@ -140,7 +140,7 @@ function ExplorePage() {
                     {s.state} · {s.access.replace("_", " ")} · {s.difficulty}
                   </p>
                 </div>
-                {saved.includes(s.id) && <span className="text-[10px] uppercase tracking-[0.14em] text-gold">Saved</span>}
+                {saved.includes(s.id) && <span className="text-[12px] uppercase tracking-[0.14em] text-gold">Saved</span>}
               </div>
               <p className="mt-2 text-xs text-faint">{s.finds.slice(0, 4).join(" · ")}</p>
             </Link>

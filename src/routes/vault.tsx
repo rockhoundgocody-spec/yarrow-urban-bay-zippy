@@ -52,7 +52,7 @@ function VaultPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-cyan">Collection</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-cyan">Collection</p>
         <h1 className="mt-1 font-display text-2xl text-fg">GeoDex</h1>
         <p className="mt-1 text-sm text-muted">Collected, left in place, and observed — one archive.</p>
       </header>
@@ -124,7 +124,7 @@ function VaultPage() {
                   <p className="truncate font-display text-sm text-fg">{s.name}</p>
                   <div className="mt-1 flex items-center justify-between">
                     <RarityChip rarity={s.rarity} />
-                    <span className="text-[11px] tabular-nums text-faint">
+                    <span className="text-xs tabular-nums text-faint">
                       {s.disposition === "affixed_logged"
                         ? "In place"
                         : s.disposition === "restricted_observed"

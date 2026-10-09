@@ -55,7 +55,7 @@ function SitePage() {
 
   return (
     <div className="space-y-5">
-      <p className="text-[10px] uppercase tracking-[0.18em] text-field">{site.region}</p>
+      <p className="text-[12px] uppercase tracking-[0.18em] text-field">{site.region}</p>
       <h1 className="font-display text-2xl leading-tight text-fg">{site.name}</h1>
       <p className="text-sm text-muted">
         {site.state} · {site.category.replace("_", " ")} · {site.difficulty}
@@ -63,11 +63,11 @@ function SitePage() {
 
       <Panel className="grid grid-cols-2 gap-3 p-4 text-sm">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-faint">Access</p>
+          <p className="text-[12px] uppercase tracking-[0.14em] text-faint">Access</p>
           <p className="mt-1 capitalize text-fg">{site.access}</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-faint">Season</p>
+          <p className="text-[12px] uppercase tracking-[0.14em] text-faint">Season</p>
           <p className="mt-1 text-fg">{site.season}</p>
         </div>
       </Panel>
@@ -75,7 +75,7 @@ function SitePage() {
       <p className="text-sm leading-relaxed text-muted">{site.notes}</p>
 
       <div className="rounded-xl border border-gold/25 bg-gold/5 p-4">
-        <p className="text-[10px] uppercase tracking-[0.16em] text-gold">Land status</p>
+        <p className="text-[12px] uppercase tracking-[0.16em] text-gold">Land status</p>
         <p className="mt-2 text-sm leading-relaxed text-fg/90">{site.legality}</p>
         {site.legalityCheckedAt && site.legalitySource ? (
           <p className="mt-2 text-[13px] text-muted">
@@ -93,7 +93,7 @@ function SitePage() {
       </div>
 
       <div>
-        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-faint">Hazards</p>
+        <p className="mb-2 text-[12px] uppercase tracking-[0.16em] text-faint">Hazards</p>
         <div className="flex flex-wrap gap-2">
           {siteHazards(site.category).map((h) => (
             <span key={h} className="rounded-full border border-line px-3 py-1.5 text-xs text-muted">
@@ -108,7 +108,7 @@ function SitePage() {
       </p>
 
       <div>
-        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-faint">Expected finds</p>
+        <p className="mb-2 text-[12px] uppercase tracking-[0.16em] text-faint">Expected finds</p>
         <div className="flex flex-wrap gap-2">
           {site.finds.map((name) => {
             const m = MINERALS.find((x) => x.name === name);

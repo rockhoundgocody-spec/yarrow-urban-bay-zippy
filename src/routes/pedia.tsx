@@ -46,7 +46,7 @@ function PediaPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-frost">Learn</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-frost">Learn</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Mineralpedia</h1>
         <p className="mt-1 text-sm text-muted">{MINERALS.length} field species with tests, lookalikes, and hardness.</p>
       </header>
@@ -88,7 +88,7 @@ function PediaPage() {
               <CrystalGem hue={m.hue} system={m.crystalSystem} size={44} />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-sm text-fg">{m.name}</p>
-                <p className="truncate text-[11px] text-faint">
+                <p className="truncate text-xs text-faint">
                   {m.formula} · Mohs {m.hardnessMin}
                   {m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}
                 </p>

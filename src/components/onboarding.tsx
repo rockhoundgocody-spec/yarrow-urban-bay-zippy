@@ -35,17 +35,17 @@ export function Onboarding() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-void/94 p-4">
       <div className="rh-panel rh-hairline w-full max-w-md rounded-2xl p-6">
-        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-frost">RockHound GO</p>
+        <p className="text-[12px] font-medium uppercase tracking-[0.2em] text-frost">RockHound GO</p>
         <div className="mt-5 grid size-12 place-items-center rounded-lg border border-line bg-stone">
           <Icon className="size-5 text-gold" />
         </div>
-        <p className="mt-5 text-[10px] uppercase tracking-[0.18em] text-faint">{slide.kicker}</p>
+        <p className="mt-5 text-[12px] uppercase tracking-[0.18em] text-faint">{slide.kicker}</p>
         <h1 className="mt-2 font-display text-2xl leading-tight text-fg">{slide.title}</h1>
         <p className="mt-3 text-sm leading-relaxed text-muted">{slide.body}</p>
 
         {last && (
           <label className="mt-5 block">
-            <span className="text-[10px] uppercase tracking-[0.16em] text-faint">What should we call you</span>
+            <span className="text-[12px] uppercase tracking-[0.16em] text-faint">What should we call you</span>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}

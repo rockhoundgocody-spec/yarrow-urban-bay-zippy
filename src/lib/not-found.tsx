@@ -9,7 +9,7 @@ export function NotFound() {
       <span className="grid size-14 place-items-center rounded-full border border-line-strong text-frost" aria-hidden="true">
         <Compass className="size-6" />
       </span>
-      <p className="text-[10px] uppercase tracking-[0.18em] text-amber">404 · off the map</p>
+      <p className="text-[12px] uppercase tracking-[0.18em] text-amber">404 · off the map</p>
       <h1 className="font-display text-2xl text-fg">No outcrop here</h1>
       <p className="max-w-xs text-sm text-muted">That page doesn't exist. Head back to the hub or open the field map.</p>
       <div className="flex gap-3">

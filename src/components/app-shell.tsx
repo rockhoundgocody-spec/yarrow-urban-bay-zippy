@@ -103,7 +103,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-label={fieldMode ? "Switch to Hub mode" : "Switch to Field mode"}
               onClick={() => setFieldMode(!fieldMode)}
               className={cn(
-                "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                "h-8 rounded-full border px-3 text-[12px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                 fieldMode
                   ? "border-field/40 bg-field/15 text-field"
                   : "border-line text-muted hover:text-fg",
@@ -147,7 +147,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </Link>
                 );
               })}
-              <p className="mt-4 flex items-center gap-2 px-3 text-[10px] uppercase tracking-[0.14em] text-faint">
+              <p className="mt-4 flex items-center gap-2 px-3 text-[12px] uppercase tracking-[0.14em] text-faint">
                 <WifiOff className="size-3" /> Stored on this device · no account
               </p>
             </nav>
@@ -179,7 +179,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     >
                       <Icon className="size-6" />
                     </span>
-                    <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-gold">Scan</span>
+                    <span className="text-[12px] font-medium uppercase tracking-[0.14em] text-gold">Scan</span>
                   </Link>
                 );
               }
@@ -193,7 +193,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Icon className={cn("size-[18px]", active ? "text-fg" : "text-faint")} />
                   <span
                     className={cn(
-                      "text-[10px] font-medium uppercase tracking-[0.12em]",
+                      "text-[12px] font-medium uppercase tracking-[0.12em]",
                       active ? "text-fg" : "text-faint",
                     )}
                   >
@@ -219,7 +219,7 @@ export function XpRibbon() {
   const { level, pct, into, need } = xpToNext(xp);
   return (
     <div className="rh-panel rh-hairline rounded-xl px-4 py-3">
-      <div className="flex items-center justify-between text-[11px] text-muted">
+      <div className="flex items-center justify-between text-xs text-muted">
         <span className="font-display text-sm text-fg">Level {level}</span>
         <span className="tabular-nums">
           {into}/{need} XP · {streak}d streak
@@ -236,7 +236,7 @@ export function XpRibbon() {
       >
         <div className="h-full rounded-full bg-frost" style={{ width: `${Math.round(pct * 100)}%` }} />
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[9px] uppercase tracking-[0.12em] text-faint">
+      <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[12px] uppercase tracking-[0.12em] text-faint">
         <span>
           <span className="block tabular-nums text-fg">{collector ?? 0}</span>
           Collector
