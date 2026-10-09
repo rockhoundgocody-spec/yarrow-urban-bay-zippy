@@ -185,7 +185,7 @@ export function CloverVoicePanel({
             onClick={onMic}
             aria-label={phase === "listening" ? "Listening: tap to pause microphone" : "Microphone: tap to speak"}
             className={cn(
-              "grid size-11 shrink-0 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian",
+              "grid size-12 shrink-0 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-1 focus-visible:ring-offset-obsidian",
               phase === "listening"
                 ? "bg-field/25 text-field shadow-[0_0_16px_rgb(61_207_138_/_0.45)]"
                 : phase === "speaking"

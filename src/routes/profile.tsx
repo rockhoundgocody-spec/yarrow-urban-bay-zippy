@@ -76,7 +76,7 @@ function ProfilePage() {
         <input
           defaultValue={name}
           onBlur={(e) => completeOnboarding(e.target.value)}
-          className="mt-2 h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-frost"
+          className="mt-2 h-12 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-frost"
         />
       </label>
 

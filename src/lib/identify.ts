@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { AI_TIMEOUT_MS, AiGuardError, aiModel, guardAiCall } from "@/lib/ai-guard";
+import { AI_TIMEOUT_MS, AiGuardError, aiModel, guardAiCall, parseInput, rejectInvalidInput } from "@/lib/ai-guard";
 import { MINERALS } from "@/data/minerals";
 import { asRarity, mergeCatalog } from "@/lib/field-key";
 import type { IdentifyResult } from "@/lib/types";
@@ -35,8 +35,8 @@ function clean(s: string | undefined, max: number): string {
 }
 
 export const identifySpecimen = createServerFn({ method: "POST" })
-  .validator((input: unknown) => IdentifyInput.parse(input))
-  .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
+  .validator((input: unknown) => parseInput(IdentifyInput, input))
+  .handler(async ({ data: input }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
     try {
       guardAiCall("identify");
     } catch (e) {
@@ -152,10 +152,10 @@ const CloverInput = z.object({
 });
 
 export const askClover = createServerFn({ method: "POST" })
-  .validator((input: unknown) => CloverInput.parse(input))
+  .validator((input: unknown) => parseInput(CloverInput, input))
   .handler(
     async ({
-      data,
+      data: input,
     }): Promise<
       { ok: true; text: string; logFind: boolean; findDetails: string | null } | { ok: false; error: string }
     > => {

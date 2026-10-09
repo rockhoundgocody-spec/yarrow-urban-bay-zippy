@@ -350,7 +350,7 @@ function IdentifyPage() {
           <div className="max-h-[78vh] w-full max-w-md overflow-y-auto">
             <button
               type="button"
-              className="mb-2 ml-auto grid size-11 place-items-center rounded-md text-muted"
+              className="mb-2 ml-auto grid size-12 place-items-center rounded-md text-muted"
               onClick={() => setResult(null)}
               aria-label="Close report"
             >

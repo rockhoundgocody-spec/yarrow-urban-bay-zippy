@@ -57,7 +57,7 @@ function PediaPage() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
           aria-label="Search minerals"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
+          className="h-12 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
         />
       </label>
       <div className="flex gap-1.5 overflow-x-auto pb-1">

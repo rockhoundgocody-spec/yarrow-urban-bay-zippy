@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { AI_TIMEOUT_MS, AiGuardError, guardAiCall } from "@/lib/ai-guard";
+import { AI_TIMEOUT_MS, AiGuardError, guardAiCall, parseInput, rejectInvalidInput } from "@/lib/ai-guard";
 
 const SpeakInput = z.object({ text: z.string().min(1).max(800) });
 
@@ -13,8 +13,8 @@ const TranscribeInput = z.object({
 });
 
 export const speakClover = createServerFn({ method: "POST" })
-  .validator((input: unknown) => SpeakInput.parse(input))
-  .handler(async ({ data }): Promise<{ ok: true; audio: string } | { ok: false }> => {
+  .validator((input: unknown) => parseInput(SpeakInput, input))
+  .handler(async ({ data: input }): Promise<{ ok: true; audio: string } | { ok: false }> => {
     try {
       guardAiCall("speak");
     } catch (e) {
@@ -49,8 +49,8 @@ export const speakClover = createServerFn({ method: "POST" })
   });
 
 export const transcribeClover = createServerFn({ method: "POST" })
-  .validator((input: unknown) => TranscribeInput.parse(input))
-  .handler(async ({ data }): Promise<{ ok: true; text: string } | { ok: false; error: string }> => {
+  .validator((input: unknown) => parseInput(TranscribeInput, input))
+  .handler(async ({ data: input }): Promise<{ ok: true; text: string } | { ok: false; error: string }> => {
     try {
       guardAiCall("transcribe");
     } catch (e) {

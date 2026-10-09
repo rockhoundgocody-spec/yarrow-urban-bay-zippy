@@ -50,7 +50,7 @@ export function Onboarding() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Field name"
-              className="mt-2 h-11 w-full rounded-md border border-line-strong bg-void px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
+              className="mt-2 h-12 w-full rounded-md border border-line-strong bg-void px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
             />
           </label>
         )}

@@ -11,7 +11,8 @@
  * and scripted abuse from a single source; a durable, cross-instance limiter
  * needs a shared store (planned with the Supabase move).
  */
-import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
+import { getRequestHeader, getRequestIP, setResponseStatus } from "@tanstack/react-start/server";
+import type { ZodType } from "zod";
 
 export type AiKind = "identify" | "clover" | "speak" | "transcribe";
 
@@ -85,3 +86,20 @@ export function aiModel(): string {
 }
 
 export const AI_TIMEOUT_MS = 25_000;
+
+export type Parsed<T> = { valid: true; value: T } | { valid: false };
+
+/** Validator helper: never throws, so bad input becomes a 400 instead of a 500. */
+export function parseInput<T>(schema: ZodType<T>, input: unknown): Parsed<T> {
+  const r = schema.safeParse(input);
+  return r.success ? { valid: true, value: r.data } : { valid: false };
+}
+
+/** Marks the response 400 Bad Request. Call from a handler when input was invalid. */
+export function rejectInvalidInput(): void {
+  try {
+    setResponseStatus(400);
+  } catch {
+    /* outside a request (tests) */
+  }
+}

@@ -89,7 +89,7 @@ function ExplorePage() {
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search sites, states, minerals"
         aria-label="Search field sites, states, or minerals"
-        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
+        className="h-12 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
       />
 
       <div className="flex gap-1.5 overflow-x-auto">
