@@ -4,7 +4,7 @@ import { SITES } from "@/data/locations";
 import { canonicalUrl } from "@/lib/seo";
 
 /** Indexable routes only — private/per-device pages are deliberately absent. */
-const STATIC_PATHS = ["/", "/explore", "/identify", "/pedia", "/safety"];
+const STATIC_PATHS = ["/", "/explore", "/identify", "/pedia", "/safety", "/data"];
 
 function buildSitemap(): string {
   const paths = [

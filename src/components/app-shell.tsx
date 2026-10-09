@@ -4,6 +4,7 @@ import {
   Compass,
   Gem,
   Home,
+  Lock,
   Map,
   Menu,
   MessageSquare,
@@ -39,6 +40,7 @@ const MENU = [
   { to: "/safety", label: "Safety & land", icon: Shield },
   { to: "/clover", label: "Clover AGI", icon: Sparkles },
   { to: "/profile", label: "Progress", icon: User },
+  { to: "/data", label: "Your data", icon: Lock },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -146,7 +148,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 );
               })}
               <p className="mt-4 flex items-center gap-2 px-3 text-[10px] uppercase tracking-[0.14em] text-faint">
-                <WifiOff className="size-3" /> Local cache · no account
+                <WifiOff className="size-3" /> Stored on this device · no account
               </p>
             </nav>
           </div>
