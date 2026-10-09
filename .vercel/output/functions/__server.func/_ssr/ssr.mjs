@@ -9,6 +9,7 @@ var ssr_exports = /* @__PURE__ */ __exportAll({
 	default: () => server_default,
 	i: () => getRequestHeader,
 	n: () => TSS_SERVER_FUNCTION,
+	o: () => setResponseStatus,
 	r: () => getServerFnById,
 	t: () => createServerFn
 });
@@ -618,6 +619,11 @@ function getRequestHeader(name) {
 }
 function getRequestIP(opts) {
 	return getRequestIP$1(getH3Event(), opts);
+}
+function setResponseStatus(code, text) {
+	const event = getH3Event();
+	if (code) event.res.status = sanitizeStatusCode(code, event.res.status);
+	if (text) event.res.statusText = sanitizeStatusMessage(text);
 }
 function getResponse() {
 	return getH3Event().res;
@@ -4126,7 +4132,7 @@ var defaultSerovalPlugins = [
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-BbWu-t3J.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-CWTNhwFn.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -4148,19 +4154,19 @@ async function getStartManifest(matchedRoutes) {
 var manifest = {
 	"042763fd345a97f0345dc0cd42b9436661ff0d26a355cf8c24dd7b66626f4b22": {
 		functionName: "transcribeClover_createServerFn_handler",
-		importer: () => import("./speak-DboMNlLv.mjs")
+		importer: () => import("./speak-DhYimvjK.mjs")
 	},
 	"7e21a7c7dfbe6a11dec545ec79c9ac91890a8f328b0decb36744ebd1fc131d3a": {
 		functionName: "identifySpecimen_createServerFn_handler",
-		importer: () => import("./identify-OsZGrk5o.mjs")
+		importer: () => import("./identify-I1j3_BfR.mjs")
 	},
 	"b2e0318fa02b334f5ed76157bb1657ac522da5d9d53a2faa5ef81db85048b334": {
 		functionName: "speakClover_createServerFn_handler",
-		importer: () => import("./speak-DboMNlLv.mjs")
+		importer: () => import("./speak-DhYimvjK.mjs")
 	},
 	"c70c46c50fe1438464e51a0cdbbd58cd880dd95e147db9e66685ea9eb551bf66": {
 		functionName: "askClover_createServerFn_handler",
-		importer: () => import("./identify-OsZGrk5o.mjs")
+		importer: () => import("./identify-I1j3_BfR.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -6071,7 +6077,7 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-zv3UGgEF2.mjs").then((n) => n.t),
+		import("./router-y7NTENN72.mjs").then((n) => n.t),
 		import("./start-BHBt9rKO.mjs"),
 		import("./empty-plugin-adapters-BJ4m9L8g.mjs")
 	]);
@@ -6517,4 +6523,4 @@ function createServerEntry(entry) {
 }
 var server_default = createServerEntry({ fetch: fetch$1 });
 //#endregion
-export { getServerFnById as a, getRequestIP as i, createServerFn as n, ssr_exports as o, getRequestHeader as r, TSS_SERVER_FUNCTION as t };
+export { getServerFnById as a, getRequestIP as i, createServerFn as n, setResponseStatus as o, getRequestHeader as r, ssr_exports as s, TSS_SERVER_FUNCTION as t };

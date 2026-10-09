@@ -1,1 +1,0 @@
-import{i as e,n as t}from"./jsx-runtime-Cltr0gcK.js";import{x as n}from"./index-CQhulmS-.js";var r=e(t(),1);function i(e,t){let[i,a]=(0,r.useState)(void 0);return(0,r.useEffect)(()=>{let r=!0;if(!e||!t){a(void 0);return}return n(e).then(e=>{r&&a(e)}).catch(()=>{r&&a(void 0)}),()=>{r=!1}},[e,t]),i}export{i as t};
