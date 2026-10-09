@@ -6,6 +6,9 @@ import { MINERALS } from "@/data/minerals";
 import { nextInChain } from "@/data/chains";
 import { useField } from "@/lib/store";
 import { privateHead } from "@/lib/seo";
+import { usePhoto } from "@/lib/use-photo";
+import { deletePhoto } from "@/lib/photo-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vault_/$id")({
   head: () => privateHead("Specimen", "/vault/$id"),
@@ -25,6 +28,8 @@ function SpecimenPage() {
   const specimen = useField((s) => s.specimens.find((x) => x.id === id));
   const update = useField((s) => s.updateSpecimen);
   const remove = useField((s) => s.removeSpecimen);
+  const restore = useField((s) => s.restoreSpecimen);
+  const photo = usePhoto(specimen?.id, specimen?.hasPhoto);
   const mineral = MINERALS.find((m) => m.id === specimen?.mineralId);
   const chain = nextInChain(specimen?.mineralId)[0];
   const nextMin = chain ? MINERALS.find((m) => m.id === chain.nextId) : undefined;
@@ -40,9 +45,7 @@ function SpecimenPage() {
   return (
     <div className="space-y-5">
       <p className="text-[10px] uppercase tracking-[0.18em] text-cyan">GeoDex specimen</p>
-      {specimen.photoDataUrl && (
-        <img src={specimen.photoDataUrl} alt={specimen.name} className="w-full rounded-xl object-cover" />
-      )}
+      {photo && <img src={photo} alt={specimen.name} className="w-full rounded-xl object-cover" />}
       <div className="flex items-start gap-3">
         <CrystalGem hue={mineral?.hue ?? "#bfe9ff"} system={specimen.crystalSystem} size={64} />
         <div>
@@ -105,7 +108,22 @@ function SpecimenPage() {
         variant="line"
         className="w-full text-danger"
         onClick={() => {
-          remove(specimen.id);
+          const removed = specimen;
+          remove(removed.id);
+          // Keep the photo until the undo window closes.
+          const timer = window.setTimeout(() => {
+            if (removed.hasPhoto) void deletePhoto(removed.id).catch(() => undefined);
+          }, 10_000);
+          toast(`Removed ${removed.name} from GeoDex`, {
+            duration: 10_000,
+            action: {
+              label: "Undo",
+              onClick: () => {
+                window.clearTimeout(timer);
+                restore(removed);
+              },
+            },
+          });
           void navigate({ to: "/vault" });
         }}
       >

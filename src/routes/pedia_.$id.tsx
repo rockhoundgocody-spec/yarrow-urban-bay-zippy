@@ -36,7 +36,6 @@ export const Route = createFileRoute("/pedia_/$id")({
   component: MineralPage,
 });
 
-const READ = new Set<string>();
 
 function MineralPage() {
   const { id } = Route.useParams();
@@ -44,17 +43,18 @@ function MineralPage() {
   const complete = useField((s) => s.completeQuest);
   const addSpecimen = useField((s) => s.addSpecimen);
   const addXpLane = useField((s) => s.addXpLane);
+  const markSpeciesRead = useField((s) => s.markSpeciesRead);
   const chain = nextInChain(m?.id)[0];
   const nextMin = chain ? MINERAL_BY_ID[chain.nextId] : undefined;
 
   useEffect(() => {
     if (!m) return;
     complete("pedia");
-    if (!READ.has(m.id)) {
-      READ.add(m.id);
+    // Reading XP is paid once per species, ever (persisted), not per page load.
+    if (markSpeciesRead(m.id)) {
       addXpLane("scientist", XP_REWARDS.pediaRead);
     }
-  }, [m, complete, addXpLane]);
+  }, [m, complete, addXpLane, markSpeciesRead]);
 
   if (!m) {
     return (

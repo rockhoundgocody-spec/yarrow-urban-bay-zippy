@@ -7,6 +7,8 @@ import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import type { DiscoveryDisposition } from "@/lib/types";
 import { privateHead } from "@/lib/seo";
+import { usePhoto } from "@/lib/use-photo";
+import type { Specimen } from "@/lib/types";
 
 export const Route = createFileRoute("/vault")({
   head: () => privateHead("GeoDex", "/vault"),
@@ -118,13 +120,7 @@ function VaultPage() {
             return (
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel block rounded-xl p-3">
-                  {s.photoDataUrl ? (
-                    <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
-                  ) : (
-                    <div className="mb-2 grid h-24 place-items-center">
-                      <CrystalGem hue={m?.hue ?? "#bfe9ff"} system={s.crystalSystem} size={56} />
-                    </div>
-                  )}
+                  <SpecimenThumb specimen={s} hue={m?.hue} />
                   <p className="truncate font-display text-sm text-fg">{s.name}</p>
                   <div className="mt-1 flex items-center justify-between">
                     <RarityChip rarity={s.rarity} />
@@ -143,6 +139,16 @@ function VaultPage() {
         </ul>
       )}
       <SectionLabel>{MINERALS.length} species in Mineralpedia if you want to study first</SectionLabel>
+    </div>
+  );
+}
+
+function SpecimenThumb({ specimen, hue }: { specimen: Specimen; hue?: string }) {
+  const photo = usePhoto(specimen.id, specimen.hasPhoto);
+  if (photo) return <img src={photo} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />;
+  return (
+    <div className="mb-2 grid h-24 place-items-center">
+      <CrystalGem hue={hue ?? "#bfe9ff"} system={specimen.crystalSystem} size={56} />
     </div>
   );
 }
