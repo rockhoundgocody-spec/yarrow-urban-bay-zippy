@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CloverRouteImport } from './routes/clover'
 import { Route as CommunityRouteImport } from './routes/community'
+import { Route as DataRouteImport } from './routes/data'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as IdentifyRouteImport } from './routes/identify'
 import { Route as MarketRouteImport } from './routes/market'
@@ -39,6 +40,11 @@ const CloverRoute = CloverRouteImport.update({
 const CommunityRoute = CommunityRouteImport.update({
   id: '/community',
   path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataRoute = DataRouteImport.update({
+  id: '/data',
+  path: '/data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clover': typeof CloverRoute
   '/community': typeof CommunityRoute
+  '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
   '/identify': typeof IdentifyRoute
   '/market': typeof MarketRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clover': typeof CloverRoute
   '/community': typeof CommunityRoute
+  '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
   '/identify': typeof IdentifyRoute
   '/market': typeof MarketRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/clover': typeof CloverRoute
   '/community': typeof CommunityRoute
+  '/data': typeof DataRoute
   '/explore': typeof ExploreRoute
   '/identify': typeof IdentifyRoute
   '/market': typeof MarketRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clover'
     | '/community'
+    | '/data'
     | '/explore'
     | '/identify'
     | '/market'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clover'
     | '/community'
+    | '/data'
     | '/explore'
     | '/identify'
     | '/market'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clover'
     | '/community'
+    | '/data'
     | '/explore'
     | '/identify'
     | '/market'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CloverRoute: typeof CloverRoute
   CommunityRoute: typeof CommunityRoute
+  DataRoute: typeof DataRoute
   ExploreRoute: typeof ExploreRoute
   IdentifyRoute: typeof IdentifyRoute
   MarketRoute: typeof MarketRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/community'
       fullPath: '/community'
       preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data': {
+      id: '/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof DataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -359,6 +379,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CloverRoute: CloverRoute,
   CommunityRoute: CommunityRoute,
+  DataRoute: DataRoute,
   ExploreRoute: ExploreRoute,
   IdentifyRoute: IdentifyRoute,
   MarketRoute: MarketRoute,
