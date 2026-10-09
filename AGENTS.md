@@ -356,7 +356,7 @@ mismatches), so `npm ci` fails. The canonical lockfile is `pnpm-lock.yaml`
 install --frozen-lockfile && exec pnpm run dev`.
 
 **Pre-existing test failures:** 8 tests in `scripts/grok-pwa-plugin.test.mjs`
-fail because the OG-title injector always emits the app name ("RockHound-GO")
+fail because the OG-title injector always emits the app name ("RockHound GO")
 instead of the generic document titles those tests expect. These are unrelated
 to app functionality and existed before the Base44 import.
 

@@ -41,7 +41,7 @@ function SpecimenPage() {
         <img src={specimen.photoDataUrl} alt={specimen.name} className="w-full rounded-xl object-cover" />
       )}
       <div className="flex items-start gap-3">
-        <CrystalGem hue={mineral?.hue ?? "#8d7cff"} system={specimen.crystalSystem} size={64} />
+        <CrystalGem hue={mineral?.hue ?? "#bfe9ff"} system={specimen.crystalSystem} size={64} />
         <div>
           <h1 className="font-display text-2xl text-fg">{specimen.name}</h1>
           <p className="mt-1 text-sm text-muted">
@@ -96,7 +96,7 @@ function SpecimenPage() {
           value={specimen.notes}
           onChange={(e) => update(specimen.id, { notes: e.target.value })}
           rows={3}
-          className="mt-2 w-full rounded-md border border-line bg-obsidian p-3 text-sm text-fg outline-none focus:border-amethyst"
+          className="mt-2 w-full rounded-md border border-line bg-obsidian p-3 text-sm text-fg outline-none focus:border-frost"
           placeholder="Locality, weather, companions, tests run…"
         />
       </label>

@@ -37,7 +37,7 @@ function PediaPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-amethyst">Learn</p>
+        <p className="text-[10px] uppercase tracking-[0.18em] text-frost">Learn</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Mineralpedia</h1>
         <p className="mt-1 text-sm text-muted">{MINERALS.length} field species with tests, lookalikes, and hardness.</p>
       </header>
@@ -48,7 +48,7 @@ function PediaPage() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
           aria-label="Search minerals"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
         />
       </label>
       <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -59,7 +59,7 @@ function PediaPage() {
             onClick={() => setCat(c.k)}
             className={cn(
               "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
+              cat === c.k ? "border-frost/40 bg-frost/10 text-fg" : "border-line text-muted",
             )}
           >
             {c.l}

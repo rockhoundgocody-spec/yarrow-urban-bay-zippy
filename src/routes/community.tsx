@@ -14,7 +14,7 @@ function CommunityPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-amethyst">Community</p>
+        <p className="text-[10px] uppercase tracking-[0.18em] text-frost">Community</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Field feed</h1>
         <p className="mt-1 text-sm text-muted">Finds from collectors on the circuit. Local likes stay on this device.</p>
       </header>

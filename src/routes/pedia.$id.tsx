@@ -47,7 +47,7 @@ function MineralPage() {
       <div className="flex items-start gap-4">
         <CrystalGem hue={m.hue} system={m.crystalSystem} size={80} />
         <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-amethyst">{m.family}</p>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-frost">{m.family}</p>
           <h1 className="mt-1 font-display text-2xl text-fg">{m.name}</h1>
           <p className="mt-1 font-mono text-sm text-muted">{m.formula}</p>
           <div className="mt-2">

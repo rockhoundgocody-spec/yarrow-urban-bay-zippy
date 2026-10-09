@@ -81,20 +81,20 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-expanded={menu}
               aria-controls="main-menu"
               onClick={() => setMenu((v) => !v)}
-              className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               {menu ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
-            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void">
+            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void">
               <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>
-              <span className="font-display text-[17px] font-semibold text-amethyst">GO</span>
+              <span className="font-display text-[17px] font-semibold text-frost">GO</span>
             </Link>
             <button
               type="button"
               aria-label={fieldMode ? "Switch to Hub mode" : "Switch to Field mode"}
               onClick={() => setFieldMode(!fieldMode)}
               className={cn(
-                "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                 fieldMode
                   ? "border-field/40 bg-field/15 text-field"
                   : "border-line text-muted hover:text-fg",
@@ -105,7 +105,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               to="/clover"
               aria-label="Clover AGI Assistant"
-              className="grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              className="grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               <Sparkles className="size-5" />
             </Link>
@@ -129,7 +129,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     to={item.to}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                      "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                       active ? "bg-fg/10 text-fg" : "text-muted hover:bg-fg/5 hover:text-fg",
                     )}
                   >
@@ -160,7 +160,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     to={tab.to}
                     aria-label="Scan specimen"
                     aria-current={active ? "page" : undefined}
-                    className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+                    className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                   >
                     <span
                       className={cn(
@@ -179,7 +179,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={tab.to}
                   to={tab.to}
                   aria-current={active ? "page" : undefined}
-                  className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+                  className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                 >
                   <Icon className={cn("size-[18px]", active ? "text-fg" : "text-faint")} />
                   <span
@@ -225,7 +225,7 @@ export function XpRibbon() {
         aria-valuetext={`${into} of ${need} XP to level ${level + 1}`}
         className="mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10"
       >
-        <div className="h-full rounded-full bg-amethyst" style={{ width: `${Math.round(pct * 100)}%` }} />
+        <div className="h-full rounded-full bg-frost" style={{ width: `${Math.round(pct * 100)}%` }} />
       </div>
       <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[9px] uppercase tracking-[0.12em] text-faint">
         <span>

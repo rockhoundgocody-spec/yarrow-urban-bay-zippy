@@ -69,7 +69,7 @@ function VaultPage() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search GeoDex"
           aria-label="Search GeoDex collection"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
         />
       </label>
 
@@ -123,7 +123,7 @@ function VaultPage() {
                     <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
                   ) : (
                     <div className="mb-2 grid h-24 place-items-center">
-                      <CrystalGem hue={m?.hue ?? "#8d7cff"} system={s.crystalSystem} size={56} />
+                      <CrystalGem hue={m?.hue ?? "#bfe9ff"} system={s.crystalSystem} size={56} />
                     </div>
                   )}
                   <p className="truncate font-display text-sm text-fg">{s.name}</p>

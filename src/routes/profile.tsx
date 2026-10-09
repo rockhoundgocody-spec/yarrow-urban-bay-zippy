@@ -30,7 +30,7 @@ function ProfilePage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-amethyst">Progress</p>
+        <p className="text-[10px] uppercase tracking-[0.18em] text-frost">Progress</p>
         <h1 className="mt-1 font-display text-2xl text-fg">{name}</h1>
         <p className="mt-1 text-sm text-muted">
           {rankFromLevel(level)} · Level {level}
@@ -75,7 +75,7 @@ function ProfilePage() {
         <input
           defaultValue={name}
           onBlur={(e) => completeOnboarding(e.target.value)}
-          className="mt-2 h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-amethyst"
+          className="mt-2 h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-frost"
         />
       </label>
 

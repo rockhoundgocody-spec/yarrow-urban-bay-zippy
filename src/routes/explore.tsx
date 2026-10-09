@@ -48,7 +48,7 @@ function ExplorePage() {
             d="M12 18 L18 12 L28 11 L40 10 L52 10.5 L62 11 L70 13 L78 16 L84 14 L88 18 L90 24 L87 30 L85 36 L86 42 L80 46 L72 50 L64 52 L54 53 L46 51 L40 52 L34 50 L28 47 L22 42 L16 36 L13 28 Z
                M80 46 L82 54 L79 57 L76 50 Z
                M28 47 L26 56 L22 54 L24 47 Z"
-            className="fill-stone stroke-amethyst/50"
+            className="fill-stone stroke-frost/50"
             strokeWidth="0.45"
           />
           {list.map((s) => {
@@ -64,7 +64,7 @@ function ExplorePage() {
                 className="cursor-pointer"
                 onClick={() => setPicked(s.id)}
               >
-                <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
+                <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#bfe9ff" : "#3dcf8a"} />
                 <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
               </g>
             );
@@ -121,7 +121,7 @@ function ExplorePage() {
             <Link
               to="/explore/$id"
               params={{ id: s.id }}
-              className={cn("rh-panel block rounded-xl p-4", picked === s.id && "border-amethyst/40")}
+              className={cn("rh-panel block rounded-xl p-4", picked === s.id && "border-frost/40")}
               onClick={() => setPicked(s.id)}
             >
               <div className="flex items-start justify-between gap-3">

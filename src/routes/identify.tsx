@@ -189,7 +189,7 @@ function IdentifyPage() {
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "h-10 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              "h-10 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
               tab === t ? "bg-obsidian text-fg" : "text-muted hover:text-fg",
             )}
           >
@@ -284,7 +284,7 @@ function IdentifyPage() {
               step={0.5}
               value={key.hardness ?? 5}
               onChange={(e) => setKey({ ...key, hardness: Number(e.target.value) })}
-              className="w-full accent-amethyst"
+              className="w-full accent-frost"
             />
             <div className="mt-1 flex justify-between text-[10px] text-faint">
               <span>Talc 1</span>
@@ -371,8 +371,8 @@ function FieldChips({
             aria-pressed={value === o}
             onClick={() => onPick(o)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
-              value === o ? "border-amethyst bg-amethyst/15 text-fg" : "border-line text-muted hover:text-fg",
+              "rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              value === o ? "border-frost bg-frost/15 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {o}
@@ -396,7 +396,7 @@ function ResultCard({
   return (
     <Panel hairline className="p-5">
       <div className="flex items-start gap-3">
-        <CrystalGem hue={mineral?.hue ?? "#8d7cff"} system={result.crystalSystem} size={64} />
+        <CrystalGem hue={mineral?.hue ?? "#bfe9ff"} system={result.crystalSystem} size={64} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h2 className="font-display text-xl text-fg">{result.name}</h2>

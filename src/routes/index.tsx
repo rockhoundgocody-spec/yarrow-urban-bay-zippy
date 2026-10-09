@@ -94,7 +94,7 @@ function Home() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amethyst">Operating system active</p>
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-frost">Operating system active</p>
         <h1 className="mt-2 font-display text-[1.75rem] leading-tight text-fg">
           {greeting}, {name}.
         </h1>
@@ -173,7 +173,7 @@ function Home() {
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel flex items-center gap-3 rounded-xl px-3 py-3">
                   <CrystalGem
-                    hue={MINERALS.find((m) => m.id === s.mineralId)?.hue ?? "#8d7cff"}
+                    hue={MINERALS.find((m) => m.id === s.mineralId)?.hue ?? "#bfe9ff"}
                     system={s.crystalSystem}
                     size={40}
                   />

@@ -5,7 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "RockHound-GO";
+const APP_NAME = "RockHound GO";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -18,7 +18,7 @@ export const Route = createRootRoute({
         content:
           "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding.",
       },
-      { name: "theme-color", content: "#07060F" },
+      { name: "theme-color", content: "#07090b" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
@@ -52,9 +52,9 @@ function Root() {
             position="top-center"
             toastOptions={{
               style: {
-                background: "#171427",
-                border: "1px solid rgb(236 232 247 / 0.12)",
-                color: "#ece8f7",
+                background: "#141a1f",
+                border: "1px solid rgb(238 243 246 / 0.12)",
+                color: "#eef3f6",
               },
             }}
           />

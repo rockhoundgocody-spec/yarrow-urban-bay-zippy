@@ -34,7 +34,7 @@ function SafetyPage() {
         <p className="text-[10px] uppercase tracking-[0.18em] text-field">Safety · legality</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Land before the hammer</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          RockHound-GO is a field intelligence platform. It will not tell you a site is legal if it is not.
+          RockHound GO is a field intelligence platform. It will not tell you a site is legal if it is not.
         </p>
       </header>
 
