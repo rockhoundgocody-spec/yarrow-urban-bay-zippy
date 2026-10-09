@@ -219,6 +219,12 @@ function IdentifyPage() {
                 <div>
                   <Camera className="mx-auto size-8 text-faint" />
                   <p className="mt-3 text-sm text-muted">Open the camera or upload from the roll.</p>
+                  <p className="mt-2 text-[13px] text-faint">
+                    Photos are sent to xAI to identify them.{" "}
+                    <Link to="/data" className="text-cyan underline">
+                      How your data is handled
+                    </Link>
+                  </p>
                   <p className="mt-2 text-xs text-faint">Good light. Fill the frame. One angle is enough.</p>
                 </div>
               </div>
@@ -461,6 +467,11 @@ function ResultCard({
           <Sparkles className="size-3" /> Open in Mineralpedia
         </Link>
       )}
+      <p className="mt-4 rounded-md border border-line p-3 text-[13px] leading-relaxed text-muted">
+        {result.source === "ai" ? "AI identification" : "Field-key matching"} can be wrong. Confirm with hardness, streak and
+        other field tests before relying on it — and never use it to decide whether something is safe, valuable or legal to
+        collect.
+      </p>
       {!result.notGeological && <DiscoveryChoice onConfirm={onSave} />}
     </Panel>
   );

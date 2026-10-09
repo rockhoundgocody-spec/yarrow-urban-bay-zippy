@@ -1,4 +1,4 @@
-import { useEffect, type MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import { LiquidMetalOrb } from "@/components/orb/liquid-metal-orb";
 import { OrbSpeech } from "@/components/orb/orb-speech";
 import { useCloverConversation } from "@/components/orb/use-clover-conversation";
