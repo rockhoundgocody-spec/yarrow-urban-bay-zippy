@@ -363,3 +363,16 @@ to app functionality and existed before the Base44 import.
 **Verify:** `docker compose -f docker-compose.base44.yml up -d`, then curl
 `http://localhost:3000/` for a 200 with real HTML. Typecheck and build pass
 inside the container via `pnpm run typecheck` / `pnpm run build`.
+
+## RockHound GO project rules (rhgo.me)
+
+- Brand is exactly **"RockHound GO"**; the gemstone is **"Red beryl"** (no alternate names).
+- Palette: obsidian / frost (`--color-frost`) / caustic amber (`--color-amber`, `--color-gold`). No purple.
+- Every route sets `head` via `pageHead()` (public: title, description, canonical on https://rhgo.me, JSON-LD)
+  or `privateHead()` (noindex) from `src/lib/seo.ts`. Add new public routes to `src/routes/sitemap[.]xml.ts`.
+- Detail routes are un-nested (`pedia_.$id.tsx`) and `throw notFound()` in the loader for unknown ids → real HTTP 404.
+- Security headers live in `scripts/security-headers.mjs` (dev plugin + Nitro routeRules). Add any new external
+  host to the CSP there.
+- Offline: `public/sw.js` (registered in production only). Bump `VERSION` when caching strategy changes.
+- QA before calling work done (inside the container): `node scripts/qa-routes.mjs http://127.0.0.1:8080` (dev) and
+  against `vite preview` on :8081 (prod), plus `node scripts/qa-offline.mjs http://127.0.0.1:8081`.
