@@ -27,7 +27,10 @@ export type FieldSite = {
   difficulty: Difficulty;
   finds: string[];
   notes: string;
+  /** Collecting rules as last understood. Unsourced until `legalityCheckedAt` and `legalitySource` are set. */
   legality: string;
+  legalityCheckedAt?: string;
+  legalitySource?: string;
   season: string;
 };
 
@@ -346,36 +349,6 @@ export const SITES: FieldSite[] = [
     notes: "Blue topaz in streambeds on private ranches. A Texas classic.",
     legality: "Ranch fee digs only. No public land collecting here.",
     season: "October–May.",
-  },
-  {
-    id: "hickory-creek",
-    name: "Hickory Creek Gravel Bar",
-    state: "Illinois",
-    region: "Midwest",
-    lat: 41.7938,
-    lng: -87.8162,
-    category: "gravel_bar",
-    access: "public",
-    difficulty: "easy",
-    finds: ["Quartz", "Orthoclase (Potassium Feldspar)", "Muscovite (Mica)"],
-    notes: "Seasonal bar along Hickory Creek. Best after spring flooding.",
-    legality: "Public access along the waterway. Respect private banks.",
-    season: "After spring floods.",
-  },
-  {
-    id: "salt-creek",
-    name: "Salt Creek Public Beach",
-    state: "Illinois",
-    region: "Midwest",
-    lat: 41.8456,
-    lng: -87.9234,
-    category: "beach",
-    access: "public",
-    difficulty: "easy",
-    finds: ["Quartz", "Calcite"],
-    notes: "Rocky shore with better finds after rain. Beginner-friendly.",
-    legality: "Public park. Collection as posted.",
-    season: "Spring–fall.",
   },
   {
     id: "dunes",
