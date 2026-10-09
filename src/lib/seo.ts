@@ -21,6 +21,14 @@ export type PageHeadInput = {
   jsonLd?: JsonLd | JsonLd[];
 };
 
+/** Trim to a search-snippet length on a word boundary. */
+export function clamp(text: string, max = 158): string {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), 40))}…`;
+}
+
 export function canonicalUrl(path: string): string {
   return `${SITE_URL}${path === "/" ? "/" : path.replace(/\/+$/, "")}`;
 }
