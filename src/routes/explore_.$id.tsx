@@ -80,7 +80,9 @@ function SitePage() {
         {site.legalityCheckedAt && site.legalitySource ? (
           <p className="mt-2 text-[13px] text-muted">
             Checked {site.legalityCheckedAt} ·{" "}
-            <a href={site.legalitySource} target="_blank" rel="noopener noreferrer" X
+            <a href={site.legalitySource} target="_blank" rel="noopener noreferrer"
+              className="inline-flex min-h-12 min-w-12 items-center justify-center px-1 text-cyan underline"
+            >
               source
             </a>
           </p>
