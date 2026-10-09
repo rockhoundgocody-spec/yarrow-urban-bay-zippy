@@ -37,6 +37,11 @@ function clean(s: string | undefined, max: number): string {
 export const identifySpecimen = createServerFn({ method: "POST" })
   .validator((input: unknown) => parseInput(IdentifyInput, input))
   .handler(async ({ data: input }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
+    if (!input.valid) {
+      rejectInvalidInput();
+      return { ok: false, error: "Invalid request." };
+    }
+    const data = input.value;
     try {
       guardAiCall("identify");
     } catch (e) {
@@ -159,6 +164,11 @@ export const askClover = createServerFn({ method: "POST" })
     }): Promise<
       { ok: true; text: string; logFind: boolean; findDetails: string | null } | { ok: false; error: string }
     > => {
+      if (!input.valid) {
+        rejectInvalidInput();
+        return { ok: false, error: "Invalid request." };
+      }
+      const data = input.value;
       try {
         guardAiCall("clover");
       } catch (e) {

@@ -15,6 +15,11 @@ const TranscribeInput = z.object({
 export const speakClover = createServerFn({ method: "POST" })
   .validator((input: unknown) => parseInput(SpeakInput, input))
   .handler(async ({ data: input }): Promise<{ ok: true; audio: string } | { ok: false }> => {
+    if (!input.valid) {
+      rejectInvalidInput();
+      return { ok: false };
+    }
+    const data = input.value;
     try {
       guardAiCall("speak");
     } catch (e) {
@@ -51,6 +56,11 @@ export const speakClover = createServerFn({ method: "POST" })
 export const transcribeClover = createServerFn({ method: "POST" })
   .validator((input: unknown) => parseInput(TranscribeInput, input))
   .handler(async ({ data: input }): Promise<{ ok: true; text: string } | { ok: false; error: string }> => {
+    if (!input.valid) {
+      rejectInvalidInput();
+      return { ok: false, error: "Invalid request." };
+    }
+    const data = input.value;
     try {
       guardAiCall("transcribe");
     } catch (e) {
