@@ -1,5 +1,5 @@
 import { i as __toESM } from "../_runtime.mjs";
-import { _ as require_react } from "./@tanstack/react-router+[...].mjs";
+import { v as require_react } from "./@tanstack/react-router+[...].mjs";
 //#region node_modules/.pnpm/zustand@5.0.15_@types+react@19.2.18_react@19.2.8_use-sync-external-store@1.6.0_react@19.2.8_/node_modules/zustand/esm/vanilla.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var createStoreImpl = (createState) => {

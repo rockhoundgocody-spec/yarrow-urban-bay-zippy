@@ -12,9 +12,9 @@ var install_page_default = "<!DOCTYPE html>\n<html lang=\"en\" class=\"device-de
 //#endregion
 //#region \0virtual:grok-og-identity
 var grokOgIdentity = { "site": {
-	"title": "RockHound-GO",
+	"title": "RockHound GO",
 	"card": "custom",
-	"color": "8D7CFF",
+	"color": "F5B642",
 	"image": "/og.jpg"
 } };
 //#endregion
@@ -442,20 +442,46 @@ async function grokPwaMiddleware(event, next) {
 var findRouteRules = /* @__PURE__ */ (() => {
 	const $0 = [{
 		name: "headers",
+		route: "/sw.js",
+		handler: headers,
+		options: {
+			"cache-control": "no-cache",
+			"service-worker-allowed": "/"
+		}
+	}], $1 = [{
+		name: "headers",
 		route: "/assets/**",
 		handler: headers,
 		options: { "cache-control": "public, max-age=31536000, immutable" }
+	}], $2 = [{
+		name: "headers",
+		route: "/**",
+		handler: headers,
+		options: {
+			"Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://grok.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://grok.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://grok.com https://og.grok.me; media-src 'self' data: blob:; connect-src 'self' https://grok.com; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self' https://grok.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests",
+			"X-Content-Type-Options": "nosniff",
+			"Referrer-Policy": "strict-origin-when-cross-origin",
+			"Permissions-Policy": "camera=(self), microphone=(self), geolocation=(self), payment=(), usb=()",
+			"Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+			"X-Frame-Options": "SAMEORIGIN",
+			"Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+		}
 	}];
 	return (m, p) => {
 		let r = [];
 		if (p.charCodeAt(p.length - 1) === 47) p = p.slice(0, -1) || "/";
+		if (p === "/sw.js") r.unshift({ data: $0 });
 		let s = p.split("/");
 		if (s.length > 1) {
 			if (s[1] === "assets") r.unshift({
-				data: $0,
+				data: $1,
 				params: { "_": s.slice(2).join("/") }
 			});
 		}
+		r.unshift({
+			data: $2,
+			params: { "_": s.slice(1).join("/") }
+		});
 		return r;
 	};
 })();

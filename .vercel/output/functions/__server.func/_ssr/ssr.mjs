@@ -1,5 +1,5 @@
 import { n as __exportAll } from "../_runtime.mjs";
-import { _ as require_react, g as require_jsx_runtime, n as defineHandlerCallback, s as RouterProvider, t as renderRouterToStream } from "../_libs/@tanstack/react-router+[...].mjs";
+import { g as require_jsx_runtime, n as defineHandlerCallback, s as RouterProvider, t as renderRouterToStream, v as require_react } from "../_libs/@tanstack/react-router+[...].mjs";
 import { PassThrough, Readable } from "node:stream";
 import { AsyncLocalStorage } from "node:async_hooks";
 //#region node_modules/.nitro/vite/services/ssr/index.js
@@ -4105,7 +4105,7 @@ var defaultSerovalPlugins = [
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-D0QyjXd7.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-DCUvTAPw.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -4131,7 +4131,7 @@ var manifest = {
 	},
 	"7e21a7c7dfbe6a11dec545ec79c9ac91890a8f328b0decb36744ebd1fc131d3a": {
 		functionName: "identifySpecimen_createServerFn_handler",
-		importer: () => import("./identify-CjPPlO_z.mjs")
+		importer: () => import("./identify-PDw0Nz56.mjs")
 	},
 	"b2e0318fa02b334f5ed76157bb1657ac522da5d9d53a2faa5ef81db85048b334": {
 		functionName: "speakClover_createServerFn_handler",
@@ -4139,7 +4139,7 @@ var manifest = {
 	},
 	"c70c46c50fe1438464e51a0cdbbd58cd880dd95e147db9e66685ea9eb551bf66": {
 		functionName: "askClover_createServerFn_handler",
-		importer: () => import("./identify-CjPPlO_z.mjs")
+		importer: () => import("./identify-PDw0Nz56.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -6050,7 +6050,7 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-a352uhk_.mjs").then((n) => n.t),
+		import("./router-CRN5OVWq2.mjs").then((n) => n.t),
 		import("./start-d3N1JdIl.mjs"),
 		import("./empty-plugin-adapters-BJ4m9L8g.mjs")
 	]);
