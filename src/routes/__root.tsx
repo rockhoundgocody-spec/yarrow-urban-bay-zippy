@@ -1,6 +1,5 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
-import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { AppShell } from "@/components/app-shell";
 import { ServiceWorker } from "@/components/service-worker";
 import { Toaster } from "sonner";
@@ -20,12 +19,17 @@ export const Route = createRootRoute({
           "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding.",
       },
       { name: "theme-color", content: "#07090b" },
+      { name: "color-scheme", content: "dark" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: APP_NAME },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "stylesheet",
@@ -43,7 +47,6 @@ function Root() {
         <HeadContent />
       </head>
       <body className="bg-void text-fg antialiased">
-        <PreviewHostBridge />
         <ServiceWorker />
         <AuthProvider>
           <AppShell>
