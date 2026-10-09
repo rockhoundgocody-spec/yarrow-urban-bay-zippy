@@ -23,7 +23,6 @@ function ProfilePage() {
   const scientist = useField((s) => s.scientistXp);
   const explorer = useField((s) => s.explorerXp);
   const completeOnboarding = useField((s) => s.completeOnboarding);
-  const reset = useField((s) => s.resetLocal);
   const { level } = xpToNext(xp);
   const species = new Set(specimens.map((s) => s.mineralId || s.name.toLowerCase())).size;
   const earned = new Set(badges.map((b) => b.id));
@@ -80,12 +79,7 @@ function ProfilePage() {
         />
       </label>
 
-      <Button variant="line" className="w-full text-danger" onClick={() => reset()}>
-        Reset local field data
-      </Button>
-      <p className="text-[11px] leading-relaxed text-faint">
-        Everything here stays on this device. No sign-in — say the word and I'll add accounts.
-      </p>
+      <DataControls />
     </div>
   );
 }
