@@ -38,7 +38,10 @@ export type Specimen = {
   formula?: string;
   rarity: Rarity;
   confidence: number;
+  /** Legacy: photos used to live inline in localStorage. Migrated to IndexedDB on load. */
   photoDataUrl?: string;
+  /** True when a photo for this specimen is stored in IndexedDB under its id. */
+  hasPhoto?: boolean;
   notes: string;
   locationName?: string;
   locationId?: string;
@@ -100,30 +103,4 @@ export type CloverMessage = {
   role: "user" | "assistant";
   text: string;
   at: number;
-};
-
-export type CommunityPost = {
-  id: string;
-  author: string;
-  mineral: string;
-  mineralId?: string;
-  location: string;
-  caption: string;
-  likes: number;
-  liked: boolean;
-  hue: string;
-  at: number;
-};
-
-export type MarketListing = {
-  id: string;
-  title: string;
-  seller: string;
-  mineral: string;
-  mineralId?: string;
-  rarity: Rarity;
-  price: number;
-  locale: string;
-  hue: string;
-  note: string;
 };
