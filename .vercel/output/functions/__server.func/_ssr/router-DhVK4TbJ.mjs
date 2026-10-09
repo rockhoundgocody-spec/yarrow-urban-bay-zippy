@@ -5,7 +5,7 @@ import { n as MINERAL_BY_ID, r as findMineralByName, t as MINERALS } from "./min
 import { C as Compass, O as BookOpen, T as Camera, c as ShoppingBag, h as Map, i as TriangleAlert, l as Shield, m as Menu, n as WifiOff, o as Target, p as MessageSquare, r as User, s as Sparkles, t as X, x as Gem, y as House } from "../_libs/lucide-react.mjs";
 import { a as union, i as string, n as number, r as object, t as literal } from "../_libs/zod.mjs";
 import { t as Toaster } from "../_libs/sonner.mjs";
-import { _ as cn, b as todayKey, c as useField, d as Button, g as CrystalGem, l as xpToNext, n as SITES, r as SITE_BY_ID } from "./router-CRN5OVWq2.mjs";
+import { _ as cn, b as todayKey, c as useField, d as Button, g as CrystalGem, l as xpToNext, n as SITES, r as SITE_BY_ID } from "./router-DhVK4TbJ2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/seo-Bf04Xsi-.js
 /**
 * Per-route <head> builder. Canonical origin is rhgo.me.
@@ -62,7 +62,7 @@ function privateHead(title, path) {
 	});
 }
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/router-CRN5OVWq.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-DhVK4TbJ.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var __defProp = Object.defineProperty;
@@ -2166,7 +2166,7 @@ function ServiceWorker() {
 	}, []);
 	return null;
 }
-var styles_default = "/assets/styles-DIr35ugo.css";
+var styles_default = "/assets/styles-CrXHE14G.css";
 var APP_NAME = "RockHound GO";
 var Route$16 = createRootRoute({
 	head: () => ({
@@ -2239,7 +2239,7 @@ function Root() {
 		})]
 	});
 }
-var $$splitComponentImporter$14 = () => import("./routes-CFKMl4lR.mjs");
+var $$splitComponentImporter$14 = () => import("./routes-BYBlXaRB.mjs");
 var Route$15 = createFileRoute("/")({
 	head: () => pageHead({
 		path: "/",
@@ -2259,12 +2259,12 @@ var Route$15 = createFileRoute("/")({
 	}),
 	component: lazyRouteComponent($$splitComponentImporter$14, "component")
 });
-var $$splitComponentImporter$13 = () => import("./clover-CfS-nb9w.mjs");
+var $$splitComponentImporter$13 = () => import("./clover-B3kb3TCr.mjs");
 var Route$14 = createFileRoute("/clover")({
 	head: () => privateHead("Clover", "/clover"),
 	component: lazyRouteComponent($$splitComponentImporter$13, "component")
 });
-var $$splitComponentImporter$12 = () => import("./community-BRs9fVks.mjs");
+var $$splitComponentImporter$12 = () => import("./community-CeS280ln.mjs");
 var Route$13 = createFileRoute("/community")({
 	head: () => privateHead("Field feed", "/community"),
 	component: lazyRouteComponent($$splitComponentImporter$12, "component")
@@ -2278,7 +2278,7 @@ var Route$12 = createFileRoute("/explore")({
 	}),
 	component: lazyRouteComponent($$splitComponentImporter$11, "component")
 });
-var $$splitComponentImporter$10 = () => import("./identify-CoA31hF2.mjs");
+var $$splitComponentImporter$10 = () => import("./identify-BJKOfOmm.mjs");
 var Route$11 = createFileRoute("/identify")({
 	head: () => pageHead({
 		title: "Identify a mineral",
@@ -2349,7 +2349,7 @@ var Route$3 = createFileRoute("/vault")({
 	head: () => privateHead("GeoDex", "/vault"),
 	component: lazyRouteComponent($$splitComponentImporter$3, "component")
 });
-var $$splitComponentImporter$2 = () => import("./explore_._id-CzAq8okg.mjs");
+var $$splitComponentImporter$2 = () => import("./explore_._id-CrJ9DJPD.mjs");
 var Route$2 = createFileRoute("/explore_/$id")({
 	loader: ({ params }) => {
 		const site = SITE_BY_ID[params.id];
@@ -2381,7 +2381,7 @@ var Route$2 = createFileRoute("/explore_/$id")({
 	},
 	component: lazyRouteComponent($$splitComponentImporter$2, "component")
 });
-var $$splitComponentImporter$1 = () => import("./pedia_._id-B2Un94Id.mjs");
+var $$splitComponentImporter$1 = () => import("./pedia_._id-DxM9Yt8n.mjs");
 var Route$1 = createFileRoute("/pedia_/$id")({
 	loader: ({ params }) => {
 		const mineral = MINERAL_BY_ID[params.id];
@@ -2410,7 +2410,7 @@ var Route$1 = createFileRoute("/pedia_/$id")({
 	},
 	component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-var $$splitComponentImporter = () => import("./vault_._id-BwckT1Xo.mjs");
+var $$splitComponentImporter = () => import("./vault_._id--KVKBjO6.mjs");
 var Route = createFileRoute("/vault_/$id")({
 	head: () => privateHead("Specimen", "/vault/$id"),
 	component: lazyRouteComponent($$splitComponentImporter, "component")

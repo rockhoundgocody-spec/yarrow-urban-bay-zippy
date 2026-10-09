@@ -1,11 +1,11 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { g as require_jsx_runtime, p as Link, v as require_react } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-DfAvtWOL.mjs";
-import { i as Route$2 } from "./router-CRN5OVWq.mjs";
+import { i as Route$2 } from "./router-DhVK4TbJ.mjs";
 import { C as Compass, D as BookmarkCheck, E as Bookmark } from "../_libs/lucide-react.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
-import { a as siteHazards, c as useField, d as Button, f as Panel, r as SITE_BY_ID } from "./router-CRN5OVWq2.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/explore_._id-CzAq8okg.js
+import { a as siteHazards, c as useField, d as Button, f as Panel, r as SITE_BY_ID } from "./router-DhVK4TbJ2.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/explore_._id-CrJ9DJPD.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function SitePage() {

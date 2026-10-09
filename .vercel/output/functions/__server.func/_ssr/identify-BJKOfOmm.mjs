@@ -1,12 +1,12 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { g as require_jsx_runtime, m as useNavigate, p as Link, v as require_react } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-DfAvtWOL.mjs";
-import { c as matchFieldKey, l as mineralToResult, s as identifySpecimen } from "./router-CRN5OVWq.mjs";
+import { c as matchFieldKey, l as mineralToResult, s as identifySpecimen } from "./router-DhVK4TbJ.mjs";
 import { S as FlipHorizontal, T as Camera, _ as Landmark, g as LoaderCircle, s as Sparkles, t as X, u as ShieldAlert, v as ImagePlus, x as Gem } from "../_libs/lucide-react.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
-import { _ as cn, c as useField, d as Button, f as Panel, g as CrystalGem, m as SectionLabel, o as XP_REWARDS, p as RarityChip, y as formatUsd } from "./router-CRN5OVWq2.mjs";
+import { _ as cn, c as useField, d as Button, f as Panel, g as CrystalGem, m as SectionLabel, o as XP_REWARDS, p as RarityChip, y as formatUsd } from "./router-DhVK4TbJ2.mjs";
 import { t as nextInChain } from "./chains-BYKGPKKQ.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/identify-CoA31hF2.js
+//#region node_modules/.nitro/vite/services/ssr/assets/identify-BJKOfOmm.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var OPTIONS = [

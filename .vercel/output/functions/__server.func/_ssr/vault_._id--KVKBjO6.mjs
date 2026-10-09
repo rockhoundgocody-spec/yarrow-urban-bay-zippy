@@ -1,10 +1,10 @@
 import { g as require_jsx_runtime, m as useNavigate, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-DfAvtWOL.mjs";
-import { n as Route } from "./router-CRN5OVWq.mjs";
+import { n as Route } from "./router-DhVK4TbJ.mjs";
 import { a as Trash2 } from "../_libs/lucide-react.mjs";
-import { c as useField, d as Button, f as Panel, g as CrystalGem, p as RarityChip, y as formatUsd } from "./router-CRN5OVWq2.mjs";
+import { c as useField, d as Button, f as Panel, g as CrystalGem, p as RarityChip, y as formatUsd } from "./router-DhVK4TbJ2.mjs";
 import { t as nextInChain } from "./chains-BYKGPKKQ.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/vault_._id-BwckT1Xo.js
+//#region node_modules/.nitro/vite/services/ssr/assets/vault_._id--KVKBjO6.js
 var import_jsx_runtime = require_jsx_runtime();
 var DISPO_LABEL = {
 	chattel_collected: "Collected · GeoDex",

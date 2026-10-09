@@ -1,11 +1,11 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { g as require_jsx_runtime, p as Link, v as require_react } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as MINERAL_BY_ID, r as findMineralByName } from "./minerals-DfAvtWOL.mjs";
-import { l as mineralToResult, r as Route$1 } from "./router-CRN5OVWq.mjs";
+import { l as mineralToResult, r as Route$1 } from "./router-DhVK4TbJ.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
-import { c as useField, d as Button, f as Panel, g as CrystalGem, n as SITES, o as XP_REWARDS, p as RarityChip } from "./router-CRN5OVWq2.mjs";
+import { c as useField, d as Button, f as Panel, g as CrystalGem, n as SITES, o as XP_REWARDS, p as RarityChip } from "./router-DhVK4TbJ2.mjs";
 import { t as nextInChain } from "./chains-BYKGPKKQ.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/pedia_._id-B2Un94Id.js
+//#region node_modules/.nitro/vite/services/ssr/assets/pedia_._id-DxM9Yt8n.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var READ = /* @__PURE__ */ new Set();

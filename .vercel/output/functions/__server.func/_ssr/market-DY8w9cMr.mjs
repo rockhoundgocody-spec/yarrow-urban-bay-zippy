@@ -1,6 +1,6 @@
 import { g as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-DfAvtWOL.mjs";
-import { g as CrystalGem, p as RarityChip, u as MARKET_SEED, y as formatUsd } from "./router-CRN5OVWq2.mjs";
+import { g as CrystalGem, p as RarityChip, u as MARKET_SEED, y as formatUsd } from "./router-DhVK4TbJ2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/market-DY8w9cMr.js
 var import_jsx_runtime = require_jsx_runtime();
 function MarketPage() {

@@ -1,10 +1,10 @@
 import { g as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-DfAvtWOL.mjs";
-import { a as XpRibbon } from "./router-CRN5OVWq.mjs";
+import { a as XpRibbon } from "./router-DhVK4TbJ.mjs";
 import { C as Compass, T as Camera, f as Navigation, h as Map, i as TriangleAlert, l as Shield, n as WifiOff, o as Target, s as Sparkles, x as Gem } from "../_libs/lucide-react.mjs";
-import { c as useField, f as Panel, g as CrystalGem, l as xpToNext, m as SectionLabel, n as SITES, s as rankFromLevel, v as formatRelative } from "./router-CRN5OVWq2.mjs";
-import { t as HeroCloverOrb } from "./hero-orb-CwQChG9e.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-CFKMl4lR.js
+import { c as useField, f as Panel, g as CrystalGem, l as xpToNext, m as SectionLabel, n as SITES, s as rankFromLevel, v as formatRelative } from "./router-DhVK4TbJ2.mjs";
+import { t as HeroCloverOrb } from "./hero-orb-DoIBQTiL.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-BYBlXaRB.js
 var import_jsx_runtime = require_jsx_runtime();
 function SyncStatusBar() {
 	const count = useField((s) => s.specimens.length);

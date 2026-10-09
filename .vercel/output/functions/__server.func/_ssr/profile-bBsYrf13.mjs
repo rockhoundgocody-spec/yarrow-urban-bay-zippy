@@ -1,5 +1,5 @@
 import { g as require_jsx_runtime } from "../_libs/@tanstack/react-router+[...].mjs";
-import { _ as cn, c as useField, d as Button, f as Panel, h as Stat, l as xpToNext, s as rankFromLevel, y as formatUsd } from "./router-CRN5OVWq2.mjs";
+import { _ as cn, c as useField, d as Button, f as Panel, h as Stat, l as xpToNext, s as rankFromLevel, y as formatUsd } from "./router-DhVK4TbJ2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/profile-bBsYrf13.js
 var import_jsx_runtime = require_jsx_runtime();
 var BADGE_CATALOG = [

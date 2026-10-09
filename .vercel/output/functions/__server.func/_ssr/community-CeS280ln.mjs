@@ -1,8 +1,8 @@
 import { g as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-DfAvtWOL.mjs";
 import { b as Heart } from "../_libs/lucide-react.mjs";
-import { _ as cn, c as useField, g as CrystalGem, v as formatRelative } from "./router-CRN5OVWq2.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/community-BRs9fVks.js
+import { _ as cn, c as useField, g as CrystalGem, v as formatRelative } from "./router-DhVK4TbJ2.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/community-CeS280ln.js
 var import_jsx_runtime = require_jsx_runtime();
 function CommunityPage() {
 	const posts = useField((s) => s.posts);
@@ -36,6 +36,7 @@ function CommunityPage() {
 								children: p.author
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 								className: "text-[11px] text-faint",
+								suppressHydrationWarning: true,
 								children: formatRelative(p.at)
 							})]
 						}),
