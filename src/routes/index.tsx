@@ -20,8 +20,28 @@ import { MINERALS } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
 import { formatRelative } from "@/lib/utils";
+import { pageHead, SITE_NAME, SITE_URL } from "@/lib/seo";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  head: () =>
+    pageHead({
+      path: "/",
+      description:
+        "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding.",
+      jsonLd: [
+        { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+        {
+          "@type": "WebApplication",
+          name: SITE_NAME,
+          url: SITE_URL,
+          applicationCategory: "ReferenceApplication",
+          operatingSystem: "Web",
+          description: "AI mineral identification, rockhounding map, specimen vault, and field tools.",
+        },
+      ],
+    }),
+  component: Home,
+});
 
 const FIELD_MISSIONS = [
   { to: "/identify", icon: Camera, title: "Scan", sub: "Identify specimen", priority: true },

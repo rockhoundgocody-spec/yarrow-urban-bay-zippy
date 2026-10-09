@@ -4,8 +4,12 @@ import { CrystalGem } from "@/components/crystal-gem";
 import { MINERALS } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { cn, formatRelative } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/community")({ component: CommunityPage });
+export const Route = createFileRoute("/community")({
+  head: () => privateHead("Field feed", "/community"),
+  component: CommunityPage,
+});
 
 function CommunityPage() {
   const posts = useField((s) => s.posts);

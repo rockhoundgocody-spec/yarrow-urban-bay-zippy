@@ -4,8 +4,12 @@ import { Button, Panel, SectionLabel } from "@/components/ui";
 import { SITE_BY_ID, SITES } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { uid } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/trips")({ component: TripsPage });
+export const Route = createFileRoute("/trips")({
+  head: () => privateHead("Trip planner", "/trips"),
+  component: TripsPage,
+});
 
 function TripsPage() {
   const trips = useField((s) => s.trips);

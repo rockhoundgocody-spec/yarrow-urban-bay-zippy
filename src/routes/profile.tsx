@@ -5,8 +5,12 @@ import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
 import { formatUsd } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/profile")({ component: ProfilePage });
+export const Route = createFileRoute("/profile")({
+  head: () => privateHead("Progress", "/profile"),
+  component: ProfilePage,
+});
 
 function ProfilePage() {
   const name = useField((s) => s.displayName);

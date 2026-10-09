@@ -4,8 +4,12 @@ import { RarityChip } from "@/components/ui";
 import { MARKET_SEED } from "@/data/feed";
 import { MINERALS } from "@/data/minerals";
 import { formatUsd } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/market")({ component: MarketPage });
+export const Route = createFileRoute("/market")({
+  head: () => privateHead("Specimen market", "/market"),
+  component: MarketPage,
+});
 
 function MarketPage() {
   return (

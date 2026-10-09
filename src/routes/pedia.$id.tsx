@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
 import { Button, Panel, RarityChip } from "@/components/ui";
@@ -9,8 +9,32 @@ import { mineralToResult } from "@/lib/identify";
 import { useField } from "@/lib/store";
 import { XP_REWARDS } from "@/lib/xp";
 import { toast } from "sonner";
+import { pageHead, canonicalUrl, clamp } from "@/lib/seo";
 
-export const Route = createFileRoute("/pedia/$id")({ component: MineralPage });
+export const Route = createFileRoute("/pedia/$id")({
+  loader: ({ params }) => {
+    const mineral = MINERAL_BY_ID[params.id];
+    if (!mineral) throw notFound();
+    return { mineral };
+  },
+  head: ({ loaderData }) => {
+    const m = loaderData?.mineral;
+    if (!m) return {};
+    return pageHead({
+      title: `${m.name} — identification & field tests`,
+      path: `/pedia/${m.id}`,
+      description: clamp(m.blurb),
+      jsonLd: {
+        "@type": "DefinedTerm",
+        name: m.name,
+        description: m.blurb,
+        url: canonicalUrl(`/pedia/${m.id}`),
+        inDefinedTermSet: { "@type": "DefinedTermSet", name: "Mineralpedia", url: canonicalUrl("/pedia") },
+      },
+    });
+  },
+  component: MineralPage,
+});
 
 const READ = new Set<string>();
 

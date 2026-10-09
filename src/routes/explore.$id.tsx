@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { Bookmark, BookmarkCheck, Compass } from "lucide-react";
 import { useEffect } from "react";
 import { Button, Panel } from "@/components/ui";
@@ -6,8 +6,32 @@ import { SITE_BY_ID, siteHazards } from "@/data/locations";
 import { MINERALS } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { toast } from "sonner";
+import { pageHead, canonicalUrl, clamp } from "@/lib/seo";
 
-export const Route = createFileRoute("/explore/$id")({ component: SitePage });
+export const Route = createFileRoute("/explore/$id")({
+  loader: ({ params }) => {
+    const site = SITE_BY_ID[params.id];
+    if (!site) throw notFound();
+    return { site };
+  },
+  head: ({ loaderData }) => {
+    const site = loaderData?.site;
+    if (!site) return {};
+    return pageHead({
+      title: `${site.name}, ${site.state}`,
+      path: `/explore/${site.id}`,
+      description: clamp(`Rockhounding at ${site.name}, ${site.state}. Likely finds: ${site.finds.slice(0, 4).join(", ")}. Season: ${site.season}.`),
+      jsonLd: {
+        "@type": "Place",
+        name: site.name,
+        url: canonicalUrl(`/explore/${site.id}`),
+        address: { "@type": "PostalAddress", addressRegion: site.state },
+        geo: { "@type": "GeoCoordinates", latitude: site.lat, longitude: site.lng },
+      },
+    });
+  },
+  component: SitePage,
+});
 
 function SitePage() {
   const { id } = Route.useParams();

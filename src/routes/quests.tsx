@@ -4,8 +4,12 @@ import { Panel } from "@/components/ui";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import type { QuestId } from "@/lib/types";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/quests")({ component: QuestsPage });
+export const Route = createFileRoute("/quests")({
+  head: () => privateHead("Daily quests", "/quests"),
+  component: QuestsPage,
+});
 
 const ICONS: Record<QuestId, typeof Camera> = {
   scan: Camera,

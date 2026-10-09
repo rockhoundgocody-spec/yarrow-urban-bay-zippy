@@ -6,8 +6,17 @@ import { RarityChip, SectionLabel } from "@/components/ui";
 import { MINERALS, type MineralCategory } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/pedia")({ component: PediaPage });
+export const Route = createFileRoute("/pedia")({
+  head: () =>
+    pageHead({
+      title: "Mineralpedia",
+      path: "/pedia",
+      description: `Mineralpedia: ${MINERALS.length} field species with tests, lookalikes, and hardness.`,
+    }),
+  component: PediaPage,
+});
 
 const CATS: { k: MineralCategory | "all"; l: string }[] = [
   { k: "all", l: "All" },

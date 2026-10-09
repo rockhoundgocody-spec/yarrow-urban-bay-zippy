@@ -4,8 +4,18 @@ import { Panel, SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
+import { SITES } from "@/data/locations";
 
-export const Route = createFileRoute("/explore")({ component: ExplorePage });
+export const Route = createFileRoute("/explore")({
+  head: () =>
+    pageHead({
+      title: "Field map",
+      path: "/explore",
+      description: `${SITES.length} rockhounding localities with access type, difficulty, likely finds, and land-status notes. Always confirm land status before you go.`,
+    }),
+  component: ExplorePage,
+});
 
 const ACCESS: { k: AccessType | "all"; l: string }[] = [
   { k: "all", l: "Any access" },

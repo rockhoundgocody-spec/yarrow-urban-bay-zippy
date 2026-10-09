@@ -13,8 +13,18 @@ import { useField } from "@/lib/store";
 import type { IdentifyResult } from "@/lib/types";
 import { XP_REWARDS } from "@/lib/xp";
 import { cn, formatUsd } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/identify")({ component: IdentifyPage });
+export const Route = createFileRoute("/identify")({
+  head: () =>
+    pageHead({
+      title: "Identify a mineral",
+      path: "/identify",
+      description:
+        "Identify a mineral from one photo, or score the Mineralpedia catalog with field tests — no photo needed.",
+    }),
+  component: IdentifyPage,
+});
 
 const COLORS = ["clear", "white", "purple", "green", "blue", "yellow", "red", "black", "pink", "gold", "brown"];
 const LUSTERS = ["vitreous", "metallic", "pearly", "earthy", "silky", "waxy"];

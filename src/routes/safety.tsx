@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shield } from "lucide-react";
 import { Panel, SectionLabel } from "@/components/ui";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/safety")({ component: SafetyPage });
+export const Route = createFileRoute("/safety")({
+  head: () =>
+    pageHead({
+      title: "Safety & land status",
+      path: "/safety",
+      description:
+        "Land before the hammer: confirm posted signs, claim markers, and seasonal closures, and follow the stewardship doctrine before you collect.",
+    }),
+  component: SafetyPage,
+});
 
 const RULES = [
   {

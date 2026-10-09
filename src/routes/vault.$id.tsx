@@ -6,8 +6,12 @@ import { MINERALS } from "@/data/minerals";
 import { nextInChain } from "@/data/chains";
 import { useField } from "@/lib/store";
 import { formatUsd } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/vault/$id")({ component: SpecimenPage });
+export const Route = createFileRoute("/vault/$id")({
+  head: () => privateHead("Specimen", "/vault/$id"),
+  component: SpecimenPage,
+});
 
 const DISPO_LABEL: Record<string, string> = {
   chattel_collected: "Collected · GeoDex",

@@ -7,8 +7,12 @@ import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { formatUsd } from "@/lib/utils";
 import type { DiscoveryDisposition } from "@/lib/types";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/vault")({ component: VaultPage });
+export const Route = createFileRoute("/vault")({
+  head: () => privateHead("GeoDex", "/vault"),
+  component: VaultPage,
+});
 
 const FILTERS: { k: Rarity | "all"; l: string }[] = [
   { k: "all", l: "All" },
