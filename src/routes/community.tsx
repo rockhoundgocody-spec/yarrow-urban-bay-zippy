@@ -29,7 +29,10 @@ function CommunityPage() {
             <li key={p.id} className="rh-panel rounded-xl p-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-fg">{p.author}</p>
-                <p className="text-[11px] text-faint">{formatRelative(p.at)}</p>
+                {/* Relative time depends on the clock, so server and client can differ by a tick. */}
+                <p className="text-[11px] text-faint" suppressHydrationWarning>
+                  {formatRelative(p.at)}
+                </p>
               </div>
               <div className="mt-3 flex items-start gap-3">
                 <CrystalGem hue={p.hue} system={m?.crystalSystem} size={52} />
