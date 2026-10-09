@@ -28,8 +28,10 @@ await ctx.addInitScript(() => {
   try {
     const key = "rhgo-field-v2";
     const cur = JSON.parse(localStorage.getItem(key) || "null");
-    if (!cur) localStorage.setItem(key, JSON.stringify({ state: { onboarded: true, openerSeen: true }, version: 0 }));
-  } catch {}
+    if (!cur) localStorage.setItem(key, JSON.stringify({ state: { onboarded: true, openerSeen: true }, version: 3 }));
+  } catch {
+    /* storage blocked: tests run without seeded state */
+  }
 });
 
 let failed = false;

@@ -3,7 +3,7 @@ import { chromium } from "playwright";
 const base = (process.argv[2] || "http://127.0.0.1:8081").replace(/\/$/, "");
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-await ctx.addInitScript(() => { try { if (!localStorage.getItem("rhgo-field-v2")) localStorage.setItem("rhgo-field-v2", JSON.stringify({ state: { onboarded: true, openerSeen: true }, version: 0 })); } catch {} });
+await ctx.addInitScript(() => { try { if (!localStorage.getItem("rhgo-field-v2")) localStorage.setItem("rhgo-field-v2", JSON.stringify({ state: { onboarded: true, openerSeen: true }, version: 3 })); } catch { /* storage blocked: tests run without seeded state */ } });
 const page = await ctx.newPage();
 await page.goto(base + "/", { waitUntil: "networkidle" });
 await page.evaluate(async () => { await navigator.serviceWorker.ready; });
