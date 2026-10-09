@@ -1,6 +1,6 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { _ as require_react } from "../_libs/@tanstack/react-router+[...].mjs";
-import { l as getPhoto } from "./router-y7NTENN72.mjs";
+import { l as getPhoto } from "./router-Ffn1aSfQ2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/use-photo-CnqYJ6YN.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 /** Loads a specimen photo from IndexedDB (client only). */

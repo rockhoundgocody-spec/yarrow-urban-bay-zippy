@@ -2,11 +2,11 @@ import { i as __toESM } from "../_runtime.mjs";
 import { _ as require_react, h as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as MINERAL_BY_ID, r as findMineralByName } from "./minerals-BzbnUKRY.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
-import { r as Route$1 } from "./router-y7NTENN7.mjs";
-import { _ as Panel, g as Button, m as useField, n as SITES, o as XP_REWARDS, v as RarityChip, x as CrystalGem } from "./router-y7NTENN72.mjs";
+import { r as Route$1 } from "./router-Ffn1aSfQ.mjs";
+import { _ as Panel, g as Button, m as useField, n as SITES, o as XP_REWARDS, v as RarityChip, x as CrystalGem } from "./router-Ffn1aSfQ2.mjs";
 import { i as mineralToResult } from "./field-key-2lmsCSrG.mjs";
 import { t as nextInChain } from "./chains-BYKGPKKQ.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/pedia_._id-0KookL9V.js
+//#region node_modules/.nitro/vite/services/ssr/assets/pedia_._id-C5G66hNA.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function MineralPage() {
@@ -135,7 +135,7 @@ function MineralPage() {
 						children: [alt ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
 							to: "/pedia/$id",
 							params: { id: alt.id },
-							className: "inline-flex min-h-12 items-center text-fg",
+							className: "inline-flex min-h-12 min-w-12 items-center text-fg",
 							children: s.name
 						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-fg",

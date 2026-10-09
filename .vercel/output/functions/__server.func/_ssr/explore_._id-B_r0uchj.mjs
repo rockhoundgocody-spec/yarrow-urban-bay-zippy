@@ -2,10 +2,10 @@ import { i as __toESM } from "../_runtime.mjs";
 import { _ as require_react, h as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-BzbnUKRY.mjs";
 import { n as toast } from "../_libs/sonner.mjs";
-import { i as Route$2 } from "./router-y7NTENN7.mjs";
+import { i as Route$2 } from "./router-Ffn1aSfQ.mjs";
 import { A as BookmarkCheck, E as Compass, k as Bookmark } from "../_libs/lucide-react.mjs";
-import { _ as Panel, a as siteHazards, g as Button, m as useField, r as SITE_BY_ID } from "./router-y7NTENN72.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/explore_._id-Bc4biugd.js
+import { _ as Panel, a as siteHazards, g as Button, m as useField, r as SITE_BY_ID } from "./router-Ffn1aSfQ2.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/explore_._id-B_r0uchj.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function SitePage() {
@@ -88,7 +88,7 @@ function SitePage() {
 								href: site.legalitySource,
 								target: "_blank",
 								rel: "noopener noreferrer",
-								className: "inline-flex min-h-12 items-center text-cyan underline",
+								className: "inline-flex min-h-12 min-w-12 items-center justify-center px-1 text-cyan underline",
 								children: "source"
 							})
 						]

@@ -2,7 +2,7 @@ import { i as __toESM } from "../_runtime.mjs";
 import { _ as require_react, h as require_jsx_runtime, p as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as MINERALS } from "./minerals-BzbnUKRY.mjs";
 import { O as Camera, f as Search } from "../_libs/lucide-react.mjs";
-import { _ as Panel, b as Stat, m as useField, v as RarityChip, x as CrystalGem, y as SectionLabel } from "./router-y7NTENN72.mjs";
+import { _ as Panel, b as Stat, m as useField, v as RarityChip, x as CrystalGem, y as SectionLabel } from "./router-Ffn1aSfQ2.mjs";
 import { t as usePhoto } from "./use-photo-CnqYJ6YN.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/vault-6zseEz8u.js
 var import_react = /* @__PURE__ */ __toESM(require_react());

@@ -6,7 +6,7 @@ import { n as MINERAL_BY_ID, r as findMineralByName, t as MINERALS } from "./min
 import { t as Toaster } from "../_libs/sonner.mjs";
 import { a as object, i as number, n as array, s as string, t as _enum } from "../_libs/zod.mjs";
 import { C as Gem, E as Compass, O as Camera, S as House, _ as Map, a as TriangleAlert, c as Sparkles, g as Menu, h as MessageSquare, j as BookOpen, l as ShoppingBag, n as WifiOff, r as User, s as Target, t as X, u as Shield, v as Lock } from "../_libs/lucide-react.mjs";
-import { S as cn, d as migrateLegacyPhotos, g as Button, h as xpToNext, m as useField, n as SITES, r as SITE_BY_ID, w as todayKey, x as CrystalGem } from "./router-y7NTENN72.mjs";
+import { S as cn, d as migrateLegacyPhotos, g as Button, h as xpToNext, m as useField, n as SITES, r as SITE_BY_ID, w as todayKey, x as CrystalGem } from "./router-Ffn1aSfQ2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/seo-BCed6diZ.js
 /**
 * Per-route <head> builder. Canonical origin is rhgo.me.
@@ -107,7 +107,7 @@ function privateHead(title, path) {
 	});
 }
 //#endregion
-//#region node_modules/.nitro/vite/services/ssr/assets/router-y7NTENN7.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-Ffn1aSfQ.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var __defProp = Object.defineProperty;
@@ -2038,7 +2038,7 @@ function Root() {
 		})]
 	});
 }
-var $$splitComponentImporter$15 = () => import("./routes-DASI5QhV.mjs");
+var $$splitComponentImporter$15 = () => import("./routes-j43ffu2f.mjs");
 var Route$16 = createFileRoute("/")({
 	head: () => pageHead({
 		title: "Rock & mineral ID, field map and GeoDex",
@@ -2059,7 +2059,7 @@ var Route$16 = createFileRoute("/")({
 	}),
 	component: lazyRouteComponent($$splitComponentImporter$15, "component")
 });
-var $$splitComponentImporter$14 = () => import("./clover-Dh4wYZ6U.mjs");
+var $$splitComponentImporter$14 = () => import("./clover-yPt1Qp2V.mjs");
 var Route$15 = createFileRoute("/clover")({
 	head: () => privateHead("Clover", "/clover"),
 	component: lazyRouteComponent($$splitComponentImporter$14, "component")
@@ -2087,7 +2087,7 @@ var Route$12 = createFileRoute("/explore")({
 	}),
 	component: lazyRouteComponent($$splitComponentImporter$11, "component")
 });
-var $$splitComponentImporter$10 = () => import("./identify-B0Rw5mLc.mjs");
+var $$splitComponentImporter$10 = () => import("./identify-CzMFbpIU.mjs");
 var Route$11 = createFileRoute("/identify")({
 	head: () => pageHead({
 		title: "Identify a mineral",
@@ -2159,7 +2159,7 @@ var Route$3 = createFileRoute("/vault")({
 	head: () => privateHead("GeoDex", "/vault"),
 	component: lazyRouteComponent($$splitComponentImporter$3, "component")
 });
-var $$splitComponentImporter$2 = () => import("./explore_._id-Bc4biugd.mjs");
+var $$splitComponentImporter$2 = () => import("./explore_._id-B_r0uchj.mjs");
 var Route$2 = createFileRoute("/explore_/$id")({
 	loader: ({ params }) => {
 		const site = SITE_BY_ID[params.id];
@@ -2191,7 +2191,7 @@ var Route$2 = createFileRoute("/explore_/$id")({
 	},
 	component: lazyRouteComponent($$splitComponentImporter$2, "component")
 });
-var $$splitComponentImporter$1 = () => import("./pedia_._id-0KookL9V.mjs");
+var $$splitComponentImporter$1 = () => import("./pedia_._id-C5G66hNA.mjs");
 var Route$1 = createFileRoute("/pedia_/$id")({
 	loader: ({ params }) => {
 		const mineral = MINERAL_BY_ID[params.id];
@@ -2220,7 +2220,7 @@ var Route$1 = createFileRoute("/pedia_/$id")({
 	},
 	component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-var $$splitComponentImporter = () => import("./vault_._id-oY1MsE8n.mjs");
+var $$splitComponentImporter = () => import("./vault_._id-Zg8QZRLa.mjs");
 var Route = createFileRoute("/vault_/$id")({
 	head: () => privateHead("Specimen", "/vault/$id"),
 	component: lazyRouteComponent($$splitComponentImporter, "component")

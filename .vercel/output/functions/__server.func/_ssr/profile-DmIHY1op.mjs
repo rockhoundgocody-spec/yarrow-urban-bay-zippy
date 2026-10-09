@@ -3,7 +3,7 @@ import { _ as require_react, h as require_jsx_runtime } from "../_libs/@tanstack
 import { n as toast } from "../_libs/sonner.mjs";
 import { a as object, i as number, n as array, o as record, r as literal, s as string } from "../_libs/zod.mjs";
 import { T as Download, i as Upload, p as RotateCcw } from "../_libs/lucide-react.mjs";
-import { S as cn, _ as Panel, b as Stat, f as putPhoto, g as Button, h as xpToNext, m as useField, p as rankFromLevel, s as clearPhotos, u as getPhotos } from "./router-y7NTENN72.mjs";
+import { S as cn, _ as Panel, b as Stat, f as putPhoto, g as Button, h as xpToNext, m as useField, p as rankFromLevel, s as clearPhotos, u as getPhotos } from "./router-Ffn1aSfQ2.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/profile-DmIHY1op.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
