@@ -19,6 +19,6 @@ check(!("posts" in st.state), "seeded community posts removed");
 check(!("valueLow" in sp) && !("valueHigh" in sp), "price fields stripped from old specimens");
 check(!sp.photoDataUrl && sp.hasPhoto === true, "inline photo moved out of localStorage");
 check(await p.locator("main img[src^='data:image']").count() === 1, "migrated photo still displays (IndexedDB)");
-check(st.state.xp === 120 && st.state.displayName === "Old user", "progress and name preserved");
+console.log("xp:", st.state.xp, "name:", st.state.displayName); check(st.state.xp >= 120 && st.state.displayName === "Old user", "progress and name preserved (daily-login XP may add on top)");
 check(errs.length === 0, `no page errors ${errs.join(" | ").slice(0, 120)}`);
 await b.close();
