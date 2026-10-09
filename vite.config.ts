@@ -11,6 +11,8 @@ import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
 // @ts-expect-error JS plugin alongside the TS vite config
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
+// @ts-expect-error JS module alongside the TS vite config
+import { securityHeaders, securityHeadersPlugin } from "./scripts/security-headers.mjs";
 
 /** The files `src/lib/db.ts` globs — same directory, same non-recursive scope. */
 function hasGlobbedMigrations(root: string): boolean {
@@ -150,9 +152,6 @@ export default defineConfig(({ command, isPreview }) => ({
     host: "0.0.0.0",
     port: 8080,
     strictPort: true,
-    headers: {
-      "Permissions-Policy": "microphone=(self), camera=(self)",
-    },
   },
   preview: {
     host: "127.0.0.1",
@@ -166,6 +165,8 @@ export default defineConfig(({ command, isPreview }) => ({
     authPopupPlugin(),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.
     appEnvPlugin(),
+    // CSP, clickjacking, nosniff, permissions — dev server half.
+    securityHeadersPlugin(),
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
@@ -178,6 +179,16 @@ export default defineConfig(({ command, isPreview }) => ({
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
+            // Production security headers (static assets + SSR pages).
+            routeRules: {
+              "/**": { headers: securityHeaders({ dev: false }) },
+              "/assets/**": {
+                headers: { "cache-control": "public, max-age=31536000, immutable" },
+              },
+              "/sw.js": {
+                headers: { "cache-control": "no-cache", "service-worker-allowed": "/" },
+              },
+            },
           }),
         ]
       : []),
