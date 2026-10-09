@@ -5,6 +5,7 @@ import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
 import { cn } from "@/lib/utils";
 import { privateHead } from "@/lib/seo";
+import { DataControls } from "@/components/data-controls";
 
 export const Route = createFileRoute("/profile")({
   head: () => privateHead("Progress", "/profile"),

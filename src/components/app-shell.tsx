@@ -20,7 +20,7 @@ import { CinematicOpener } from "@/components/cinematic-opener";
 import { Onboarding } from "@/components/onboarding";
 import { FloatingCloverOrb } from "@/components/orb/floating-orb";
 import { cn } from "@/lib/utils";
-import { useField } from "@/lib/store";
+import { migrateLegacyPhotos, useField } from "@/lib/store";
 import { xpToNext } from "@/lib/xp";
 
 const TABS = [
@@ -57,6 +57,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMounted(true);
     useField.getState().hydrateDay();
+    void migrateLegacyPhotos();
   }, []);
 
   useEffect(() => {
