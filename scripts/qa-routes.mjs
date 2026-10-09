@@ -39,7 +39,17 @@ if (shots) mkdirSync("screenshots", { recursive: true });
 for (const [path, expect] of ROUTES) {
   const page = await ctx.newPage();
   const problems = [];
-  page.on("console", (m) => { if (m.type() === "error") problems.push(`console: ${m.text().slice(0, 200)}`); });
+  page.on("console", (m) => {
+    if (m.type() !== "error") return;
+    // Chrome logs the document's own intentional 404 as a resource error;
+    // real subresource 4xx/5xx are caught by the response listener below.
+    if (expect === 404 && /status of 404/.test(m.text()) && m.location().url.replace(base, "") === path) return;
+    problems.push(`console: ${m.text().slice(0, 200)} @ ${m.location().url}`);
+  });
+  page.on("response", (r) => {
+    if (r.request().resourceType() === "document") return;
+    if (r.url().startsWith(base) && r.status() >= 400) problems.push(`subresource ${r.status()}: ${r.url()}`);
+  });
   page.on("pageerror", (e) => problems.push(`pageerror: ${String(e.message).slice(0, 200)}`));
   page.on("requestfailed", (r) => {
     const u = r.url();
