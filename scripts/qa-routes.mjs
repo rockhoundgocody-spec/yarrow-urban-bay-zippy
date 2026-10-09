@@ -17,7 +17,7 @@ const ROUTES = [
   ["/", 200], ["/explore", 200], ["/explore/crater-diamonds", 200], ["/identify", 200],
   ["/pedia", 200], ["/pedia/quartz", 200], ["/pedia/amethyst", 200], ["/safety", 200],
   ["/trips", 200], ["/quests", 200], ["/profile", 200], ["/vault", 200], ["/clover", 200],
-  ["/community", 200], ["/market", 200], ["/pedia/not-a-mineral", 404],
+  ["/community", 200], ["/market", 200], ["/data", 200], ["/explore/salt-creek", 404], ["/pedia/not-a-mineral", 404],
   ["/explore/not-a-site", 404], ["/no-such-page", 404],
 ];
 
