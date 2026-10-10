@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CloverRouteImport } from './routes/clover'
 import { Route as CommunityRouteImport } from './routes/community'
+import { Route as DataRouteImport } from './routes/data'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as IdentifyRouteImport } from './routes/identify'
 import { Route as MarketRouteImport } from './routes/market'
@@ -19,11 +20,12 @@ import { Route as PediaRouteImport } from './routes/pedia'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as QuestsRouteImport } from './routes/quests'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as VaultRouteImport } from './routes/vault'
-import { Route as ExploreIdRouteImport } from './routes/explore.$id'
-import { Route as PediaIdRouteImport } from './routes/pedia.$id'
-import { Route as VaultIdRouteImport } from './routes/vault.$id'
+import { Route as ExploreIdRouteImport } from './routes/explore_.$id'
+import { Route as PediaIdRouteImport } from './routes/pedia_.$id'
+import { Route as VaultIdRouteImport } from './routes/vault_.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -38,6 +40,11 @@ const CloverRoute = CloverRouteImport.update({
 const CommunityRoute = CommunityRouteImport.update({
   id: '/community',
   path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataRoute = DataRouteImport.update({
+  id: '/data',
+  path: '/data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -75,6 +82,11 @@ const SafetyRoute = SafetyRouteImport.update({
   path: '/safety',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TripsRoute = TripsRouteImport.update({
   id: '/trips',
   path: '/trips',
@@ -86,34 +98,36 @@ const VaultRoute = VaultRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreIdRoute = ExploreIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ExploreRoute,
+  id: '/explore_/$id',
+  path: '/explore/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PediaIdRoute = PediaIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => PediaRoute,
+  id: '/pedia_/$id',
+  path: '/pedia/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const VaultIdRoute = VaultIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => VaultRoute,
+  id: '/vault_/$id',
+  path: '/vault/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clover': typeof CloverRoute
   '/community': typeof CommunityRoute
-  '/explore': typeof ExploreRouteWithChildren
+  '/data': typeof DataRoute
+  '/explore': typeof ExploreRoute
   '/identify': typeof IdentifyRoute
   '/market': typeof MarketRoute
-  '/pedia': typeof PediaRouteWithChildren
+  '/pedia': typeof PediaRoute
   '/profile': typeof ProfileRoute
   '/quests': typeof QuestsRoute
   '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trips': typeof TripsRoute
-  '/vault': typeof VaultRouteWithChildren
+  '/vault': typeof VaultRoute
   '/explore/$id': typeof ExploreIdRoute
   '/pedia/$id': typeof PediaIdRoute
   '/vault/$id': typeof VaultIdRoute
@@ -122,15 +136,17 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clover': typeof CloverRoute
   '/community': typeof CommunityRoute
-  '/explore': typeof ExploreRouteWithChildren
+  '/data': typeof DataRoute
+  '/explore': typeof ExploreRoute
   '/identify': typeof IdentifyRoute
   '/market': typeof MarketRoute
-  '/pedia': typeof PediaRouteWithChildren
+  '/pedia': typeof PediaRoute
   '/profile': typeof ProfileRoute
   '/quests': typeof QuestsRoute
   '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trips': typeof TripsRoute
-  '/vault': typeof VaultRouteWithChildren
+  '/vault': typeof VaultRoute
   '/explore/$id': typeof ExploreIdRoute
   '/pedia/$id': typeof PediaIdRoute
   '/vault/$id': typeof VaultIdRoute
@@ -140,18 +156,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/clover': typeof CloverRoute
   '/community': typeof CommunityRoute
-  '/explore': typeof ExploreRouteWithChildren
+  '/data': typeof DataRoute
+  '/explore': typeof ExploreRoute
   '/identify': typeof IdentifyRoute
   '/market': typeof MarketRoute
-  '/pedia': typeof PediaRouteWithChildren
+  '/pedia': typeof PediaRoute
   '/profile': typeof ProfileRoute
   '/quests': typeof QuestsRoute
   '/safety': typeof SafetyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/trips': typeof TripsRoute
-  '/vault': typeof VaultRouteWithChildren
-  '/explore/$id': typeof ExploreIdRoute
-  '/pedia/$id': typeof PediaIdRoute
-  '/vault/$id': typeof VaultIdRoute
+  '/vault': typeof VaultRoute
+  '/explore_/$id': typeof ExploreIdRoute
+  '/pedia_/$id': typeof PediaIdRoute
+  '/vault_/$id': typeof VaultIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -159,6 +177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clover'
     | '/community'
+    | '/data'
     | '/explore'
     | '/identify'
     | '/market'
@@ -166,6 +185,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quests'
     | '/safety'
+    | '/sitemap.xml'
     | '/trips'
     | '/vault'
     | '/explore/$id'
@@ -176,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clover'
     | '/community'
+    | '/data'
     | '/explore'
     | '/identify'
     | '/market'
@@ -183,6 +204,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quests'
     | '/safety'
+    | '/sitemap.xml'
     | '/trips'
     | '/vault'
     | '/explore/$id'
@@ -193,6 +215,7 @@ export interface FileRouteTypes {
     | '/'
     | '/clover'
     | '/community'
+    | '/data'
     | '/explore'
     | '/identify'
     | '/market'
@@ -200,26 +223,32 @@ export interface FileRouteTypes {
     | '/profile'
     | '/quests'
     | '/safety'
+    | '/sitemap.xml'
     | '/trips'
     | '/vault'
-    | '/explore/$id'
-    | '/pedia/$id'
-    | '/vault/$id'
+    | '/explore_/$id'
+    | '/pedia_/$id'
+    | '/vault_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CloverRoute: typeof CloverRoute
   CommunityRoute: typeof CommunityRoute
-  ExploreRoute: typeof ExploreRouteWithChildren
+  DataRoute: typeof DataRoute
+  ExploreRoute: typeof ExploreRoute
   IdentifyRoute: typeof IdentifyRoute
   MarketRoute: typeof MarketRoute
-  PediaRoute: typeof PediaRouteWithChildren
+  PediaRoute: typeof PediaRoute
   ProfileRoute: typeof ProfileRoute
   QuestsRoute: typeof QuestsRoute
   SafetyRoute: typeof SafetyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TripsRoute: typeof TripsRoute
-  VaultRoute: typeof VaultRouteWithChildren
+  VaultRoute: typeof VaultRoute
+  ExploreIdRoute: typeof ExploreIdRoute
+  PediaIdRoute: typeof PediaIdRoute
+  VaultIdRoute: typeof VaultIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -243,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/community'
       fullPath: '/community'
       preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data': {
+      id: '/data'
+      path: '/data'
+      fullPath: '/data'
+      preLoaderRoute: typeof DataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -294,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SafetyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trips': {
       id: '/trips'
       path: '/trips'
@@ -308,74 +351,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VaultRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore/$id': {
-      id: '/explore/$id'
-      path: '/$id'
+    '/explore_/$id': {
+      id: '/explore_/$id'
+      path: '/explore/$id'
       fullPath: '/explore/$id'
       preLoaderRoute: typeof ExploreIdRouteImport
-      parentRoute: typeof ExploreRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/pedia/$id': {
-      id: '/pedia/$id'
-      path: '/$id'
+    '/pedia_/$id': {
+      id: '/pedia_/$id'
+      path: '/pedia/$id'
       fullPath: '/pedia/$id'
       preLoaderRoute: typeof PediaIdRouteImport
-      parentRoute: typeof PediaRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/vault/$id': {
-      id: '/vault/$id'
-      path: '/$id'
+    '/vault_/$id': {
+      id: '/vault_/$id'
+      path: '/vault/$id'
       fullPath: '/vault/$id'
       preLoaderRoute: typeof VaultIdRouteImport
-      parentRoute: typeof VaultRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface ExploreRouteChildren {
-  ExploreIdRoute: typeof ExploreIdRoute
-}
-
-const ExploreRouteChildren: ExploreRouteChildren = {
-  ExploreIdRoute: ExploreIdRoute,
-}
-
-const ExploreRouteWithChildren =
-  ExploreRoute._addFileChildren(ExploreRouteChildren)
-
-interface PediaRouteChildren {
-  PediaIdRoute: typeof PediaIdRoute
-}
-
-const PediaRouteChildren: PediaRouteChildren = {
-  PediaIdRoute: PediaIdRoute,
-}
-
-const PediaRouteWithChildren = PediaRoute._addFileChildren(PediaRouteChildren)
-
-interface VaultRouteChildren {
-  VaultIdRoute: typeof VaultIdRoute
-}
-
-const VaultRouteChildren: VaultRouteChildren = {
-  VaultIdRoute: VaultIdRoute,
-}
-
-const VaultRouteWithChildren = VaultRoute._addFileChildren(VaultRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CloverRoute: CloverRoute,
   CommunityRoute: CommunityRoute,
-  ExploreRoute: ExploreRouteWithChildren,
+  DataRoute: DataRoute,
+  ExploreRoute: ExploreRoute,
   IdentifyRoute: IdentifyRoute,
   MarketRoute: MarketRoute,
-  PediaRoute: PediaRouteWithChildren,
+  PediaRoute: PediaRoute,
   ProfileRoute: ProfileRoute,
   QuestsRoute: QuestsRoute,
   SafetyRoute: SafetyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TripsRoute: TripsRoute,
-  VaultRoute: VaultRouteWithChildren,
+  VaultRoute: VaultRoute,
+  ExploreIdRoute: ExploreIdRoute,
+  PediaIdRoute: PediaIdRoute,
+  VaultIdRoute: VaultIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

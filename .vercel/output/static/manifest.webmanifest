@@ -1,0 +1,24 @@
+{
+  "name": "RockHound GO",
+  "short_name": "RockHound GO",
+  "description": "AI mineral identification, rockhounding map, specimen GeoDex and field tools.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07090B",
+  "theme_color": "#07090B",
+  "categories": ["education", "reference", "utilities"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Scan a specimen", "short_name": "Scan", "url": "/identify", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "GeoDex", "short_name": "GeoDex", "url": "/vault", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Field map", "short_name": "Map", "url": "/explore", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

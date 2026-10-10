@@ -6,8 +6,17 @@ import { RarityChip, SectionLabel } from "@/components/ui";
 import { MINERALS, type MineralCategory } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/pedia")({ component: PediaPage });
+export const Route = createFileRoute("/pedia")({
+  head: () =>
+    pageHead({
+      title: "Mineralpedia",
+      path: "/pedia",
+      description: `Mineralpedia: ${MINERALS.length} field species with tests, lookalikes, and hardness.`,
+    }),
+  component: PediaPage,
+});
 
 const CATS: { k: MineralCategory | "all"; l: string }[] = [
   { k: "all", l: "All" },
@@ -37,7 +46,7 @@ function PediaPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-amethyst">Learn</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-frost">Learn</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Mineralpedia</h1>
         <p className="mt-1 text-sm text-muted">{MINERALS.length} field species with tests, lookalikes, and hardness.</p>
       </header>
@@ -48,7 +57,7 @@ function PediaPage() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
           aria-label="Search minerals"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-12 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
         />
       </label>
       <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -58,8 +67,8 @@ function PediaPage() {
             type="button"
             onClick={() => setCat(c.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
+              "shrink-0 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs",
+              cat === c.k ? "border-frost/40 bg-frost/10 text-fg" : "border-line text-muted",
             )}
           >
             {c.l}
@@ -79,7 +88,7 @@ function PediaPage() {
               <CrystalGem hue={m.hue} system={m.crystalSystem} size={44} />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-sm text-fg">{m.name}</p>
-                <p className="truncate text-[11px] text-faint">
+                <p className="truncate text-xs text-faint">
                   {m.formula} · Mohs {m.hardnessMin}
                   {m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}
                 </p>

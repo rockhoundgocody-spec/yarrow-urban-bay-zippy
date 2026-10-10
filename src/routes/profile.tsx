@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button, Panel, Stat } from "@/components/ui";
+import { Panel, Stat } from "@/components/ui";
 import { BADGE_CATALOG } from "@/data/badges";
 import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
-import { formatUsd } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
+import { DataControls } from "@/components/data-controls";
 
-export const Route = createFileRoute("/profile")({ component: ProfilePage });
+export const Route = createFileRoute("/profile")({
+  head: () => privateHead("Progress", "/profile"),
+  component: ProfilePage,
+});
 
 function ProfilePage() {
   const name = useField((s) => s.displayName);
@@ -20,17 +24,14 @@ function ProfilePage() {
   const scientist = useField((s) => s.scientistXp);
   const explorer = useField((s) => s.explorerXp);
   const completeOnboarding = useField((s) => s.completeOnboarding);
-  const reset = useField((s) => s.resetLocal);
   const { level } = xpToNext(xp);
-  const value = specimens
-    .filter((s) => s.collected)
-    .reduce((a, s) => a + ((s.valueLow ?? 0) + (s.valueHigh ?? 0)) / 2, 0);
+  const species = new Set(specimens.map((s) => s.mineralId || s.name.toLowerCase())).size;
   const earned = new Set(badges.map((b) => b.id));
 
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-amethyst">Progress</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-frost">Progress</p>
         <h1 className="mt-1 font-display text-2xl text-fg">{name}</h1>
         <p className="mt-1 text-sm text-muted">
           {rankFromLevel(level)} · Level {level}
@@ -40,7 +41,7 @@ function ProfilePage() {
         <Stat label="XP" value={xp} />
         <Stat label="Streak" value={`${streak}d`} />
         <Stat label="GeoDex" value={specimens.length} />
-        <Stat label="Collected value" value={formatUsd(value)} />
+        <Stat label="Species" value={species} />
         <Stat label="Saved sites" value={saved.length} />
         <Stat label="Badges" value={`${earned.size}/${BADGE_CATALOG.length}`} />
       </Panel>
@@ -53,7 +54,7 @@ function ProfilePage() {
       </Panel>
 
       <section>
-        <p className="mb-3 text-[10px] uppercase tracking-[0.16em] text-faint">Credentials</p>
+        <p className="mb-3 text-[12px] uppercase tracking-[0.16em] text-faint">Credentials</p>
         <ul className="grid grid-cols-2 gap-2">
           {BADGE_CATALOG.map((b) => (
             <li
@@ -64,27 +65,22 @@ function ProfilePage() {
               )}
             >
               <p className="text-sm text-fg">{b.name}</p>
-              <p className="mt-1 text-[11px] text-muted">{b.detail}</p>
+              <p className="mt-1 text-xs text-muted">{b.detail}</p>
             </li>
           ))}
         </ul>
       </section>
 
       <label className="block">
-        <span className="text-[10px] uppercase tracking-[0.16em] text-faint">Field name</span>
+        <span className="text-[12px] uppercase tracking-[0.16em] text-faint">Field name</span>
         <input
           defaultValue={name}
           onBlur={(e) => completeOnboarding(e.target.value)}
-          className="mt-2 h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-amethyst"
+          className="mt-2 h-12 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none focus:border-frost"
         />
       </label>
 
-      <Button variant="line" className="w-full text-danger" onClick={() => reset()}>
-        Reset local field data
-      </Button>
-      <p className="text-[11px] leading-relaxed text-faint">
-        Everything here stays on this device. No sign-in — say the word and I'll add accounts.
-      </p>
+      <DataControls />
     </div>
   );
 }

@@ -4,8 +4,12 @@ import { Button, Panel, SectionLabel } from "@/components/ui";
 import { SITE_BY_ID, SITES } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { uid } from "@/lib/utils";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/trips")({ component: TripsPage });
+export const Route = createFileRoute("/trips")({
+  head: () => privateHead("Trip planner", "/trips"),
+  component: TripsPage,
+});
 
 function TripsPage() {
   const trips = useField((s) => s.trips);
@@ -18,29 +22,35 @@ function TripsPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-field">Field ops</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-field">Field ops</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Trip planner</h1>
         <p className="mt-1 text-sm text-muted">Itinerary, gear, land-status reminder. Pack the night before.</p>
       </header>
 
       <Panel className="space-y-3 p-4">
         <SectionLabel>New itinerary</SectionLabel>
+        <label htmlFor="trip-name" className="sr-only">Trip name</label>
         <input
+          id="trip-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Trip name"
-          className="h-11 w-full rounded-md border border-line bg-void px-3 text-sm text-fg outline-none focus:border-field"
+          className="h-12 w-full rounded-md border border-line bg-void px-3 text-sm text-fg outline-none focus:border-field"
         />
+        <label htmlFor="trip-date" className="block text-xs text-muted">Date</label>
         <input
+          id="trip-date"
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="h-11 w-full rounded-md border border-line bg-void px-3 text-sm text-fg outline-none"
+          className="h-12 w-full rounded-md border border-line bg-void px-3 text-sm text-fg outline-none"
         />
+        <label htmlFor="trip-site" className="block text-xs text-muted">First locality</label>
         <select
+          id="trip-site"
           value={siteId}
           onChange={(e) => setSiteId(e.target.value)}
-          className="h-11 w-full rounded-md border border-line bg-void px-3 text-sm text-fg"
+          className="h-12 w-full rounded-md border border-line bg-void px-3 text-sm text-fg"
         >
           {SITES.map((s) => (
             <option key={s.id} value={s.id}>
@@ -95,7 +105,7 @@ function TripsPage() {
               </ul>
               <div className="mt-3 space-y-1">
                 {t.gear.map((g) => (
-                  <label key={g.id} className="flex min-h-11 items-center gap-2 text-sm">
+                  <label key={g.id} className="flex min-h-12 items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={g.packed}

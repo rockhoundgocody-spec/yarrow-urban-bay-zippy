@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shield } from "lucide-react";
 import { Panel, SectionLabel } from "@/components/ui";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/safety")({ component: SafetyPage });
+export const Route = createFileRoute("/safety")({
+  head: () =>
+    pageHead({
+      title: "Safety & land status",
+      path: "/safety",
+      description:
+        "Land before the hammer: confirm posted signs, claim markers, and seasonal closures, and follow the stewardship doctrine before you collect.",
+    }),
+  component: SafetyPage,
+});
 
 const RULES = [
   {
@@ -31,10 +41,10 @@ function SafetyPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-field">Safety · legality</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-field">Safety · legality</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Land before the hammer</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          RockHound-GO is a field intelligence platform. It will not tell you a site is legal if it is not.
+          RockHound GO is a field intelligence platform. It will not tell you a site is legal if it is not.
         </p>
       </header>
 
@@ -55,7 +65,7 @@ function SafetyPage() {
         ))}
       </ul>
 
-      <Link to="/explore" className="block text-center text-sm text-cyan">
+      <Link to="/explore" className="flex min-h-12 items-center justify-center text-sm text-cyan">
         Open the field map
       </Link>
     </div>

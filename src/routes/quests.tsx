@@ -4,8 +4,12 @@ import { Panel } from "@/components/ui";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import type { QuestId } from "@/lib/types";
+import { privateHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/quests")({ component: QuestsPage });
+export const Route = createFileRoute("/quests")({
+  head: () => privateHead("Daily quests", "/quests"),
+  component: QuestsPage,
+});
 
 const ICONS: Record<QuestId, typeof Camera> = {
   scan: Camera,
@@ -30,7 +34,7 @@ function QuestsPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-gold">Play & progress</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-gold">Play & progress</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Daily briefing</h1>
         <p className="mt-1 text-sm text-muted">
           {done}/{quests.length} complete. Resets at midnight UTC.

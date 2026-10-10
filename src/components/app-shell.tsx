@@ -4,6 +4,7 @@ import {
   Compass,
   Gem,
   Home,
+  Lock,
   Map,
   Menu,
   MessageSquare,
@@ -20,7 +21,7 @@ import { CinematicOpener } from "@/components/cinematic-opener";
 import { Onboarding } from "@/components/onboarding";
 import { FloatingCloverOrb } from "@/components/orb/floating-orb";
 import { cn } from "@/lib/utils";
-import { useField } from "@/lib/store";
+import { migrateLegacyPhotos, useField } from "@/lib/store";
 import { xpToNext } from "@/lib/xp";
 
 const TABS = [
@@ -39,6 +40,7 @@ const MENU = [
   { to: "/safety", label: "Safety & land", icon: Shield },
   { to: "/clover", label: "Clover AGI", icon: Sparkles },
   { to: "/profile", label: "Progress", icon: User },
+  { to: "/data", label: "Your data", icon: Lock },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -49,8 +51,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const fieldMode = useField((s) => s.fieldMode);
   const setFieldMode = useField((s) => s.setFieldMode);
 
+  // Overlays depend on per-device state, so they mount after hydration only.
+  // Rendering them on the server put the onboarding <h1> at the top of every
+  // page's HTML (duplicate content for crawlers, flash for returning users).
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     useField.getState().hydrateDay();
+    void migrateLegacyPhotos();
   }, []);
 
   useEffect(() => {
@@ -71,8 +80,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div data-mode={fieldMode ? "field" : "home"} className="min-h-dvh bg-void text-fg">
       <div className="rh-grain min-h-dvh">
-        {!onboarded && <Onboarding />}
-        {onboarded && !openerSeen && <CinematicOpener />}
+        {mounted && !onboarded && <Onboarding />}
+        {mounted && onboarded && !openerSeen && <CinematicOpener />}
         <header className="sticky top-0 z-30 border-b border-line bg-void/80 backdrop-blur-md">
           <div className="mx-auto flex h-14 max-w-lg items-center gap-3 px-4">
             <button
@@ -81,20 +90,21 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-expanded={menu}
               aria-controls="main-menu"
               onClick={() => setMenu((v) => !v)}
-              className="grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              className="grid size-12 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               {menu ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
-            <Link to="/" className="flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void">
-              <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>
-              <span className="font-display text-[17px] font-semibold text-amethyst">GO</span>
+            <Link to="/" className="flex min-h-12 min-w-0 flex-1 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void">
+              <span className="font-display text-[17px] font-semibold tracking-tight text-fg">RockHound</span>{" "}
+              <span className="font-display text-[17px] font-semibold text-frost">GO</span>
             </Link>
             <button
               type="button"
-              aria-label={fieldMode ? "Switch to Hub mode" : "Switch to Field mode"}
+              aria-label={fieldMode ? "Field mode, switch to Hub" : "Hub mode, switch to Field"}
+              title={fieldMode ? "Field theme on. Tap for the Hub theme." : "Tap for the Field theme for outdoor use."}
               onClick={() => setFieldMode(!fieldMode)}
               className={cn(
-                "h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                "h-12 rounded-full border px-4 text-[12px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                 fieldMode
                   ? "border-field/40 bg-field/15 text-field"
                   : "border-line text-muted hover:text-fg",
@@ -105,7 +115,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               to="/clover"
               aria-label="Clover AGI Assistant"
-              className="grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              className="grid size-12 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             >
               <Sparkles className="size-5" />
             </Link>
@@ -129,7 +139,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     to={item.to}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                      "flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
                       active ? "bg-fg/10 text-fg" : "text-muted hover:bg-fg/5 hover:text-fg",
                     )}
                   >
@@ -138,8 +148,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </Link>
                 );
               })}
-              <p className="mt-4 flex items-center gap-2 px-3 text-[10px] uppercase tracking-[0.14em] text-faint">
-                <WifiOff className="size-3" /> Local cache · no account
+              <p className="mt-4 flex items-center gap-2 px-3 text-[12px] uppercase tracking-[0.14em] text-faint">
+                <WifiOff className="size-3" /> Stored on this device · no account
               </p>
             </nav>
           </div>
@@ -148,7 +158,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="mx-auto w-full max-w-lg overflow-x-clip px-4 pb-28 pt-5">{children}</main>
         <FloatingCloverOrb />
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-void/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-void/97 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
           <div className="mx-auto flex max-w-lg items-end px-2">
             {TABS.map((tab) => {
               const Icon = tab.icon;
@@ -160,7 +170,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     to={tab.to}
                     aria-label="Scan specimen"
                     aria-current={active ? "page" : undefined}
-                    className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+                    className="-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                   >
                     <span
                       className={cn(
@@ -170,7 +180,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     >
                       <Icon className="size-6" />
                     </span>
-                    <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-gold">Scan</span>
+                    <span className="text-[12px] font-medium uppercase tracking-[0.14em] text-gold">Scan</span>
                   </Link>
                 );
               }
@@ -179,12 +189,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                   key={tab.to}
                   to={tab.to}
                   aria-current={active ? "page" : undefined}
-                  className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+                  className="flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void"
                 >
                   <Icon className={cn("size-[18px]", active ? "text-fg" : "text-faint")} />
                   <span
                     className={cn(
-                      "text-[10px] font-medium uppercase tracking-[0.12em]",
+                      "text-[12px] font-medium uppercase tracking-[0.12em]",
                       active ? "text-fg" : "text-faint",
                     )}
                   >
@@ -210,7 +220,7 @@ export function XpRibbon() {
   const { level, pct, into, need } = xpToNext(xp);
   return (
     <div className="rh-panel rh-hairline rounded-xl px-4 py-3">
-      <div className="flex items-center justify-between text-[11px] text-muted">
+      <div className="flex items-center justify-between text-xs text-muted">
         <span className="font-display text-sm text-fg">Level {level}</span>
         <span className="tabular-nums">
           {into}/{need} XP · {streak}d streak
@@ -225,9 +235,9 @@ export function XpRibbon() {
         aria-valuetext={`${into} of ${need} XP to level ${level + 1}`}
         className="mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10"
       >
-        <div className="h-full rounded-full bg-amethyst" style={{ width: `${Math.round(pct * 100)}%` }} />
+        <div className="h-full rounded-full bg-frost" style={{ width: `${Math.round(pct * 100)}%` }} />
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[9px] uppercase tracking-[0.12em] text-faint">
+      <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[12px] uppercase tracking-[0.12em] text-faint">
         <span>
           <span className="block tabular-nums text-fg">{collector ?? 0}</span>
           Collector

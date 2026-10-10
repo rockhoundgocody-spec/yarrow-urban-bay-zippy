@@ -8,13 +8,24 @@ import { Button, Panel, RarityChip, SectionLabel } from "@/components/ui";
 import { MINERALS } from "@/data/minerals";
 import { nextInChain } from "@/data/chains";
 import { captureFromVideo, fileToDataUrl } from "@/lib/image";
-import { identifySpecimen, matchFieldKey, mineralToResult } from "@/lib/identify";
+import { identifySpecimen } from "@/lib/identify";
+import { matchFieldKey, mineralToResult } from "@/lib/field-key";
 import { useField } from "@/lib/store";
 import type { IdentifyResult } from "@/lib/types";
 import { XP_REWARDS } from "@/lib/xp";
-import { cn, formatUsd } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { pageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/identify")({ component: IdentifyPage });
+export const Route = createFileRoute("/identify")({
+  head: () =>
+    pageHead({
+      title: "Identify a mineral",
+      path: "/identify",
+      description:
+        "Identify a mineral from one photo, or score the Mineralpedia catalog with field tests — no photo needed.",
+    }),
+  component: IdentifyPage,
+});
 
 const COLORS = ["clear", "white", "purple", "green", "blue", "yellow", "red", "black", "pink", "gold", "brown"];
 const LUSTERS = ["vitreous", "metallic", "pearly", "earthy", "silky", "waxy"];
@@ -117,8 +128,8 @@ function IdentifyPage() {
       addXp(XP_REWARDS.scan);
       completeQuest("scan");
       awardBadge("first-scan");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Scan failed.");
+    } catch {
+      setError("Scan failed. Check your signal and try again, or use the field key.");
     } finally {
       setBusy(false);
     }
@@ -141,8 +152,6 @@ function IdentifyPage() {
       hardness: r.hardness,
       luster: r.luster,
       crystalSystem: r.crystalSystem,
-      valueLow: r.valueLow,
-      valueHigh: r.valueHigh,
       fieldNotes: r.fieldNotes,
       alternatives: r.alternatives,
       source: src,
@@ -173,7 +182,7 @@ function IdentifyPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-gold">Identify</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-gold">Identify</p>
         <h1 className="mt-1 font-display text-2xl text-fg">Specimen lens</h1>
         <p className="mt-1 text-sm text-muted">Center the specimen and fill the frame. One photo is enough.</p>
       </header>
@@ -189,7 +198,7 @@ function IdentifyPage() {
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "h-10 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              "h-12 rounded-md text-xs font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
               tab === t ? "bg-obsidian text-fg" : "text-muted hover:text-fg",
             )}
           >
@@ -211,6 +220,12 @@ function IdentifyPage() {
                 <div>
                   <Camera className="mx-auto size-8 text-faint" />
                   <p className="mt-3 text-sm text-muted">Open the camera or upload from the roll.</p>
+                  <p className="mt-2 text-[13px] text-faint">
+                    Photos are sent to xAI to identify them.{" "}
+                    <Link to="/data" className="inline-flex min-h-12 items-center text-cyan underline">
+                      How your data is handled
+                    </Link>
+                  </p>
                   <p className="mt-2 text-xs text-faint">Good light. Fill the frame. One angle is enough.</p>
                 </div>
               </div>
@@ -284,9 +299,9 @@ function IdentifyPage() {
               step={0.5}
               value={key.hardness ?? 5}
               onChange={(e) => setKey({ ...key, hardness: Number(e.target.value) })}
-              className="w-full accent-amethyst"
+              className="w-full accent-frost"
             />
-            <div className="mt-1 flex justify-between text-[10px] text-faint">
+            <div className="mt-1 flex justify-between text-[12px] text-faint">
               <span>Talc 1</span>
               <span>Diamond 10</span>
             </div>
@@ -324,7 +339,7 @@ function IdentifyPage() {
             >
               <CrystalGem hue={m.hue} system={m.crystalSystem} size={48} />
               <p className="mt-2 truncate text-sm text-fg">{m.name}</p>
-              <p className="text-[11px] text-faint">{m.formula}</p>
+              <p className="text-xs text-faint">{m.formula}</p>
             </button>
           ))}
         </div>
@@ -335,7 +350,7 @@ function IdentifyPage() {
           <div className="max-h-[78vh] w-full max-w-md overflow-y-auto">
             <button
               type="button"
-              className="mb-2 ml-auto grid size-11 place-items-center rounded-md text-muted"
+              className="mb-2 ml-auto grid size-12 place-items-center rounded-md text-muted"
               onClick={() => setResult(null)}
               aria-label="Close report"
             >
@@ -371,8 +386,8 @@ function FieldChips({
             aria-pressed={value === o}
             onClick={() => onPick(o)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
-              value === o ? "border-amethyst bg-amethyst/15 text-fg" : "border-line text-muted hover:text-fg",
+              "inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
+              value === o ? "border-frost bg-frost/15 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {o}
@@ -396,7 +411,7 @@ function ResultCard({
   return (
     <Panel hairline className="p-5">
       <div className="flex items-start gap-3">
-        <CrystalGem hue={mineral?.hue ?? "#8d7cff"} system={result.crystalSystem} size={64} />
+        <CrystalGem hue={mineral?.hue ?? "#bfe9ff"} system={result.crystalSystem} size={64} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h2 className="font-display text-xl text-fg">{result.name}</h2>
@@ -422,15 +437,11 @@ function ResultCard({
           ["System", result.crystalSystem],
           ["Streak", result.streak],
           ["Color", result.color],
-          [
-            "Value",
-            result.valueLow != null ? `${formatUsd(result.valueLow)}–${formatUsd(result.valueHigh ?? result.valueLow)}` : null,
-          ],
         ]
           .filter(([, v]) => v)
           .map(([k, v]) => (
             <div key={k} className="rounded-md border border-line bg-void/40 p-2.5">
-              <dt className="text-[10px] uppercase tracking-[0.14em] text-faint">{k}</dt>
+              <dt className="text-[12px] uppercase tracking-[0.14em] text-faint">{k}</dt>
               <dd className="mt-1 capitalize text-fg">{v}</dd>
             </div>
           ))}
@@ -457,6 +468,11 @@ function ResultCard({
           <Sparkles className="size-3" /> Open in Mineralpedia
         </Link>
       )}
+      <p className="mt-4 rounded-md border border-line p-3 text-[13px] leading-relaxed text-muted">
+        {result.source === "ai" ? "AI identification" : "Field-key matching"} can be wrong. Confirm with hardness, streak and
+        other field tests before relying on it — and never use it to decide whether something is safe, valuable or legal to
+        collect.
+      </p>
       {!result.notGeological && <DiscoveryChoice onConfirm={onSave} />}
     </Panel>
   );

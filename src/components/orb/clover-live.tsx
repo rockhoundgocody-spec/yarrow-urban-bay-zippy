@@ -31,6 +31,8 @@ export function CloverLiveProvider({ children }: { children: ReactNode }) {
   return <CloverLiveContext.Provider value={clover}>{children}</CloverLiveContext.Provider>;
 }
 
+// Provider + hook pairing is intentional; the hook is meaningless without this provider.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useClover() {
   const ctx = useContext(CloverLiveContext);
   if (!ctx) throw new Error("Clover live is not mounted");

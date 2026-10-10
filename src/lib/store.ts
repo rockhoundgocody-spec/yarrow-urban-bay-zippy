@@ -1,18 +1,18 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist, type StateStorage } from "zustand/middleware";
+import { toast } from "sonner";
+import { deletePhoto, putPhoto } from "@/lib/photo-store";
 import type {
   BadgeId,
   BadgeState,
   CloverMessage,
-  CommunityPost,
   DailyQuest,
   DiscoveryDisposition,
   Specimen,
   Trip,
   XpLane,
 } from "@/lib/types";
-import { COMMUNITY_SEED } from "@/data/feed";
-import { XP_REWARDS, levelFromXp } from "@/lib/xp";
+import { XP_REWARDS } from "@/lib/xp";
 import { todayKey, uid } from "@/lib/utils";
 
 const QUEST_DEFS: Omit<DailyQuest, "done">[] = [
@@ -40,7 +40,8 @@ type FieldState = {
   badges: BadgeState[];
   quests: DailyQuest[];
   questDay: string | null;
-  posts: CommunityPost[];
+  /** Species whose Mineralpedia entry has already paid out reading XP. */
+  readSpeciesIds: string[];
   clover: CloverMessage[];
   lastScanId: string | null;
   fieldMode: boolean;
@@ -58,7 +59,9 @@ type FieldState = {
   completeQuest: (id: DailyQuest["id"]) => void;
   addTrip: (t: Omit<Trip, "id" | "createdAt">) => void;
   toggleGear: (tripId: string, gearId: string) => void;
-  toggleLike: (postId: string) => void;
+  markSpeciesRead: (mineralId: string) => boolean;
+  restoreSpecimen: (s: Specimen) => void;
+  replaceAll: (data: Partial<PersistedState>) => void;
   pushClover: (m: Omit<CloverMessage, "id" | "at">) => void;
   awardBadge: (id: BadgeId) => void;
   setFieldMode: (on: boolean) => void;
@@ -99,6 +102,39 @@ function laneForDisposition(d: DiscoveryDisposition): { lane: XpLane; amount: nu
   return { lane: "collector", amount: XP_REWARDS.saveVault };
 }
 
+let warnedFull = false;
+
+/** localStorage wrapper that never throws and tells the user when a save fails. */
+const safeStorage: StateStorage = {
+  getItem: (name) => {
+    try {
+      return localStorage.getItem(name);
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      localStorage.setItem(name, value);
+      warnedFull = false;
+    } catch {
+      if (!warnedFull) {
+        warnedFull = true;
+        toast.error("Couldn't save to this device — storage is full or blocked. Export your GeoDex from Progress.", {
+          duration: 10_000,
+        });
+      }
+    }
+  },
+  removeItem: (name) => {
+    try {
+      localStorage.removeItem(name);
+    } catch {
+      /* storage unavailable: nothing to remove */
+    }
+  },
+};
+
 const INITIAL = {
   onboarded: false,
   displayName: "Field hand",
@@ -116,7 +152,7 @@ const INITIAL = {
   badges: [] as BadgeState[],
   quests: freshQuests(),
   questDay: null as string | null,
-  posts: COMMUNITY_SEED,
+  readSpeciesIds: [] as string[],
   clover: [CLOVER_HELLO],
   lastScanId: null as string | null,
   fieldMode: false,
@@ -168,13 +204,21 @@ export const useField = create<FieldState>()(
 
       addSpecimen: (input) => {
         const { lane, amount } = laneForDisposition(input.disposition);
+        const { photoDataUrl, ...rest } = input;
         const specimen: Specimen = {
-          ...input,
+          ...rest,
           id: uid("sp"),
           createdAt: Date.now(),
           xpLane: lane,
           xpAwarded: amount,
+          hasPhoto: Boolean(photoDataUrl),
         };
+        if (photoDataUrl) {
+          putPhoto(specimen.id, photoDataUrl).catch(() => {
+            get().updateSpecimen(specimen.id, { hasPhoto: false });
+            toast.error("The photo couldn't be saved on this device. The find itself was saved.");
+          });
+        }
         const firstOf =
           input.mineralId && !get().specimens.some((s) => s.mineralId === input.mineralId);
         set({ specimens: [specimen, ...get().specimens], lastScanId: specimen.id });
@@ -189,6 +233,19 @@ export const useField = create<FieldState>()(
         set({ specimens: get().specimens.map((s) => (s.id === id ? { ...s, ...patch } : s)) }),
 
       removeSpecimen: (id) => set({ specimens: get().specimens.filter((s) => s.id !== id) }),
+
+      restoreSpecimen: (sp) => {
+        if (get().specimens.some((s) => s.id === sp.id)) return;
+        set({ specimens: [sp, ...get().specimens].sort((a, b) => b.createdAt - a.createdAt) });
+      },
+
+      markSpeciesRead: (mineralId) => {
+        if (get().readSpeciesIds.includes(mineralId)) return false;
+        set({ readSpeciesIds: [...get().readSpeciesIds, mineralId] });
+        return true;
+      },
+
+      replaceAll: (data) => set({ ...INITIAL, ...data, onboarded: true, openerSeen: true, quests: freshQuests() }),
 
       toggleSaveSite: (id) => {
         const has = get().savedSiteIds.includes(id);
@@ -231,13 +288,6 @@ export const useField = create<FieldState>()(
           ),
         }),
 
-      toggleLike: (postId) =>
-        set({
-          posts: get().posts.map((p) =>
-            p.id === postId ? { ...p, liked: !p.liked, likes: p.likes + (p.liked ? -1 : 1) } : p,
-          ),
-        }),
-
       pushClover: (m) => {
         set({ clover: [...get().clover, { ...m, id: uid("cl"), at: Date.now() }] });
         if (m.role === "user") {
@@ -255,14 +305,65 @@ export const useField = create<FieldState>()(
       setFieldMode: (on) => set({ fieldMode: on }),
       markOpenerSeen: () => set({ openerSeen: true }),
 
-      resetLocal: () => set({ ...INITIAL, posts: COMMUNITY_SEED, clover: [{ ...CLOVER_HELLO, at: Date.now() }], quests: freshQuests() }),
+      resetLocal: () => {
+        for (const sp of get().specimens) if (sp.hasPhoto) void deletePhoto(sp.id).catch(() => undefined);
+        set({ ...INITIAL, clover: [{ ...CLOVER_HELLO, at: Date.now() }], quests: freshQuests() });
+      },
     }),
-    { name: "rhgo-field-v2" },
+    {
+      name: "rhgo-field-v2",
+      version: 3,
+      storage: createJSONStorage(() => safeStorage),
+      // v2 and earlier: seeded community posts and unsourced price fields.
+      migrate: (persisted, version) => {
+        const st = (persisted ?? {}) as Record<string, unknown>;
+        if (version < 3) {
+          delete st.posts;
+          const specimens = Array.isArray(st.specimens) ? (st.specimens as Record<string, unknown>[]) : [];
+          st.specimens = specimens.map((sp) => {
+            const { valueLow: _l, valueHigh: _h, ...rest } = sp;
+            return rest;
+          });
+          if (!Array.isArray(st.readSpeciesIds)) st.readSpeciesIds = [];
+        }
+        return st as unknown as FieldState;
+      },
+    },
   ),
 );
 
-export function vaultStats(specimens: Specimen[]) {
-  const value = specimens.reduce((a, s) => a + ((s.valueLow ?? 0) + (s.valueHigh ?? 0)) / 2, 0);
-  const unique = new Set(specimens.map((s) => s.mineralId || s.name)).size;
-  return { count: specimens.length, unique, value, level: levelFromXp(useField.getState().xp) };
+/** Fields written to storage and included in exports. */
+export type PersistedState = Pick<
+  FieldState,
+  | "displayName"
+  | "xp"
+  | "collectorXp"
+  | "stewardXp"
+  | "scientistXp"
+  | "explorerXp"
+  | "streak"
+  | "lastActiveDay"
+  | "specimens"
+  | "savedSiteIds"
+  | "visitedSiteIds"
+  | "trips"
+  | "badges"
+  | "readSpeciesIds"
+>;
+
+/**
+ * Moves photos saved by older versions (inline base64 in localStorage) into
+ * IndexedDB, then drops them from the persisted state to free space.
+ */
+export async function migrateLegacyPhotos(): Promise<void> {
+  const legacy = useField.getState().specimens.filter((s) => s.photoDataUrl);
+  for (const sp of legacy) {
+    try {
+      await putPhoto(sp.id, sp.photoDataUrl as string);
+      useField.getState().updateSpecimen(sp.id, { photoDataUrl: undefined, hasPhoto: true });
+    } catch {
+      return; // keep the inline copy; try again next launch
+    }
+  }
 }
+

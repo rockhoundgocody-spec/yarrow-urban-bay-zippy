@@ -14,7 +14,7 @@ export function RarityChip({ rarity, className }: { rarity: Rarity; className?: 
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]",
+        "inline-flex items-center rounded-full border px-2 py-0.5 text-[12px] font-medium uppercase tracking-[0.14em]",
         RARITY_CLASS[rarity],
         className,
       )}
@@ -48,7 +48,7 @@ export function Button({
     <button
       type="button"
       className={cn(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium tracking-wide transition-colors duration-150 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+        "inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium tracking-wide transition-colors duration-150 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-frost focus-visible:ring-offset-2 focus-visible:ring-offset-void",
         variant === "primary" && "bg-fg text-void hover:bg-fg/90",
         variant === "gold" && "bg-gold text-void hover:bg-gold/90",
         variant === "ghost" && "bg-fg/5 text-fg hover:bg-fg/10",
@@ -65,7 +65,7 @@ export function Button({
 export function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="min-w-0">
-      <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-faint">{label}</p>
+      <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-faint">{label}</p>
       <p className="mt-1 font-display text-lg tabular-nums text-fg">{value}</p>
     </div>
   );
@@ -73,6 +73,6 @@ export function Stat({ label, value }: { label: string; value: string | number }
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-faint">{children}</p>
+    <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.18em] text-faint">{children}</p>
   );
 }

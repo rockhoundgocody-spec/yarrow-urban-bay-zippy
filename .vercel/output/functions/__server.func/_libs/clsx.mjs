@@ -1,4 +1,4 @@
-//#region node_modules/clsx/dist/clsx.mjs
+//#region node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
 function r(e) {
 	var t, f, n = "";
 	if ("string" == typeof e || "number" == typeof e) n += e;

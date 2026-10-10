@@ -73,11 +73,11 @@ export function DiscoveryChoice({
 
   return (
     <div className="mt-5 space-y-3">
-      <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-gold">Discovery choice</p>
+      <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-gold">Discovery choice</p>
       <p className="text-sm leading-relaxed text-muted">
         Collecting is a legal and ethical decision. Reward documentation more than extraction.
       </p>
-      <label className="flex min-h-11 items-start gap-3 rounded-lg border border-line bg-void/40 px-3 py-3 text-sm text-fg">
+      <label className="flex min-h-12 items-start gap-3 rounded-lg border border-line bg-void/40 px-3 py-3 text-sm text-fg">
         <input
           type="checkbox"
           checked={legal}
@@ -107,7 +107,7 @@ export function DiscoveryChoice({
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-fg">{o.title}</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted">{o.body}</p>
-                <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-faint">
+                <p className="mt-1 text-[12px] uppercase tracking-[0.14em] text-faint">
                   +{o.xp} XP · {o.lane}
                 </p>
               </div>

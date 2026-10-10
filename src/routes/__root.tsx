@@ -1,11 +1,10 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth/provider";
-import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { AppShell } from "@/components/app-shell";
+import { ServiceWorker } from "@/components/service-worker";
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "RockHound-GO";
+const APP_NAME = "RockHound GO";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -18,13 +17,18 @@ export const Route = createRootRoute({
         content:
           "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding.",
       },
-      { name: "theme-color", content: "#07060F" },
+      { name: "theme-color", content: "#07090b" },
+      { name: "color-scheme", content: "dark" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: APP_NAME },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "stylesheet",
@@ -42,8 +46,7 @@ function Root() {
         <HeadContent />
       </head>
       <body className="bg-void text-fg antialiased">
-        <PreviewHostBridge />
-        <AuthProvider>
+        <ServiceWorker />
           <AppShell>
             <Outlet />
           </AppShell>
@@ -52,13 +55,12 @@ function Root() {
             position="top-center"
             toastOptions={{
               style: {
-                background: "#171427",
-                border: "1px solid rgb(236 232 247 / 0.12)",
-                color: "#ece8f7",
+                background: "#141a1f",
+                border: "1px solid rgb(238 243 246 / 0.12)",
+                color: "#eef3f6",
               },
             }}
           />
-        </AuthProvider>
         <Scripts />
       </body>
     </html>

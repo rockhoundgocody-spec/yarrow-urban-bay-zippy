@@ -20,8 +20,29 @@ import { MINERALS } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
 import { formatRelative } from "@/lib/utils";
+import { pageHead, SITE_NAME, SITE_URL } from "@/lib/seo";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  head: () =>
+    pageHead({
+      title: "Rock & mineral ID, field map and GeoDex",
+      path: "/",
+      description:
+        "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding.",
+      jsonLd: [
+        { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+        {
+          "@type": "WebApplication",
+          name: SITE_NAME,
+          url: SITE_URL,
+          applicationCategory: "ReferenceApplication",
+          operatingSystem: "Web",
+          description: "AI mineral identification, rockhounding map, specimen vault, and field tools.",
+        },
+      ],
+    }),
+  component: Home,
+});
 
 const FIELD_MISSIONS = [
   { to: "/identify", icon: Camera, title: "Scan", sub: "Identify specimen", priority: true },
@@ -53,7 +74,7 @@ function Home() {
         <header>
           <div className="flex items-center gap-2">
             <span className="size-1.5 rounded-full bg-field shadow-[0_0_8px_var(--color-field)]" />
-            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-field">Field mode · active</p>
+            <p className="text-[12px] font-medium uppercase tracking-[0.2em] text-field">Field mode · active</p>
           </div>
           <h1 className="mt-2 font-display text-[1.75rem] leading-tight text-fg">Field operations</h1>
           <p className="mt-1 text-sm text-muted">{rankFromLevel(level)} · {month} window</p>
@@ -65,7 +86,7 @@ function Home() {
               <Camera className="size-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-gold">Primary action</p>
+              <p className="text-[12px] uppercase tracking-[0.16em] text-gold">Primary action</p>
               <p className="font-display text-xl text-fg">Scan a specimen</p>
               <p className="text-sm text-muted">One photo. Then choose: collect or leave it.</p>
             </div>
@@ -94,7 +115,7 @@ function Home() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amethyst">Operating system active</p>
+        <p className="text-[12px] font-medium uppercase tracking-[0.2em] text-frost">Operating system active</p>
         <h1 className="mt-2 font-display text-[1.75rem] leading-tight text-fg">
           {greeting}, {name}.
         </h1>
@@ -113,7 +134,7 @@ function Home() {
             <Camera className="size-6" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] uppercase tracking-[0.16em] text-gold">Primary action</p>
+            <p className="text-[12px] uppercase tracking-[0.16em] text-gold">Primary action</p>
             <p className="font-display text-xl text-fg">Scan a specimen</p>
             <p className="text-sm text-muted">Photo or field key. Then choose the ethical path.</p>
           </div>
@@ -125,7 +146,7 @@ function Home() {
           <Panel className="flex items-center gap-3 p-4">
             <Target className="size-4 text-cyan" />
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-faint">Next in the briefing</p>
+              <p className="text-[12px] uppercase tracking-[0.16em] text-faint">Next in the briefing</p>
               <p className="text-sm text-fg">{nextQuest.title}</p>
             </div>
             <span className="text-xs tabular-nums text-muted">+{nextQuest.xp} XP</span>
@@ -136,7 +157,7 @@ function Home() {
       <section>
         <SectionLabel>Today's hunt</SectionLabel>
         <Link to="/explore/$id" params={{ id: featured.id }} className="rh-panel block rounded-xl p-4">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-field">{featured.state} · {featured.access}</p>
+          <p className="text-[12px] uppercase tracking-[0.16em] text-field">{featured.state} · {featured.access}</p>
           <p className="mt-1 font-display text-lg text-fg">{featured.name}</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">{featured.notes}</p>
           <p className="mt-3 text-xs text-faint">{featured.finds.join(" · ")}</p>
@@ -159,7 +180,7 @@ function Home() {
       <section>
         <div className="mb-3 flex items-center justify-between">
           <SectionLabel>Recent GeoDex</SectionLabel>
-          <Link to="/vault" className="text-xs text-muted hover:text-fg">
+          <Link to="/vault" className="inline-flex min-h-12 min-w-12 items-center justify-end text-xs text-muted hover:text-fg">
             Open
           </Link>
         </div>
@@ -173,13 +194,13 @@ function Home() {
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel flex items-center gap-3 rounded-xl px-3 py-3">
                   <CrystalGem
-                    hue={MINERALS.find((m) => m.id === s.mineralId)?.hue ?? "#8d7cff"}
+                    hue={MINERALS.find((m) => m.id === s.mineralId)?.hue ?? "#bfe9ff"}
                     system={s.crystalSystem}
                     size={40}
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm text-fg">{s.name}</p>
-                    <p className="text-[11px] text-faint">
+                    <p className="text-xs text-faint">
                       {s.disposition === "affixed_logged"
                         ? "In place"
                         : s.disposition === "restricted_observed"
@@ -204,7 +225,7 @@ function Home() {
         </Link>
       </div>
 
-      <p className="pb-4 text-center text-[11px] text-faint">
+      <p className="pb-4 text-center text-xs text-faint">
         {streak} day streak · {specimens.length} in GeoDex
       </p>
     </div>

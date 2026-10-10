@@ -5,10 +5,15 @@ import { CrystalGem } from "@/components/crystal-gem";
 import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
-import { formatUsd } from "@/lib/utils";
 import type { DiscoveryDisposition } from "@/lib/types";
+import { privateHead } from "@/lib/seo";
+import { usePhoto } from "@/lib/use-photo";
+import type { Specimen } from "@/lib/types";
 
-export const Route = createFileRoute("/vault")({ component: VaultPage });
+export const Route = createFileRoute("/vault")({
+  head: () => privateHead("GeoDex", "/vault"),
+  component: VaultPage,
+});
 
 const FILTERS: { k: Rarity | "all"; l: string }[] = [
   { k: "all", l: "All" },
@@ -32,9 +37,6 @@ function VaultPage() {
   const [rarity, setRarity] = useState<Rarity | "all">("all");
   const [dispo, setDispo] = useState<DiscoveryDisposition | "all">("all");
 
-  const value = specimens
-    .filter((s) => s.collected)
-    .reduce((a, s) => a + ((s.valueLow ?? 0) + (s.valueHigh ?? 0)) / 2, 0);
   const unique = new Set(specimens.map((s) => s.mineralId || s.name)).size;
   const inPlace = specimens.filter((s) => s.disposition === "affixed_logged").length;
 
@@ -50,7 +52,7 @@ function VaultPage() {
   return (
     <div className="space-y-5">
       <header>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-cyan">Collection</p>
+        <p className="text-[12px] uppercase tracking-[0.18em] text-cyan">Collection</p>
         <h1 className="mt-1 font-display text-2xl text-fg">GeoDex</h1>
         <p className="mt-1 text-sm text-muted">Collected, left in place, and observed — one archive.</p>
       </header>
@@ -60,7 +62,6 @@ function VaultPage() {
         <Stat label="Species" value={unique} />
         <Stat label="In place" value={inPlace} />
       </Panel>
-      <p className="text-xs text-faint">Collected value estimate {formatUsd(value)} · in-place finds are not priced.</p>
 
       <label className="relative block">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
@@ -69,7 +70,7 @@ function VaultPage() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search GeoDex"
           aria-label="Search GeoDex collection"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-12 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-frost"
         />
       </label>
 
@@ -79,7 +80,7 @@ function VaultPage() {
             key={f.k}
             type="button"
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs ${
               dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -94,7 +95,7 @@ function VaultPage() {
             key={f.k}
             type="button"
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 inline-flex min-h-12 min-w-12 items-center justify-center rounded-full border px-3 py-1.5 text-xs ${
               rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -108,7 +109,7 @@ function VaultPage() {
           <p className="text-sm text-muted">
             {specimens.length === 0 ? "GeoDex is empty." : "Nothing matches those filters."}
           </p>
-          <Link to="/identify" className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-gold">
+          <Link to="/identify" className="mt-4 inline-flex min-h-12 items-center gap-2 text-sm text-gold">
             <Camera className="size-4" /> Scan a specimen
           </Link>
         </Panel>
@@ -119,17 +120,11 @@ function VaultPage() {
             return (
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel block rounded-xl p-3">
-                  {s.photoDataUrl ? (
-                    <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
-                  ) : (
-                    <div className="mb-2 grid h-24 place-items-center">
-                      <CrystalGem hue={m?.hue ?? "#8d7cff"} system={s.crystalSystem} size={56} />
-                    </div>
-                  )}
+                  <SpecimenThumb specimen={s} hue={m?.hue} />
                   <p className="truncate font-display text-sm text-fg">{s.name}</p>
                   <div className="mt-1 flex items-center justify-between">
                     <RarityChip rarity={s.rarity} />
-                    <span className="text-[11px] tabular-nums text-faint">
+                    <span className="text-xs tabular-nums text-faint">
                       {s.disposition === "affixed_logged"
                         ? "In place"
                         : s.disposition === "restricted_observed"
@@ -144,6 +139,16 @@ function VaultPage() {
         </ul>
       )}
       <SectionLabel>{MINERALS.length} species in Mineralpedia if you want to study first</SectionLabel>
+    </div>
+  );
+}
+
+function SpecimenThumb({ specimen, hue }: { specimen: Specimen; hue?: string }) {
+  const photo = usePhoto(specimen.id, specimen.hasPhoto);
+  if (photo) return <img src={photo} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />;
+  return (
+    <div className="mb-2 grid h-24 place-items-center">
+      <CrystalGem hue={hue ?? "#bfe9ff"} system={specimen.crystalSystem} size={56} />
     </div>
   );
 }

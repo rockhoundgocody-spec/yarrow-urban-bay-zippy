@@ -1,4 +1,4 @@
-import { useEffect, type MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import { LiquidMetalOrb } from "@/components/orb/liquid-metal-orb";
 import { OrbSpeech } from "@/components/orb/orb-speech";
 import { useCloverConversation } from "@/components/orb/use-clover-conversation";
@@ -11,20 +11,6 @@ export function HeroCloverOrb({
   variant?: "hero" | "inline";
 }) {
   const clover = useCloverConversation();
-
-  useEffect(() => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return;
-    if (sessionStorage.getItem("rhgo_last_gps")) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) =>
-        sessionStorage.setItem(
-          "rhgo_last_gps",
-          JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        ),
-      () => {},
-      { timeout: 8000, maximumAge: 600_000 },
-    );
-  }, []);
 
   function handleTap(e: MouseEvent<HTMLButtonElement>) {
     e.currentTarget.focus({ preventScroll: true });
