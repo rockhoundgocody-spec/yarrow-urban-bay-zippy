@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -111,8 +111,39 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
+/**
+ * Security: Validate and sanitize identify input to prevent prompt injection,
+ * resource exhaustion (DoS), and internal error leakage.
+ */
+export function sanitizeIdentifyInput(input: unknown): { imageDataUrl: string; notes?: string; locality?: string } {
+  if (!input || typeof input !== "object") {
+    throw new Error("Invalid request payload");
+  }
+  const obj = input as Record<string, unknown>;
+  const rawImage = typeof obj.imageDataUrl === "string" ? obj.imageDataUrl.trim() : "";
+  if (
+    !rawImage ||
+    (!rawImage.startsWith("data:image/") && !rawImage.startsWith("http://") && !rawImage.startsWith("https://"))
+  ) {
+    throw new Error("Invalid image source format");
+  }
+  if (rawImage.length > 10 * 1024 * 1024) {
+    throw new Error("Image payload exceeds maximum allowed size");
+  }
+  const locality =
+    typeof obj.locality === "string"
+      ? obj.locality.replace(/[\r\n\t]+/g, " ").trim().slice(0, 200)
+      : undefined;
+  const notes =
+    typeof obj.notes === "string"
+      ? obj.notes.replace(/[\r\n\t]+/g, " ").trim().slice(0, 500)
+      : undefined;
+
+  return { imageDataUrl: rawImage, locality: locality || undefined, notes: notes || undefined };
+}
+
 export const identifySpecimen = createServerFn({ method: "POST" })
-  .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
+  .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => sanitizeIdentifyInput(input))
   .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
@@ -151,8 +182,7 @@ Never invent certainty. If unsure, lower confidence and list alternatives.`;
     });
 
     if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      return { ok: false, error: `Identification failed (${res.status}). ${t.slice(0, 140)}` };
+      return { ok: false, error: `Identification failed (${res.status}).` };
     }
 
     const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
