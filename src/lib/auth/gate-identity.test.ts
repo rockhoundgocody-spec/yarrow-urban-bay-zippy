@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { generateKeyPairSync, type KeyObject } from "node:crypto";
 import { SignJWT, exportJWK, type JWK } from "jose";
+import { getSafeRedirectUrl } from "./client.ts";
 import {
   gateIdentityFromHeaders,
   gateKeyResolver,
@@ -322,5 +323,39 @@ describe("sessionBoundToGateIdentity", () => {
       false,
     );
     assert.equal(sessionBoundToGateIdentity([], "user-1", provider), false);
+  });
+});
+
+describe("getSafeRedirectUrl", () => {
+  type WindowStub = { location: { origin: string } };
+
+  function withWindow<T>(stub: WindowStub, fn: () => T): T {
+    (globalThis as { window?: unknown }).window = stub;
+    try {
+      return fn();
+    } finally {
+      delete (globalThis as { window?: unknown }).window;
+    }
+  }
+
+  it("allows safe http and https redirect URLs", () => {
+    withWindow({ location: { origin: "https://my-app.example.com" } }, () => {
+      assert.equal(
+        getSafeRedirectUrl("/dashboard"),
+        "https://my-app.example.com/dashboard",
+      );
+      assert.equal(
+        getSafeRedirectUrl("https://example.com/login"),
+        "https://example.com/login",
+      );
+    });
+  });
+
+  it("rejects javascript: and data: URIs and falls back to safe default", () => {
+    withWindow({ location: { origin: "https://my-app.example.com" } }, () => {
+      assert.equal(getSafeRedirectUrl("javascript:alert(1)"), "/");
+      assert.equal(getSafeRedirectUrl("javascript:alert(1)", "/fallback"), "/fallback");
+      assert.equal(getSafeRedirectUrl("data:text/html,x"), "/");
+    });
   });
 });
