@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,7 +35,7 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled = import.meta.env?.VITE_AUTH_ENABLED !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
@@ -134,10 +134,11 @@ export async function signIn(
       /* session store will recover on next useSession fetch */
     }
     if (typeof window !== "undefined") {
-      const dest = new URL(callbackURL, window.location.origin);
+      const safeCallback = getSafeRedirectUrl(callbackURL, "/");
+      const dest = new URL(safeCallback);
       const here = window.location;
       if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
-        window.location.href = callbackURL;
+        window.location.href = safeCallback;
       }
     }
     return;
@@ -149,7 +150,10 @@ export async function signIn(
     errorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url) {
+    const safeUrl = getSafeRedirectUrl(data.url, "");
+    if (safeUrl) window.location.href = safeUrl;
+  }
 }
 
 /**
@@ -218,6 +222,22 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * a hand-rolled control must catch it and let the visitor retry. In the live
  * preview the local clear is sufficient, so it always resolves.
  */
+/**
+ * Validate redirect target URL to prevent DOM XSS via unsafe protocols (e.g. javascript:, data:).
+ */
+export function getSafeRedirectUrl(target: string, fallback = "/"): string {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const dest = new URL(target, window.location.origin);
+    if (dest.protocol === "http:" || dest.protocol === "https:") {
+      return dest.href;
+    }
+  } catch {
+    /* invalid URL format */
+  }
+  return fallback;
+}
+
 export async function signOut(redirectTo = "/"): Promise<void> {
   await runSignOut({
     livePreview: inLivePreview(),
@@ -230,7 +250,9 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      if (typeof window !== "undefined") {
+        window.location.href = getSafeRedirectUrl(redirectTo, "/");
+      }
     },
   });
 }
