@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -151,8 +151,8 @@ Never invent certainty. If unsure, lower confidence and list alternatives.`;
     });
 
     if (!res.ok) {
-      const t = await res.text().catch(() => "");
-      return { ok: false, error: `Identification failed (${res.status}). ${t.slice(0, 140)}` };
+      console.error(`[identifySpecimen] xAI API error: HTTP ${res.status}`);
+      return { ok: false, error: `Identification failed (${res.status}).` };
     }
 
     const body = (await res.json()) as { choices?: { message?: { content?: string } }[] };
