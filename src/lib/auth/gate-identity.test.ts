@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { generateKeyPairSync, type KeyObject } from "node:crypto";
 import { SignJWT, exportJWK, type JWK } from "jose";
+import { sanitizeRedirectUrl } from "./client.ts";
 import {
   gateIdentityFromHeaders,
   gateKeyResolver,
@@ -322,5 +323,35 @@ describe("sessionBoundToGateIdentity", () => {
       false,
     );
     assert.equal(sessionBoundToGateIdentity([], "user-1", provider), false);
+  });
+});
+
+describe("sanitizeRedirectUrl", () => {
+  it("allows standard paths and valid http/https URLs", () => {
+    const origWindow = globalThis.window;
+    try {
+      globalThis.window = { location: { origin: "https://example.com" } } as unknown as Window & typeof globalThis;
+      assert.equal(sanitizeRedirectUrl("/dashboard"), "https://example.com/dashboard");
+      assert.equal(
+        sanitizeRedirectUrl("https://example.com/login"),
+        "https://example.com/login",
+      );
+    } finally {
+      globalThis.window = origWindow;
+    }
+  });
+
+  it("rejects unsafe schemes like javascript: and data: URIs", () => {
+    const origWindow = globalThis.window;
+    try {
+      globalThis.window = { location: { origin: "https://example.com" } } as unknown as Window & typeof globalThis;
+      assert.equal(sanitizeRedirectUrl("javascript:alert(1)"), "/");
+      assert.equal(
+        sanitizeRedirectUrl("data:text/html,<script>alert(1)</script>"),
+        "/",
+      );
+    } finally {
+      globalThis.window = origWindow;
+    }
   });
 });
