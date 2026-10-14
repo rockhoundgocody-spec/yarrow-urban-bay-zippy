@@ -5,7 +5,7 @@ import { CrystalGem } from "@/components/crystal-gem";
 import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
-import { formatUsd } from "@/lib/utils";
+import { cn, formatUsd } from "@/lib/utils";
 import type { DiscoveryDisposition } from "@/lib/types";
 
 export const Route = createFileRoute("/vault")({ component: VaultPage });
@@ -73,30 +73,34 @@ function VaultPage() {
         />
       </label>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Disposition filter">
         {DISPO.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={dispo === f.k}
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
-            }`}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
+            )}
           >
             {f.l}
           </button>
         ))}
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Rarity filter">
         {FILTERS.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={rarity === f.k}
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
-            }`}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
+            )}
           >
             {f.l}
           </button>
@@ -108,7 +112,10 @@ function VaultPage() {
           <p className="text-sm text-muted">
             {specimens.length === 0 ? "GeoDex is empty." : "Nothing matches those filters."}
           </p>
-          <Link to="/identify" className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-gold">
+          <Link
+            to="/identify"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md text-sm text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+          >
             <Camera className="size-4" /> Scan a specimen
           </Link>
         </Panel>
@@ -118,9 +125,13 @@ function VaultPage() {
             const m = MINERALS.find((x) => x.id === s.mineralId);
             return (
               <li key={s.id}>
-                <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel block rounded-xl p-3">
+                <Link
+                  to="/vault/$id"
+                  params={{ id: s.id }}
+                  className="rh-panel block rounded-xl p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+                >
                   {s.photoDataUrl ? (
-                    <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
+                    <img src={s.photoDataUrl} alt={`Photo of ${s.name}`} className="mb-2 h-24 w-full rounded-md object-cover" />
                   ) : (
                     <div className="mb-2 grid h-24 place-items-center">
                       <CrystalGem hue={m?.hue ?? "#8d7cff"} system={s.crystalSystem} size={56} />
