@@ -56,7 +56,10 @@ function QuestsPage() {
             <li key={q.id}>
               <Link
                 to={LINKS[q.id]}
-                className={cn("rh-panel flex items-center gap-3 rounded-xl p-4", q.done && "opacity-60")}
+                className={cn(
+                  "rh-panel flex items-center gap-3 rounded-xl p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                  q.done && "opacity-60",
+                )}
               >
                 <span className="grid size-10 place-items-center rounded-md border border-line">
                   {q.done ? <Check className="size-4 text-field" /> : <Icon className="size-4 text-gold" />}

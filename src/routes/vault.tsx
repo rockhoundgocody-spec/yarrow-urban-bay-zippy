@@ -78,8 +78,9 @@ function VaultPage() {
           <button
             key={f.k}
             type="button"
+            aria-pressed={dispo === f.k}
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void ${
               dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
@@ -93,8 +94,9 @@ function VaultPage() {
           <button
             key={f.k}
             type="button"
+            aria-pressed={rarity === f.k}
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void ${
               rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
             }`}
           >
