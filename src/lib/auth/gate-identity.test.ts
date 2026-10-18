@@ -9,6 +9,7 @@ import {
   verifyGateIdentityToken,
   type GateJwks,
 } from "./gate-identity.server.ts";
+import { isSafeRedirectUrl } from "./client.ts";
 
 const ISSUER = "https://gate.app-builder-testing.com";
 const AUDIENCE = "app:proj-123";
@@ -322,5 +323,32 @@ describe("sessionBoundToGateIdentity", () => {
       false,
     );
     assert.equal(sessionBoundToGateIdentity([], "user-1", provider), false);
+  });
+});
+
+describe("isSafeRedirectUrl", () => {
+  it("validates redirect URLs to prevent XSS and open redirects", () => {
+    // When window is undefined in node environment
+    assert.equal(isSafeRedirectUrl("/dashboard"), false);
+
+    const originalWindow = globalThis.window;
+    try {
+      // @ts-expect-error mocking window for test
+      globalThis.window = { location: { origin: "https://my-app.grok.me" } };
+
+      assert.equal(isSafeRedirectUrl("/dashboard"), true);
+      assert.equal(isSafeRedirectUrl("/profile?tab=settings#top"), true);
+      assert.equal(isSafeRedirectUrl("https://my-app.grok.me/auth/callback"), true);
+
+      // Reject XSS / unsafe protocols
+      assert.equal(isSafeRedirectUrl("javascript:alert(1)"), false);
+      assert.equal(isSafeRedirectUrl("data:text/html,<script>alert(1)</script>"), false);
+
+      // Reject open redirects to external origins
+      assert.equal(isSafeRedirectUrl("https://evil.com"), false);
+      assert.equal(isSafeRedirectUrl("//evil.com"), false);
+    } finally {
+      globalThis.window = originalWindow;
+    }
   });
 });
