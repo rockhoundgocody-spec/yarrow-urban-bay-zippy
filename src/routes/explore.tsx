@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -61,11 +61,27 @@ function ExplorePage() {
               <g
                 key={s.id}
                 transform={`translate(${px} ${py})`}
-                className="cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label={`${s.name}, ${s.state}`}
+                className="group cursor-pointer focus:outline-none"
                 onClick={() => setPicked(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPicked(s.id);
+                  }
+                }}
               >
                 <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
-                <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
+                <circle
+                  r={active ? 5.5 : 3.6}
+                  fill={isSaved ? "#d4af37" : "#3dcf8a"}
+                  stroke={active ? "#8d7cff" : "none"}
+                  strokeWidth="0.8"
+                  opacity={active ? 0.8 : 0.2}
+                  className="group-focus-visible:stroke-amethyst group-focus-visible:stroke-[1.2px] group-focus-visible:opacity-100"
+                />
               </g>
             );
           })}
@@ -90,7 +106,7 @@ function ExplorePage() {
             type="button"
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
               access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
             )}
           >
@@ -105,7 +121,7 @@ function ExplorePage() {
             type="button"
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize",
+              "rounded-full border px-3 py-1.5 text-xs capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
               diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
             )}
           >
