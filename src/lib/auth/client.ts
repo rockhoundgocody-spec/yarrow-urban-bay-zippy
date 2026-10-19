@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,7 +35,10 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled =
+  typeof import.meta !== "undefined" && import.meta.env
+    ? import.meta.env.VITE_AUTH_ENABLED !== "false"
+    : true;
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
@@ -134,22 +137,26 @@ export async function signIn(
       /* session store will recover on next useSession fetch */
     }
     if (typeof window !== "undefined") {
-      const dest = new URL(callbackURL, window.location.origin);
+      const safeCallback = sanitizeInternalRedirectUrl(callbackURL, "/");
+      const dest = new URL(safeCallback, window.location.origin);
       const here = window.location;
       if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
-        window.location.href = callbackURL;
+        window.location.href = safeCallback;
       }
     }
     return;
   }
 
+  const safeCallbackURL = sanitizeInternalRedirectUrl(callbackURL, "/");
+  const safeErrorCallbackURL = sanitizeInternalRedirectUrl(errorCallbackURL, "/");
+
   const { data, error } = await authClient.signIn.oauth2({
     providerId,
-    callbackURL,
-    errorCallbackURL,
+    callbackURL: safeCallbackURL,
+    errorCallbackURL: safeErrorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url) window.location.href = sanitizeExternalUrl(data.url, "/");
 }
 
 /**
@@ -218,7 +225,51 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * a hand-rolled control must catch it and let the visitor retry. In the live
  * preview the local clear is sufficient, so it always resolves.
  */
+/**
+ * Security: Sanitize internal redirect targets to prevent open redirects and DOM XSS (e.g. javascript: URIs).
+ * Only relative paths or URLs matching the current origin are allowed; falls back to `/`.
+ */
+export function sanitizeInternalRedirectUrl(urlStr: string, fallback = "/"): string {
+  try {
+    const baseOrigin =
+      typeof window !== "undefined" && window.location?.origin
+        ? window.location.origin
+        : "https://app.invalid";
+    const parsed = new URL(urlStr, baseOrigin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return fallback;
+    }
+    if (parsed.origin !== baseOrigin) {
+      return fallback;
+    }
+    return urlStr.startsWith("/") ? urlStr : parsed.href;
+  } catch {
+    return fallback;
+  }
+}
+
+/**
+ * Security: Validate external URLs (such as OAuth authorization URLs) to ensure http/https protocol
+ * and prevent DOM XSS via javascript: or data: schemes.
+ */
+export function sanitizeExternalUrl(urlStr: string, fallback = "/"): string {
+  try {
+    const baseOrigin =
+      typeof window !== "undefined" && window.location?.origin
+        ? window.location.origin
+        : "https://app.invalid";
+    const parsed = new URL(urlStr, baseOrigin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return fallback;
+    }
+    return parsed.href;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function signOut(redirectTo = "/"): Promise<void> {
+  const safeTarget = sanitizeInternalRedirectUrl(redirectTo, "/");
   await runSignOut({
     livePreview: inLivePreview(),
     hasBearer: Boolean(getBearerToken()),
@@ -230,7 +281,7 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      window.location.href = safeTarget;
     },
   });
 }
