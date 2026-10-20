@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { GROK_PROVIDERS } from "./providers.ts";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -35,10 +35,48 @@ export const authClient = createAuthClient({
  * with the key removed, sign-in is real in preview (baked preview client) and
  * when deployed (injected per-app client).
  */
-export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
+export const authEnabled = import.meta.env?.VITE_AUTH_ENABLED !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
 export { GROK_PROVIDERS };
+
+/**
+ * Sanitizes redirect URLs to enforce same-origin navigation with http: or https: protocols.
+ * Prevents DOM XSS (e.g. javascript:, data: URIs) and Open Redirects to external untrusted domains.
+ */
+export function sanitizeRedirectUrl(target: string | undefined | null, baseOrigin: string, fallback = "/"): string {
+  if (!target) return new URL(fallback, baseOrigin).href;
+  try {
+    const parsed = new URL(target, baseOrigin);
+    const baseParsed = new URL(baseOrigin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return new URL(fallback, baseOrigin).href;
+    }
+    if (parsed.origin !== baseParsed.origin) {
+      return new URL(fallback, baseOrigin).href;
+    }
+    return parsed.href;
+  } catch {
+    return new URL(fallback, baseOrigin).href;
+  }
+}
+
+/**
+ * Validates that an external redirect URL (such as an OAuth provider URL) uses http: or https: scheme.
+ * Prevents DOM XSS via javascript: or data: URIs.
+ */
+export function sanitizeExternalUrl(target: string | undefined | null, baseOrigin: string, fallback = "/"): string {
+  if (!target) return new URL(fallback, baseOrigin).href;
+  try {
+    const parsed = new URL(target, baseOrigin);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return new URL(fallback, baseOrigin).href;
+    }
+    return parsed.href;
+  } catch {
+    return new URL(fallback, baseOrigin).href;
+  }
+}
 
 // ── Live-preview bearer token ────────────────────────────────────────────────
 // The embedded preview iframe has partitioned cookies, so we keep the session's
@@ -100,8 +138,9 @@ export async function signIn(
   providerId: string,
   opts: { callbackURL?: string; errorCallbackURL?: string } = {},
 ): Promise<void> {
-  const callbackURL = opts.callbackURL ?? "/";
-  const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:8080";
+  const callbackURL = sanitizeRedirectUrl(opts.callbackURL, origin);
+  const errorCallbackURL = sanitizeRedirectUrl(opts.errorCallbackURL, origin);
 
   // Open the popup SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some
@@ -137,7 +176,7 @@ export async function signIn(
       const dest = new URL(callbackURL, window.location.origin);
       const here = window.location;
       if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
-        window.location.href = callbackURL;
+        window.location.href = dest.href;
       }
     }
     return;
@@ -149,7 +188,9 @@ export async function signIn(
     errorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url) {
+    window.location.href = sanitizeExternalUrl(data.url, origin);
+  }
 }
 
 /**
@@ -230,7 +271,9 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      if (typeof window !== "undefined") {
+        window.location.href = sanitizeRedirectUrl(redirectTo, window.location.origin);
+      }
     },
   });
 }
