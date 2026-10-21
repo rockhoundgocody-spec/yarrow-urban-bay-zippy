@@ -6,13 +6,13 @@
  */
 
 import { z } from "zod";
-import { resolveParentEmbedderOrigin } from "./preview-embedder-origin";
+import { resolveParentEmbedderOrigin } from "./preview-embedder-origin.ts";
 
 export {
   isGrokEmbedderOrigin,
   isSandboxPreviewGuestHost,
   resolveParentEmbedderOrigin,
-} from "./preview-embedder-origin";
+} from "./preview-embedder-origin.ts";
 
 export const PREVIEW_BRIDGE_CHANNEL = "grok-preview-bridge" as const;
 export const PREVIEW_BRIDGE_VERSION = 1 as const;
@@ -45,12 +45,21 @@ export type PreviewHostBridgeOptions = {
 };
 
 export function isSafeBridgePath(path: string): boolean {
-  if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) {
+  if (typeof path !== "string" || !path.startsWith("/")) {
+    return false;
+  }
+  // Reject protocol-relative '//', backslash escape '/\', whitespace or control characters after '/'
+  // eslint-disable-next-line no-control-regex
+  if (path.startsWith("//") || path.startsWith("/\\") || /^[/ \t\n\r\0-\x1f]/.test(path.slice(1))) {
+    return false;
+  }
+  // Reject backslashes anywhere in path
+  if (path.includes("\\")) {
     return false;
   }
   try {
     const resolved = new URL(path, "https://preview.invalid");
-    return resolved.origin === "https://preview.invalid";
+    return resolved.origin === "https://preview.invalid" && resolved.pathname.startsWith("/");
   } catch {
     return false;
   }
