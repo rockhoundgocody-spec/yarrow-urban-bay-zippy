@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -61,11 +61,30 @@ function ExplorePage() {
               <g
                 key={s.id}
                 transform={`translate(${px} ${py})`}
-                className="cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label={`${s.name}, ${s.state}`}
+                aria-pressed={active}
+                className="cursor-pointer focus-visible:outline-none"
                 onClick={() => setPicked(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPicked(s.id);
+                  }
+                }}
               >
-                <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
-                <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
+                <circle
+                  r={active ? 3.2 : 2.2}
+                  fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"}
+                />
+                <circle
+                  r={active ? 5.5 : 3.6}
+                  fill={isSaved ? "#d4af37" : "#3dcf8a"}
+                  opacity={active ? "0.4" : "0.2"}
+                  stroke={active ? "#8d7cff" : "none"}
+                  strokeWidth={active ? "0.5" : "0"}
+                />
               </g>
             );
           })}
@@ -83,15 +102,16 @@ function ExplorePage() {
         className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
       />
 
-      <div className="flex gap-1.5 overflow-x-auto">
+      <div className="flex gap-1.5 overflow-x-auto pb-1">
         {ACCESS.map((a) => (
           <button
             key={a.k}
             type="button"
+            aria-pressed={access === a.k}
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-field focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {a.l}
@@ -103,10 +123,11 @@ function ExplorePage() {
           <button
             key={d}
             type="button"
+            aria-pressed={diff === d}
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize",
-              diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
+              "rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {d}
