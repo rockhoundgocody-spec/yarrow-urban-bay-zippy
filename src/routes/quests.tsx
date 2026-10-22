@@ -56,16 +56,22 @@ function QuestsPage() {
             <li key={q.id}>
               <Link
                 to={LINKS[q.id]}
-                className={cn("rh-panel flex items-center gap-3 rounded-xl p-4", q.done && "opacity-60")}
+                aria-label={`${q.title}: ${q.detail}. ${q.xp} XP reward. ${q.done ? "Completed" : "Incomplete"}`}
+                className={cn(
+                  "rh-panel flex items-center gap-3 rounded-xl p-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+                  q.done && "opacity-60",
+                )}
               >
-                <span className="grid size-10 place-items-center rounded-md border border-line">
+                <span aria-hidden="true" className="grid size-10 place-items-center rounded-md border border-line">
                   {q.done ? <Check className="size-4 text-field" /> : <Icon className="size-4 text-gold" />}
                 </span>
-                <div className="min-w-0 flex-1">
+                <div aria-hidden="true" className="min-w-0 flex-1">
                   <p className="text-sm text-fg">{q.title}</p>
                   <p className="text-xs text-muted">{q.detail}</p>
                 </div>
-                <span className="text-xs tabular-nums text-muted">+{q.xp}</span>
+                <span aria-hidden="true" className="text-xs tabular-nums text-muted">
+                  +{q.xp}
+                </span>
               </Link>
             </li>
           );
