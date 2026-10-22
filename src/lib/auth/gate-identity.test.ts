@@ -9,6 +9,7 @@ import {
   verifyGateIdentityToken,
   type GateJwks,
 } from "./gate-identity.server.ts";
+import { safeRedirectTarget } from "./client.ts";
 
 const ISSUER = "https://gate.app-builder-testing.com";
 const AUDIENCE = "app:proj-123";
@@ -322,5 +323,28 @@ describe("sessionBoundToGateIdentity", () => {
       false,
     );
     assert.equal(sessionBoundToGateIdentity([], "user-1", provider), false);
+  });
+});
+
+describe("safeRedirectTarget", () => {
+  const origin = "http://localhost:8080";
+
+  it("allows relative same-origin paths", () => {
+    assert.equal(safeRedirectTarget("/profile", "/", origin), "/profile");
+    assert.equal(safeRedirectTarget("/explore?id=1#top", "/", origin), "/explore?id=1#top");
+  });
+
+  it("allows absolute URLs matching the same origin", () => {
+    assert.equal(safeRedirectTarget("http://localhost:8080/vault", "/", origin), "/vault");
+  });
+
+  it("rejects javascript: and data: URIs (preventing DOM XSS)", () => {
+    assert.equal(safeRedirectTarget("javascript:alert(1)", "/", origin), "/");
+    assert.equal(safeRedirectTarget("data:text/html,<script>alert(1)</script>", "/", origin), "/");
+  });
+
+  it("rejects external domains and protocol-relative URLs (preventing Open Redirects)", () => {
+    assert.equal(safeRedirectTarget("https://evil.com/login", "/", origin), "/");
+    assert.equal(safeRedirectTarget("//evil.com/login", "/", origin), "/");
   });
 });
