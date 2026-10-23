@@ -134,10 +134,16 @@ export async function signIn(
       /* session store will recover on next useSession fetch */
     }
     if (typeof window !== "undefined") {
-      const dest = new URL(callbackURL, window.location.origin);
-      const here = window.location;
-      if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
-        window.location.href = callbackURL;
+      try {
+        const dest = new URL(callbackURL, window.location.origin);
+        if (dest.protocol === "http:" || dest.protocol === "https:") {
+          const here = window.location;
+          if (dest.origin !== here.origin || dest.pathname !== here.pathname || dest.search !== here.search) {
+            window.location.href = dest.href;
+          }
+        }
+      } catch {
+        /* ignore invalid callbackURL */
       }
     }
     return;
@@ -149,7 +155,16 @@ export async function signIn(
     errorCallbackURL,
   });
   if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (data?.url) {
+    try {
+      const parsed = new URL(data.url, window.location.origin);
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+        window.location.href = parsed.href;
+      }
+    } catch {
+      /* ignore invalid redirect url */
+    }
+  }
 }
 
 /**
@@ -230,7 +245,14 @@ export async function signOut(redirectTo = "/"): Promise<void> {
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      try {
+        const parsed = new URL(redirectTo, window.location.origin);
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+          window.location.href = parsed.href;
+        }
+      } catch {
+        /* ignore invalid redirect url */
+      }
     },
   });
 }
