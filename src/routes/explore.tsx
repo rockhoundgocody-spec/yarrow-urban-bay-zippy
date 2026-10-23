@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Panel, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -61,8 +61,18 @@ function ExplorePage() {
               <g
                 key={s.id}
                 transform={`translate(${px} ${py})`}
-                className="cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={`${s.name}, ${s.state}${isSaved ? " (Saved)" : ""}`}
+                aria-pressed={active}
+                className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
                 onClick={() => setPicked(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPicked(s.id);
+                  }
+                }}
               >
                 <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
                 <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
