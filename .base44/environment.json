@@ -1,0 +1,12 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "XAI_API_KEY",
+      "description": "xAI API key from https://console.x.ai/ for Clover and photo identification. Optional for startup; AI requests require a valid key.",
+      "requiredAtBoot": false
+    }
+  ]
+}

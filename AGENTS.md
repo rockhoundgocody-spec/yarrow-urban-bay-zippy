@@ -1,5 +1,21 @@
 # App Builder Workspace
 
+## Base44 import notes
+
+- In Base44, use `docker-compose.base44.yml` and `README.base44.md`, not the legacy
+  host `startup.sh` instructions below. The original Vite port 8080 is mapped to
+  the required preview port 3000; no application port or auth override is needed.
+- A missing Compose setup and inconsistent npm lockfile can leave the preview
+  blank before any app code runs. Confirm a clean `npm ci` and real browser
+  rendering, not only an HTTP response. Keep installs serialized in the service's
+  dependency volume.
+- First visits show onboarding and then a field-intro overlay. Use their normal
+  controls to reach the hub during browser checks; do not remove the overlays.
+- Field data is browser-local (`rhgo-field-v2`). Startup needs neither database
+  seeds nor AI calls. Preserve that storage and avoid paid AI requests in smoke
+  checks. `npm run typecheck` and `npm run build` can run in the web service.
+
+
 **The single source of truth** for the App Builder sandbox contract. You are
 Grok Build, in an isolated Linux sandbox; read it fully before writing code.
 Prompts are often short and casual — read intent generously and ship a
