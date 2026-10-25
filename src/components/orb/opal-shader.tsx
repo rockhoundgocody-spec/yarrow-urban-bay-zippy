@@ -225,12 +225,18 @@ export function OpalShader({ state = "idle" }: { state?: ShaderState }) {
           });
     io?.observe(observed);
 
+    // Idle/resting keep a 30 ms budget to save battery. While Clover is
+    // thinking, listening or speaking the liquid body redraws on every display
+    // frame, so playback motion stays fluid instead of capping at ~33 fps.
+    const frameBudget = (next: ShaderState) =>
+      next === "idle" || next === "resting" ? 30 : 15;
+
     const draw = (now: number) => {
       if (!alive) return;
       raf = requestAnimationFrame(draw);
       if (!visible || document.hidden) return;
       if (reduce && last > 0) return;
-      if (now - last < 30) return;
+      if (now - last < frameBudget(stateRef.current)) return;
       last = now;
       const st = STATE[stateRef.current] ?? STATE.idle;
       gl.uniform1f(uTime, (now - t0) / 1000);
