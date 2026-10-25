@@ -17,8 +17,8 @@ export const speakClover = createServerFn({ method: "POST" })
         text,
         voice_id: "ara",
         language: "en",
-        speed: 0.96,
-        text_normalization: true,
+        speed: 0.98,
+        output_format: { codec: "mp3", sample_rate: 44100, bit_rate: 192000 },
       }),
     });
     if (!res.ok) return { ok: false };
@@ -44,6 +44,7 @@ export const transcribeClover = createServerFn({ method: "POST" })
 
     const ext = mime.includes("mp4") ? "mp4" : mime.includes("ogg") ? "ogg" : "webm";
     const form = new FormData();
+    form.append("model", "grok-voice-transcribe-2.0");
     form.append("language", "en");
     form.append("file", new Blob([bytes], { type: mime }), `voice.${ext}`);
 

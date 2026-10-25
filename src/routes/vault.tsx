@@ -119,7 +119,13 @@ function VaultPage() {
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel block rounded-xl p-3">
                   {s.photoDataUrl ? (
-                    <img src={s.photoDataUrl} alt="" className="mb-2 h-24 w-full rounded-md object-cover" />
+                    <img
+                      src={s.photoDataUrl}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="mb-2 h-24 w-full rounded-md object-cover"
+                    />
                   ) : (
                     <div className="mb-2 grid h-24 place-items-center">
                       <CrystalGem hue={m?.hue ?? "#8d7cff"} system={s.crystalSystem} size={56} />

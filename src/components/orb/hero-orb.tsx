@@ -12,18 +12,22 @@ export function HeroCloverOrb({
 }) {
   const clover = useCloverConversation();
 
+  // Deferred to idle so the location prompt never competes with first paint.
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) return;
     if (sessionStorage.getItem("rhgo_last_gps")) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) =>
-        sessionStorage.setItem(
-          "rhgo_last_gps",
-          JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        ),
-      () => {},
-      { timeout: 8000, maximumAge: 600_000 },
-    );
+    const idle = window.setTimeout(() => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) =>
+          sessionStorage.setItem(
+            "rhgo_last_gps",
+            JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          ),
+        () => {},
+        { timeout: 8000, maximumAge: 600_000 },
+      );
+    }, 1200);
+    return () => window.clearTimeout(idle);
   }, []);
 
   function handleTap(e: MouseEvent<HTMLButtonElement>) {

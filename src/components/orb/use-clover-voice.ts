@@ -27,8 +27,32 @@ const SILENCE_MS = 1400;
 const MAX_RECORD_MS = 14000;
 const WAIT_SPEECH_MS = 9000;
 const VOICE_RMS = 0.038;
-const BARGE_RMS = 0.11;
-const BARGE_HOLD_MS = 220;
+const BARGE_RMS = 0.13;
+const BARGE_HOLD_MS = 300;
+const BARGE_ARM_MS = 800;
+const SPEECH_CHUNK_CHARS = 180;
+
+/**
+ * Splits an answer into speakable sentences. Long utterances get cut off
+ * mid-word by several engines; short ones play back smoothly.
+ */
+function chunkForSpeech(text: string) {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (!clean) return [];
+  const sentences = clean.match(/[^.!?…]+[.!?…]*\s*/g) ?? [clean];
+  const chunks: string[] = [];
+  let current = "";
+  for (const sentence of sentences) {
+    if (current && (current + sentence).trim().length > SPEECH_CHUNK_CHARS) {
+      chunks.push(current.trim());
+      current = sentence;
+    } else {
+      current += sentence;
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+  return chunks.length ? chunks : [clean];
+}
 
 function getSpeechRecognition(): (new () => SpeechRec) | null {
   if (typeof window === "undefined") return null;
@@ -45,8 +69,10 @@ function pickBrowserVoice(voices: SpeechSynthesisVoice[]) {
     let s = 0;
     if (/en[-_]?us/i.test(v.lang)) s += 4;
     else if (v.lang.toLowerCase().startsWith("en")) s += 2;
-    if (/neural|natural|premium|enhanced|google/i.test(n)) s += 5;
-    if (/samantha|karen|moira|tessa|victoria|zira|siri|aria|jenny|female/i.test(n)) s += 4;
+    if (/natural|neural|premium|enhanced/i.test(n)) s += 7;
+    if (/google/i.test(n)) s += 4;
+    if (/online/i.test(n)) s += 2;
+    if (/samantha|karen|moira|tessa|victoria|zira|aria|jenny|ava|serena|allison|siri|female/i.test(n)) s += 4;
     if (/male|david|daniel|alex|fred/i.test(n)) s -= 3;
     return s;
   };
@@ -242,34 +268,65 @@ export function useCloverVoice() {
         resolve();
         return;
       }
-      const run = () => {
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = "en-US";
-        utter.rate = 0.92;
-        utter.pitch = 1.06;
-        const voice = pickBrowserVoice(window.speechSynthesis.getVoices());
-        if (voice) utter.voice = voice;
-        utter.onend = () => {
-          setSpeaking(false);
-          resolve();
-        };
-        utter.onerror = () => {
-          setSpeaking(false);
-          resolve();
-        };
-        setSpeaking(true);
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utter);
+      const chunks = chunkForSpeech(text);
+      if (!chunks.length) {
+        resolve();
+        return;
+      }
+      const synth = window.speechSynthesis;
+      let settled = false;
+      let timer = 0;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
+        setSpeaking(false);
+        resolve();
       };
-      const voices = window.speechSynthesis.getVoices();
-      if (voices.length) {
+      const run = () => {
+        if (settled) return;
+        const voice = pickBrowserVoice(synth.getVoices());
+        setSpeaking(true);
+        // Only clear a queue that is genuinely stuck. Cancelling a running one is
+        // what makes some engines restart mid-sentence and sound choppy.
+        if (synth.speaking || synth.pending) synth.cancel();
+        let i = 0;
+        const next = () => {
+          if (settled) return;
+          const chunk = chunks[i++];
+          if (chunk === undefined) {
+            finish();
+            return;
+          }
+          const utter = new SpeechSynthesisUtterance(chunk);
+          utter.lang = voice?.lang ?? "en-US";
+          utter.rate = 0.98;
+          utter.pitch = 1;
+          utter.volume = 1;
+          if (voice) utter.voice = voice;
+          let advanced = false;
+          const advance = () => {
+            if (advanced || settled) return;
+            advanced = true;
+            window.clearTimeout(timer);
+            next();
+          };
+          // Sentence by sentence: a dropped "end" event can only stall one chunk.
+          utter.onend = advance;
+          utter.onerror = advance;
+          timer = window.setTimeout(advance, 2000 + chunk.length * 130);
+          synth.speak(utter);
+        };
+        next();
+      };
+      if (synth.getVoices().length) {
         run();
         return;
       }
       const t = window.setTimeout(run, 400);
-      window.speechSynthesis.onvoiceschanged = () => {
+      synth.onvoiceschanged = () => {
         window.clearTimeout(t);
-        window.speechSynthesis.onvoiceschanged = null;
+        synth.onvoiceschanged = null;
         run();
       };
     });
@@ -287,7 +344,7 @@ export function useCloverVoice() {
         if (!bargeRef.current) return;
         analyser.getByteTimeDomainData(buf);
         const now = performance.now();
-        if (now - startAt < 550) {
+        if (now - startAt < BARGE_ARM_MS) {
           rafRef.current = requestAnimationFrame(tick);
           return;
         }

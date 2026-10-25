@@ -71,7 +71,7 @@ function Home() {
             </div>
           </Panel>
         </Link>
-        <div className="space-y-2">
+        <div className="grid gap-2 md:grid-cols-2">
           {FIELD_MISSIONS.map((tile) => {
             const Icon = tile.icon;
             return (
@@ -133,42 +133,43 @@ function Home() {
         </Link>
       )}
 
-      <section>
-        <SectionLabel>Today's hunt</SectionLabel>
-        <Link to="/explore/$id" params={{ id: featured.id }} className="rh-panel block rounded-xl p-4">
-          <p className="text-[10px] uppercase tracking-[0.16em] text-field">{featured.state} · {featured.access}</p>
-          <p className="mt-1 font-display text-lg text-fg">{featured.name}</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted">{featured.notes}</p>
-          <p className="mt-3 text-xs text-faint">{featured.finds.join(" · ")}</p>
-        </Link>
-      </section>
-
-      <section>
-        <SectionLabel>Species of the hour</SectionLabel>
-        <Link to="/pedia/$id" params={{ id: mineral.id }} className="rh-panel flex items-center gap-3 rounded-xl p-4">
-          <CrystalGem hue={mineral.hue} system={mineral.crystalSystem} size={56} />
-          <div className="min-w-0">
-            <p className="font-display text-fg">{mineral.name}</p>
-            <p className="text-xs text-muted">
-              {mineral.formula} · Mohs {mineral.hardnessMin}
-            </p>
-          </div>
-        </Link>
-      </section>
-
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <SectionLabel>Recent GeoDex</SectionLabel>
-          <Link to="/vault" className="text-xs text-muted hover:text-fg">
-            Open
+      <div className="grid gap-5 md:grid-cols-2 md:items-start">
+        <section>
+          <SectionLabel>Today's hunt</SectionLabel>
+          <Link to="/explore/$id" params={{ id: featured.id }} className="rh-panel block rounded-xl p-4">
+            <p className="text-[10px] uppercase tracking-[0.16em] text-field">{featured.state} · {featured.access}</p>
+            <p className="mt-1 font-display text-lg text-fg">{featured.name}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{featured.notes}</p>
+            <p className="mt-3 text-xs text-faint">{featured.finds.join(" · ")}</p>
           </Link>
-        </div>
-        {specimens.length === 0 ? (
-          <Panel className="p-4 text-sm text-muted">
-            Empty cabinet. Scan your first specimen — collect it, or mark it in place.
-          </Panel>
-        ) : (
-          <ul className="space-y-2">
+        </section>
+
+        <section>
+          <SectionLabel>Species of the hour</SectionLabel>
+          <Link to="/pedia/$id" params={{ id: mineral.id }} className="rh-panel flex items-center gap-3 rounded-xl p-4">
+            <CrystalGem hue={mineral.hue} system={mineral.crystalSystem} size={56} />
+            <div className="min-w-0">
+              <p className="font-display text-fg">{mineral.name}</p>
+              <p className="text-xs text-muted">
+                {mineral.formula} · Mohs {mineral.hardnessMin}
+              </p>
+            </div>
+          </Link>
+        </section>
+
+        <section className="md:col-span-2">
+          <div className="mb-3 flex items-center justify-between">
+            <SectionLabel>Recent GeoDex</SectionLabel>
+            <Link to="/vault" className="text-xs text-muted hover:text-fg">
+              Open
+            </Link>
+          </div>
+          {specimens.length === 0 ? (
+            <Panel className="p-4 text-sm text-muted">
+              Empty cabinet. Scan your first specimen — collect it, or mark it in place.
+            </Panel>
+          ) : (
+            <ul className="grid gap-2 md:grid-cols-3">
             {specimens.slice(0, 3).map((s) => (
               <li key={s.id}>
                 <Link to="/vault/$id" params={{ id: s.id }} className="rh-panel flex items-center gap-3 rounded-xl px-3 py-3">
@@ -191,9 +192,10 @@ function Home() {
                 </Link>
               </li>
             ))}
-          </ul>
-        )}
-      </section>
+            </ul>
+          )}
+        </section>
+      </div>
 
       <div className="flex gap-2 pb-2">
         <Link to="/clover" className="rh-panel flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl text-sm text-cyan">

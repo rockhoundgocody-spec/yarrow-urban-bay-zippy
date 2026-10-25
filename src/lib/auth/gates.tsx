@@ -62,6 +62,10 @@ export function UserButton() {
         <img
           src={user.profileImageUrl}
           alt=""
+          width={32}
+          height={32}
+          loading="lazy"
+          decoding="async"
           className="h-8 w-8 rounded-full object-cover"
         />
       ) : (

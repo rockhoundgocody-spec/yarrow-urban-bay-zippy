@@ -38,7 +38,12 @@ function SpecimenPage() {
     <div className="space-y-5">
       <p className="text-[10px] uppercase tracking-[0.18em] text-cyan">GeoDex specimen</p>
       {specimen.photoDataUrl && (
-        <img src={specimen.photoDataUrl} alt={specimen.name} className="w-full rounded-xl object-cover" />
+        <img
+          src={specimen.photoDataUrl}
+          alt={specimen.name}
+          decoding="async"
+          className="w-full rounded-xl object-cover"
+        />
       )}
       <div className="flex items-start gap-3">
         <CrystalGem hue={mineral?.hue ?? "#8d7cff"} system={specimen.crystalSystem} size={64} />

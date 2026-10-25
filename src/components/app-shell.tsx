@@ -74,7 +74,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {!onboarded && <Onboarding />}
         {onboarded && !openerSeen && <CinematicOpener />}
         <header className="sticky top-0 z-30 border-b border-line bg-void/80 backdrop-blur-md">
-          <div className="mx-auto flex h-14 max-w-lg items-center gap-3 px-4">
+          <div className="mx-auto flex h-14 max-w-lg items-center gap-3 px-4 md:max-w-3xl md:px-6 lg:max-w-5xl">
             <button
               type="button"
               aria-label={menu ? "Close menu" : "Open menu"}
@@ -145,11 +145,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         )}
 
-        <main className="mx-auto w-full max-w-lg overflow-x-clip px-4 pb-28 pt-5">{children}</main>
+        <main className="mx-auto w-full max-w-lg overflow-x-clip px-4 pb-28 pt-5 md:max-w-3xl md:px-6 lg:max-w-5xl">
+          {children}
+        </main>
         <FloatingCloverOrb />
 
         <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-void/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
-          <div className="mx-auto flex max-w-lg items-end px-2">
+          <div className="mx-auto flex max-w-lg items-end px-2 md:max-w-3xl lg:max-w-5xl">
             {TABS.map((tab) => {
               const Icon = tab.icon;
               const active = pathname === tab.to || pathname.startsWith(`${tab.to}/`);

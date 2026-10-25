@@ -130,8 +130,8 @@ void main() {
   float shade = smoothstep(0.5, 0.08, d);
   col *= mix(0.48, 1.0, shade);
 
-  float a = smoothstep(0.5, 0.455, d);
-  gl_FragColor = vec4(col, a);
+  float a = smoothstep(0.5, 0.482, d);
+  gl_FragColor = vec4(col * a, a);
 }
 `;
 
@@ -164,7 +164,7 @@ export function OpalShader({ state = "idle" }: { state?: ShaderState }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: false });
+    const gl = canvas.getContext("webgl", { alpha: true, antialias: true });
     if (!gl) return;
 
     const vs = compile(gl, gl.VERTEX_SHADER, VS);
@@ -196,12 +196,14 @@ export function OpalShader({ state = "idle" }: { state?: ShaderState }) {
     let alive = true;
     const t0 = performance.now();
     let last = 0;
+    let visible = true;
 
     const resize = () => {
       const parent = canvas.parentElement;
       const w = parent?.clientWidth || 160;
       const h = parent?.clientHeight || 160;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Full device pixel ratio (capped at 3) so the orb stays crisp on retina phones.
+      const dpr = Math.min(window.devicePixelRatio || 1, 3);
       canvas.width = Math.max(32, Math.floor(w * dpr));
       canvas.height = Math.max(32, Math.floor(h * dpr));
       canvas.style.width = "100%";
@@ -211,11 +213,22 @@ export function OpalShader({ state = "idle" }: { state?: ShaderState }) {
     };
     resize();
     const ro = new ResizeObserver(resize);
-    if (canvas.parentElement) ro.observe(canvas.parentElement);
+    const observed = canvas.parentElement ?? canvas;
+    ro.observe(observed);
+
+    // Skip all shader work while the orb is scrolled away or the tab is hidden.
+    const io =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver((entries) => {
+            visible = entries[0]?.isIntersecting ?? true;
+          });
+    io?.observe(observed);
 
     const draw = (now: number) => {
       if (!alive) return;
       raf = requestAnimationFrame(draw);
+      if (!visible || document.hidden) return;
       if (reduce && last > 0) return;
       if (now - last < 30) return;
       last = now;
@@ -229,16 +242,10 @@ export function OpalShader({ state = "idle" }: { state?: ShaderState }) {
     };
     raf = requestAnimationFrame(draw);
 
-    const onHide = () => {
-      if (document.hidden) cancelAnimationFrame(raf);
-      else raf = requestAnimationFrame(draw);
-    };
-    document.addEventListener("visibilitychange", onHide);
-
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
-      document.removeEventListener("visibilitychange", onHide);
+      io?.disconnect();
       ro.disconnect();
       gl.deleteProgram(prog);
       gl.deleteShader(vs);
