@@ -86,7 +86,7 @@ export function DiscoveryChoice({
         />
         <span>I had legal access to this ground and will follow posted rules.</span>
       </label>
-      <div className="space-y-2">
+      <div role="radiogroup" aria-label="Discovery disposition" className="space-y-2">
         {OPTIONS.map((o) => {
           const Icon = o.icon;
           const active = picked === o.id;
@@ -95,17 +95,27 @@ export function DiscoveryChoice({
             <button
               key={o.id}
               type="button"
+              role="radio"
+              aria-checked={active}
+              aria-disabled={blocked}
               disabled={blocked}
               onClick={() => setPicked(o.id)}
               className={cn(
-                "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors duration-150",
+                "flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian",
                 active ? "border-gold/50 bg-gold/10" : "border-line bg-void/30 hover:bg-fg/5",
-                blocked && "opacity-40",
+                blocked && "opacity-40 cursor-not-allowed",
               )}
             >
               <Icon className={cn("mt-0.5 size-4 shrink-0", active ? "text-gold" : "text-muted")} />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-fg">{o.title}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-fg">{o.title}</p>
+                  {blocked && (
+                    <span className="text-[10px] font-medium text-gold/80">
+                      Requires legal access
+                    </span>
+                  )}
+                </div>
                 <p className="mt-1 text-xs leading-relaxed text-muted">{o.body}</p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-faint">
                   +{o.xp} XP · {o.lane}
