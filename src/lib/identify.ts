@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -111,15 +111,53 @@ function extractJson(text: string): Record<string, unknown> | null {
 
 const CATALOG = MINERALS.map((m) => m.name).join(", ");
 
+// Max allowed image payload size (10 MB in chars) to mitigate memory exhaustion DoS.
+const MAX_IMAGE_DATA_URL_LENGTH = 10 * 1024 * 1024;
+// Max length for optional textual inputs to prevent prompt injection / token bloat.
+const MAX_TEXT_INPUT_LENGTH = 500;
+
+/**
+ * Validate that an image payload is a data:image Data URL under size limits.
+ * Protects against SSRF (arbitrary http/file schemes) and DoS via large payloads.
+ */
+export function validateImageDataUrl(url: unknown): { valid: true; url: string } | { valid: false; error: string } {
+  if (typeof url !== "string" || !url) {
+    return { valid: false, error: "Image data URL is required." };
+  }
+  if (!url.startsWith("data:image/")) {
+    return { valid: false, error: "Invalid image scheme. Only data:image/ URLs are allowed." };
+  }
+  if (url.length > MAX_IMAGE_DATA_URL_LENGTH) {
+    return { valid: false, error: "Image payload exceeds maximum allowed size." };
+  }
+  return { valid: true, url };
+}
+
+/** Sanitize and limit length of user text inputs. */
+export function sanitizeTextInput(input: unknown, fallback: string): string {
+  if (typeof input !== "string") return fallback;
+  const trimmed = input.trim().slice(0, MAX_TEXT_INPUT_LENGTH);
+  return trimmed || fallback;
+}
+
 export const identifySpecimen = createServerFn({ method: "POST" })
   .validator((input: { imageDataUrl: string; notes?: string; locality?: string }) => input)
   .handler(async ({ data }): Promise<{ ok: true; result: IdentifyResult } | { ok: false; error: string }> => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
 
+    // Security input validation
+    const imageValidation = validateImageDataUrl(data?.imageDataUrl);
+    if (!imageValidation.valid) {
+      return { ok: false, error: imageValidation.error };
+    }
+
+    const localityHint = sanitizeTextInput(data?.locality, "unknown");
+    const collectorNotes = sanitizeTextInput(data?.notes, "none");
+
     const prompt = `You are a professional mineralogist assisting a field rockhound.
 Identify the rock, mineral, or fossil in the photo.
-Locality hint: ${data.locality || "unknown"}. Collector notes: ${data.notes || "none"}.
+Locality hint: ${localityHint}. Collector notes: ${collectorNotes}.
 Prefer a common name from this catalog when it reasonably fits: ${CATALOG}.
 If the image is not geological, say so.
 Return ONLY compact JSON with keys:
@@ -143,7 +181,7 @@ Never invent certainty. If unsure, lower confidence and list alternatives.`;
             role: "user",
             content: [
               { type: "text", text: prompt },
-              { type: "image_url", image_url: { url: data.imageDataUrl } },
+              { type: "image_url", image_url: { url: imageValidation.url } },
             ],
           },
         ],
