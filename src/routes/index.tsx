@@ -10,6 +10,7 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
+import { RelativeTime, useMounted } from "@/components/client-time";
 import { CrystalGem } from "@/components/crystal-gem";
 import { HeroCloverOrb } from "@/components/orb/hero-orb";
 import { SyncStatusBar } from "@/components/sync-bar";
@@ -19,7 +20,6 @@ import { SITES } from "@/data/locations";
 import { MINERALS } from "@/data/minerals";
 import { useField } from "@/lib/store";
 import { rankFromLevel, xpToNext } from "@/lib/xp";
-import { formatRelative } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -33,6 +33,7 @@ const FIELD_MISSIONS = [
 ] as const;
 
 function Home() {
+  const mounted = useMounted();
   const name = useField((s) => s.displayName);
   const xp = useField((s) => s.xp);
   const streak = useField((s) => s.streak);
@@ -41,7 +42,9 @@ function Home() {
   const fieldMode = useField((s) => s.fieldMode);
   const { level } = xpToNext(xp);
   const nextQuest = quests.find((q) => !q.done);
-  const featured = SITES[(new Date().getDate() - 1) % SITES.length] ?? SITES[0];
+  // Rotates on the UTC date, the day boundary the rest of the app uses (todayKey,
+  // quest reset), so the server render and hydration always pick the same site.
+  const featured = SITES[(new Date().getUTCDate() - 1) % SITES.length] ?? SITES[0];
   const mineral = MINERALS.find((m) => m.id === "amethyst") ?? MINERALS[0];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Morning" : hour < 18 ? "Afternoon" : "Evening";
@@ -56,7 +59,9 @@ function Home() {
             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-field">Field mode · active</p>
           </div>
           <h1 className="mt-2 font-display text-[1.75rem] leading-tight text-fg">Field operations</h1>
-          <p className="mt-1 text-sm text-muted">{rankFromLevel(level)} · {month} window</p>
+          <p className="mt-1 text-sm text-muted">
+            {rankFromLevel(level)} · {mounted ? `${month} window` : "field window"}
+          </p>
         </header>
         <SyncStatusBar />
         <Link to="/identify" className="block">
@@ -96,7 +101,7 @@ function Home() {
       <header>
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-amethyst">Operating system active</p>
         <h1 className="mt-2 font-display text-[1.75rem] leading-tight text-fg">
-          {greeting}, {name}.
+          {mounted ? `${greeting}, ${name}.` : `Hello, ${name}.`}
         </h1>
         <p className="mt-1 text-sm text-muted">
           {rankFromLevel(level)} · disciplined discovery.
@@ -185,7 +190,7 @@ function Home() {
                         : s.disposition === "restricted_observed"
                           ? "Observed"
                           : "Collected"}{" "}
-                      · {formatRelative(s.createdAt)}
+                      · <RelativeTime at={s.createdAt} />
                     </p>
                   </div>
                 </Link>

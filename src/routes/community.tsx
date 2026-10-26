@@ -1,9 +1,10 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { CrystalGem } from "@/components/crystal-gem";
+import { RelativeTime } from "@/components/client-time";
 import { MINERALS } from "@/data/minerals";
 import { useField } from "@/lib/store";
-import { cn, formatRelative } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/community")({ component: CommunityPage });
 
@@ -25,7 +26,7 @@ function CommunityPage() {
             <li key={p.id} className="rh-panel rounded-xl p-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-fg">{p.author}</p>
-                <p className="text-[11px] text-faint">{formatRelative(p.at)}</p>
+                <RelativeTime at={p.at} className="text-[11px] text-faint" />
               </div>
               <div className="mt-3 flex items-start gap-3">
                 <CrystalGem hue={p.hue} system={m?.crystalSystem} size={52} />
