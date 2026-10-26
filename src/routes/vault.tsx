@@ -1,11 +1,11 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Camera, Search } from "lucide-react";
+import { Camera, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CrystalGem } from "@/components/crystal-gem";
 import { Panel, RarityChip, SectionLabel, Stat } from "@/components/ui";
 import { MINERALS, type Rarity } from "@/data/minerals";
 import { useField } from "@/lib/store";
-import { formatUsd } from "@/lib/utils";
+import { cn, formatUsd } from "@/lib/utils";
 import type { DiscoveryDisposition } from "@/lib/types";
 
 export const Route = createFileRoute("/vault")({ component: VaultPage });
@@ -62,41 +62,55 @@ function VaultPage() {
       </Panel>
       <p className="text-xs text-faint">Collected value estimate {formatUsd(value)} · in-place finds are not priced.</p>
 
-      <label className="relative block">
+      <div className="relative block">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search GeoDex"
           aria-label="Search GeoDex collection"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-10 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
         />
-      </label>
+        {q && (
+          <button
+            type="button"
+            onClick={() => setQ("")}
+            aria-label="Clear search"
+            className="absolute right-2 top-1/2 -translate-y-1/2 grid size-7 place-items-center rounded-md text-faint hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
+          >
+            <X className="size-4" />
+          </button>
+        )}
+      </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by disposition">
         {DISPO.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={dispo === f.k}
             onClick={() => setDispo(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
-            }`}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              dispo === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
+            )}
           >
             {f.l}
           </button>
         ))}
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by rarity">
         {FILTERS.map((f) => (
           <button
             key={f.k}
             type="button"
+            aria-pressed={rarity === f.k}
             onClick={() => setRarity(f.k)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs ${
-              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted"
-            }`}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              rarity === f.k ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
+            )}
           >
             {f.l}
           </button>
