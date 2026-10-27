@@ -48,18 +48,19 @@ function PediaPage() {
           onChange={(e) => setQ(e.target.value)}
           placeholder="Name, formula, color"
           aria-label="Search minerals"
-          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
         />
       </label>
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter minerals by category">
         {CATS.map((c) => (
           <button
             key={c.k}
             type="button"
             onClick={() => setCat(c.k)}
+            aria-pressed={cat === c.k}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              cat === c.k ? "border-amethyst/40 bg-amethyst/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {c.l}
@@ -67,28 +68,44 @@ function PediaPage() {
         ))}
       </div>
       <SectionLabel>{list.length} entries</SectionLabel>
-      <ul className="space-y-2">
-        {list.map((m) => (
-          <li key={m.id}>
-            <Link
-              to="/pedia/$id"
-              params={{ id: m.id }}
-              onClick={() => complete("pedia")}
-              className="rh-panel flex items-center gap-3 rounded-xl p-3"
-            >
-              <CrystalGem hue={m.hue} system={m.crystalSystem} size={44} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-sm text-fg">{m.name}</p>
-                <p className="truncate text-[11px] text-faint">
-                  {m.formula} · Mohs {m.hardnessMin}
-                  {m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}
-                </p>
-              </div>
-              <RarityChip rarity={m.rarity} />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {list.length === 0 ? (
+        <div className="rh-panel rounded-xl p-6 text-center">
+          <p className="text-sm text-muted">No minerals match your search or category filter.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setCat("all");
+            }}
+            className="mt-3 inline-flex items-center rounded-md text-xs font-medium text-amethyst underline underline-offset-4 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+          >
+            Clear search filters
+          </button>
+        </div>
+      ) : (
+        <ul className="space-y-2">
+          {list.map((m) => (
+            <li key={m.id}>
+              <Link
+                to="/pedia/$id"
+                params={{ id: m.id }}
+                onClick={() => complete("pedia")}
+                className="rh-panel flex items-center gap-3 rounded-xl p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+              >
+                <CrystalGem hue={m.hue} system={m.crystalSystem} size={44} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-display text-sm text-fg">{m.name}</p>
+                  <p className="truncate text-[11px] text-faint">
+                    {m.formula} · Mohs {m.hardnessMin}
+                    {m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}
+                  </p>
+                </div>
+                <RarityChip rarity={m.rarity} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
