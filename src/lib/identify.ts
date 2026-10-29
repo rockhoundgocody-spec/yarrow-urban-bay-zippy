@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { MINERALS, findMineralByName, type Mineral, type Rarity } from "@/data/minerals";
-import type { IdentifyResult } from "@/lib/types";
+import { MINERALS, findMineralByName, type Mineral, type Rarity } from "../data/minerals.ts";
+import type { IdentifyResult } from "./types.ts";
 
 const RARITY_SET = new Set<Rarity>(["common", "uncommon", "rare", "epic", "legendary"]);
 
@@ -117,9 +117,21 @@ export const identifySpecimen = createServerFn({ method: "POST" })
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false, error: "AI is not available in this environment." };
 
+    if (typeof data?.imageDataUrl !== "string" || !data.imageDataUrl.trim()) {
+      return { ok: false, error: "Invalid image input." };
+    }
+
+    const imageUrl = data.imageDataUrl.trim();
+    if (!imageUrl.startsWith("data:image/") && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+      return { ok: false, error: "Invalid image format." };
+    }
+
+    const locality = typeof data.locality === "string" && data.locality.trim() ? data.locality.trim().slice(0, 200) : "unknown";
+    const notes = typeof data.notes === "string" && data.notes.trim() ? data.notes.trim().slice(0, 400) : "none";
+
     const prompt = `You are a professional mineralogist assisting a field rockhound.
 Identify the rock, mineral, or fossil in the photo.
-Locality hint: ${data.locality || "unknown"}. Collector notes: ${data.notes || "none"}.
+Locality hint: ${locality}. Collector notes: ${notes}.
 Prefer a common name from this catalog when it reasonably fits: ${CATALOG}.
 If the image is not geological, say so.
 Return ONLY compact JSON with keys:
@@ -143,7 +155,7 @@ Never invent certainty. If unsure, lower confidence and list alternatives.`;
             role: "user",
             content: [
               { type: "text", text: prompt },
-              { type: "image_url", image_url: { url: data.imageDataUrl } },
+              { type: "image_url", image_url: { url: imageUrl } },
             ],
           },
         ],
