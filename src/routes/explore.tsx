@@ -60,9 +60,19 @@ function ExplorePage() {
             return (
               <g
                 key={s.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`${s.name}, ${s.state}`}
+                aria-pressed={active}
                 transform={`translate(${px} ${py})`}
-                className="cursor-pointer"
+                className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
                 onClick={() => setPicked(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setPicked(s.id);
+                  }
+                }}
               >
                 <circle r={active ? 3.2 : 2.2} fill={isSaved ? "#d4af37" : active ? "#8d7cff" : "#3dcf8a"} />
                 <circle r={active ? 5.5 : 3.6} fill={isSaved ? "#d4af37" : "#3dcf8a"} opacity="0.2" />
@@ -88,25 +98,27 @@ function ExplorePage() {
           <button
             key={a.k}
             type="button"
+            aria-pressed={access === a.k}
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
-              access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-field focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {a.l}
           </button>
         ))}
       </div>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 overflow-x-auto">
         {(["all", "easy", "moderate", "hard"] as const).map((d) => (
           <button
             key={d}
             type="button"
+            aria-pressed={diff === d}
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize",
-              diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-field focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {d}
@@ -115,29 +127,46 @@ function ExplorePage() {
       </div>
 
       <SectionLabel>Localities</SectionLabel>
-      <ul className="space-y-2">
-        {list.map((s) => (
-          <li key={s.id}>
-            <Link
-              to="/explore/$id"
-              params={{ id: s.id }}
-              className={cn("rh-panel block rounded-xl p-4", picked === s.id && "border-amethyst/40")}
-              onClick={() => setPicked(s.id)}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-fg">{s.name}</p>
-                  <p className="mt-0.5 text-xs text-muted">
-                    {s.state} · {s.access.replace("_", " ")} · {s.difficulty}
-                  </p>
+      {list.length === 0 ? (
+        <Panel className="p-6 text-center">
+          <p className="text-sm text-muted">No localities match your search or filter.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setAccess("all");
+              setDiff("all");
+            }}
+            className="mt-3 text-xs text-field hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-field"
+          >
+            Reset filters
+          </button>
+        </Panel>
+      ) : (
+        <ul className="space-y-2">
+          {list.map((s) => (
+            <li key={s.id}>
+              <Link
+                to="/explore/$id"
+                params={{ id: s.id }}
+                className={cn("rh-panel block rounded-xl p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst", picked === s.id && "border-amethyst/40")}
+                onClick={() => setPicked(s.id)}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-display text-fg">{s.name}</p>
+                    <p className="mt-0.5 text-xs text-muted">
+                      {s.state} · {s.access.replace("_", " ")} · {s.difficulty}
+                    </p>
+                  </div>
+                  {saved.includes(s.id) && <span className="text-[10px] uppercase tracking-[0.14em] text-gold">Saved</span>}
                 </div>
-                {saved.includes(s.id) && <span className="text-[10px] uppercase tracking-[0.14em] text-gold">Saved</span>}
-              </div>
-              <p className="mt-2 text-xs text-faint">{s.finds.slice(0, 4).join(" · ")}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+                <p className="mt-2 text-xs text-faint">{s.finds.slice(0, 4).join(" · ")}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

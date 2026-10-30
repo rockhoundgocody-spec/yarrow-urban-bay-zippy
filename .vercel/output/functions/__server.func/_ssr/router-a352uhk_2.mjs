@@ -1,0 +1,2258 @@
+import { i as __toESM } from "../_runtime.mjs";
+import { _ as require_react, a as HeadContent, c as createRouter, d as createFileRoute, f as createRootRoute, g as require_jsx_runtime, h as useRouter, i as Scripts, l as Outlet, o as useRouterState, p as Link, u as lazyRouteComponent } from "../_libs/@tanstack/react-router+[...].mjs";
+import { n as createServerFn, r as getServerFnById, t as TSS_SERVER_FUNCTION } from "./ssr.mjs";
+import { r as findMineralByName, t as MINERALS } from "./minerals-DfAvtWOL.mjs";
+import { C as Compass, O as BookOpen, T as Camera, c as ShoppingBag, h as Map, i as TriangleAlert, l as Shield, m as Menu, n as WifiOff, o as Target, p as MessageSquare, r as User, s as Sparkles, t as X, x as Gem, y as House } from "../_libs/lucide-react.mjs";
+import { a as union, i as string, n as number, r as object, t as literal } from "../_libs/zod.mjs";
+import { t as Toaster } from "../_libs/sonner.mjs";
+import { a as xpToNext, f as CrystalGem, g as todayKey, i as useField, p as cn, s as Button } from "./router-a352uhk_.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/router-a352uhk_.js
+var import_react = /* @__PURE__ */ __toESM(require_react());
+var import_jsx_runtime = require_jsx_runtime();
+var __defProp = Object.defineProperty;
+var __exportAll = (all, no_symbols) => {
+	let target = {};
+	for (var name in all) __defProp(target, name, {
+		get: all[name],
+		enumerable: true
+	});
+	if (!no_symbols) __defProp(target, Symbol.toStringTag, { value: "Module" });
+	return target;
+};
+function AppErrorComponent({ error }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", {
+		className: "flex min-h-screen flex-col items-center justify-center gap-3 bg-void px-6 text-center text-fg",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "text-danger",
+				"aria-hidden": "true",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TriangleAlert, {
+					className: "size-10",
+					strokeWidth: 2
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+				className: "font-display text-lg",
+				children: "Something went wrong"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "max-w-md text-sm break-words text-muted",
+				children: error.message || "An unexpected error occurred. Try reloading the page."
+			})
+		]
+	});
+}
+/**
+* App-wide client provider mounted once near the root (in `src/routes/__root.tsx`):
+*
+*   <AuthProvider><Outlet /></AuthProvider>
+*
+* Better Auth's React client (`@/lib/auth/client`) needs NO context provider —
+* its `useSession()` works standalone — so this is a passthrough today. It's
+* kept as the single, stable mount point for any future client-side providers
+* (e.g. a toast or theme provider) without churning the root shell.
+*/
+function AuthProvider({ children }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children });
+}
+function isGrokEmbedderOrigin(origin) {
+	try {
+		const url = new URL(origin);
+		if (url.protocol !== "https:" && url.protocol !== "http:") return false;
+		const host = url.hostname.toLowerCase();
+		if (host === "grok.com" || host.endsWith(".grok.com")) return true;
+		if (host === "localhost" || host === "127.0.0.1" || host === "[::1]") return true;
+		return false;
+	} catch {
+		return false;
+	}
+}
+function isSandboxPreviewGuestHost(hostname) {
+	const host = hostname.toLowerCase();
+	return host === "grok-sandbox.com" || host.endsWith(".grok-sandbox.com");
+}
+function isRemintPreviewPair(guestHost, parentHost) {
+	const guest = guestHost.toLowerCase();
+	const parent = parentHost.toLowerCase();
+	const i = guest.indexOf(".preview.");
+	if (i <= 0) return false;
+	const label = guest.slice(0, i);
+	const rest = guest.slice(i + 9);
+	if (label.includes(".") || !rest.includes(".")) return false;
+	return parent === rest || parent === `grok.${rest}`;
+}
+function resolveParentEmbedderOrigin(parentIsSelf, referrer, ancestorOrigin, guestHostname = "") {
+	if (parentIsSelf) return null;
+	for (const candidate of [referrer, ancestorOrigin ?? ""].filter(Boolean)) try {
+		const url = new URL(candidate.includes("://") ? candidate : `https://${candidate}`);
+		if (url.protocol !== "https:" && url.protocol !== "http:") continue;
+		if (isGrokEmbedderOrigin(url.origin)) return url.origin;
+		if (isSandboxPreviewGuestHost(guestHostname) || isRemintPreviewPair(guestHostname, url.hostname)) return url.origin;
+	} catch {}
+	return null;
+}
+/**
+* Guest side of the grok-web ↔ sandbox preview postMessage bridge.
+*
+* Activates only when this page is framed by an allowlisted Grok embedder.
+* Top-level runs (download/export, local `npm run dev`, deployed sites) noop.
+*/
+var PREVIEW_BRIDGE_CHANNEL = "grok-preview-bridge";
+var EnvelopeSchema = object({
+	channel: literal(PREVIEW_BRIDGE_CHANNEL),
+	version: number().int().positive(),
+	type: string().min(1)
+});
+var HelloSchema = EnvelopeSchema.extend({ type: literal("hello") });
+var NavigateSchema = EnvelopeSchema.extend({
+	type: literal("navigate"),
+	path: string().min(1)
+});
+var HistorySchema = EnvelopeSchema.extend({
+	type: literal("history"),
+	delta: union([literal(-1), literal(1)])
+});
+function isSafeBridgePath(path) {
+	if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) return false;
+	try {
+		return new URL(path, "https://preview.invalid").origin === "https://preview.invalid";
+	} catch {
+		return false;
+	}
+}
+/**
+* Install host↔guest messaging. Returns a dispose function.
+* Noops (returns a no-op dispose) when not embedded under a Grok parent.
+*/
+function installPreviewHostBridge(options = {}) {
+	if (typeof window === "undefined") return () => {};
+	const ancestorOrigin = typeof location.ancestorOrigins !== "undefined" && location.ancestorOrigins.length > 0 ? location.ancestorOrigins[0] : null;
+	const parentOrigin = resolveParentEmbedderOrigin(window.parent === window, document.referrer, ancestorOrigin, window.location.hostname);
+	if (parentOrigin === null) return () => {};
+	const ROOT_STATE_KEY = "__grokPreviewBridgeRoot";
+	const originalPushState = window.history.pushState.bind(window.history);
+	const originalReplaceState = window.history.replaceState.bind(window.history);
+	const isAtHistoryRoot = () => {
+		const state = window.history.state;
+		return Boolean(state && typeof state === "object" && state[ROOT_STATE_KEY] === true);
+	};
+	try {
+		const current = window.history.state;
+		if (!(current !== null && typeof current === "object" && Object.prototype.hasOwnProperty.call(current, ROOT_STATE_KEY))) {
+			const isRoot = window.history.length <= 1;
+			originalReplaceState(current && typeof current === "object" ? {
+				...current,
+				[ROOT_STATE_KEY]: isRoot
+			} : { [ROOT_STATE_KEY]: isRoot }, "", window.location.href);
+		}
+	} catch {}
+	const post = (message) => {
+		window.parent.postMessage(message, parentOrigin);
+	};
+	const reportLocation = () => {
+		post({
+			channel: PREVIEW_BRIDGE_CHANNEL,
+			version: 1,
+			type: "location",
+			path: window.location.pathname || "/",
+			search: window.location.search,
+			hash: window.location.hash
+		});
+	};
+	const reportRoutes = () => {
+		const paths = options.getRoutePaths?.() ?? [];
+		post({
+			channel: PREVIEW_BRIDGE_CHANNEL,
+			version: 1,
+			type: "routes",
+			paths
+		});
+	};
+	const defaultNavigate = (path) => {
+		if (!isSafeBridgePath(path)) return;
+		try {
+			const url = new URL(path, window.location.origin);
+			if (url.origin !== window.location.origin) return;
+			const next = `${url.pathname}${url.search}${url.hash}`;
+			window.history.pushState(window.history.state, "", next);
+			window.dispatchEvent(new PopStateEvent("popstate", { state: window.history.state }));
+		} catch {}
+	};
+	const navigate = (path) => {
+		if (!isSafeBridgePath(path)) return;
+		if (options.navigate) {
+			options.navigate(path);
+			return;
+		}
+		defaultNavigate(path);
+	};
+	const announce = () => {
+		reportLocation();
+		reportRoutes();
+		post({
+			channel: PREVIEW_BRIDGE_CHANNEL,
+			version: 1,
+			type: "ready"
+		});
+	};
+	const onMessage = (event) => {
+		if (event.source !== window.parent) return;
+		if (event.origin !== parentOrigin) return;
+		const envelope = EnvelopeSchema.safeParse(event.data);
+		if (!envelope.success || envelope.data.version !== 1) return;
+		if (envelope.data.type === "hello") {
+			if (!HelloSchema.safeParse(event.data).success) return;
+			announce();
+			return;
+		}
+		if (envelope.data.type === "navigate") {
+			const parsed = NavigateSchema.safeParse(event.data);
+			if (!parsed.success) return;
+			navigate(parsed.data.path);
+			queueMicrotask(reportLocation);
+			return;
+		}
+		if (envelope.data.type === "history") {
+			const parsed = HistorySchema.safeParse(event.data);
+			if (!parsed.success) return;
+			if (parsed.data.delta === -1 && isAtHistoryRoot()) return;
+			window.history.go(parsed.data.delta);
+		}
+	};
+	const onPopState = () => {
+		reportLocation();
+	};
+	const onHashChange = () => {
+		reportLocation();
+	};
+	window.history.pushState = (data, unused, url) => {
+		const next = data && typeof data === "object" ? {
+			...data,
+			[ROOT_STATE_KEY]: false
+		} : data;
+		originalPushState(next, unused, url);
+		reportLocation();
+	};
+	window.history.replaceState = (data, unused, url) => {
+		const next = isAtHistoryRoot() ? {
+			...data && typeof data === "object" ? data : {},
+			[ROOT_STATE_KEY]: true
+		} : data;
+		originalReplaceState(next, unused, url);
+		reportLocation();
+	};
+	window.addEventListener("message", onMessage);
+	window.addEventListener("popstate", onPopState);
+	window.addEventListener("hashchange", onHashChange);
+	announce();
+	return () => {
+		window.removeEventListener("message", onMessage);
+		window.removeEventListener("popstate", onPopState);
+		window.removeEventListener("hashchange", onHashChange);
+		window.history.pushState = originalPushState;
+		window.history.replaceState = originalReplaceState;
+	};
+}
+/** Collect static path patterns from a TanStack route tree (best-effort). */
+function collectRoutePathsFromTree(routeTree) {
+	const paths = /* @__PURE__ */ new Set();
+	const walk = (node) => {
+		if (!node || typeof node !== "object") return;
+		const record = node;
+		const full = typeof record.fullPath === "string" ? record.fullPath : typeof record.path === "string" ? record.path : null;
+		if (full !== null && full !== "") paths.add(full.startsWith("/") ? full : `/${full}`);
+		else if (full === "") paths.add("/");
+		const children = record.children;
+		if (Array.isArray(children)) for (const child of children) walk(child);
+		else if (children && typeof children === "object") for (const child of Object.values(children)) walk(child);
+	};
+	walk(routeTree);
+	return [...paths];
+}
+/**
+* Mount once in `__root.tsx` so the Grok preview chrome can drive navigation
+* (and later receive registered routes). Noops when the app is not embedded.
+*/
+function PreviewHostBridge() {
+	const router = useRouter();
+	(0, import_react.useEffect)(() => {
+		return installPreviewHostBridge({
+			navigate: (path) => {
+				router.history.push(path);
+			},
+			getRoutePaths: () => collectRoutePathsFromTree(router.routeTree)
+		});
+	}, [router]);
+	return null;
+}
+function CinematicOpener() {
+	const mark = useField((s) => s.markOpenerSeen);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "fixed inset-0 z-50 grid place-items-center bg-void p-6",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "rh-rise max-w-sm text-center",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CrystalGem, {
+					hue: "#8d7cff",
+					system: "trigonal",
+					size: 96,
+					className: "mx-auto"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-6 text-[10px] font-medium uppercase tracking-[0.28em] text-amethyst",
+					children: "Field intelligence"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+					className: "mt-3 font-display text-4xl tracking-tight text-fg",
+					children: "RockHound-GO"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-4 text-sm leading-relaxed text-muted",
+					children: "Explore. Scan. Choose. Log. The operating system for disciplined discovery — not a camera roll."
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+					variant: "gold",
+					className: "mt-8 w-full",
+					onClick: mark,
+					children: "Enter the field"
+				})
+			]
+		})
+	});
+}
+var SLIDES = [
+	{
+		icon: Camera,
+		kicker: "Scan",
+		title: "Photograph a specimen. Get a field report.",
+		body: "Clover reads color, habit, and luster. One photo is enough. Confidence stays honest."
+	},
+	{
+		icon: Compass,
+		kicker: "Explore",
+		title: "Localities with land status attached.",
+		body: "Public beaches, fee digs, alpine claims. Every pin carries access notes — verify before you go."
+	},
+	{
+		icon: Gem,
+		kicker: "Choose",
+		title: "Collect, or mark it in place.",
+		body: "GeoDex logs both paths. Steward XP for leaving a find. Collector XP for legal collection. Extraction is never the only win."
+	}
+];
+function Onboarding() {
+	const [i, setI] = (0, import_react.useState)(0);
+	const [name, setName] = (0, import_react.useState)("");
+	const complete = useField((s) => s.completeOnboarding);
+	const slide = SLIDES[i];
+	const Icon = slide.icon;
+	const last = i === SLIDES.length - 1;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "fixed inset-0 z-50 flex items-center justify-center bg-void/94 p-4",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "rh-panel rh-hairline w-full max-w-md rounded-2xl p-6",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "text-[10px] font-medium uppercase tracking-[0.2em] text-amethyst",
+					children: "RockHound-GO"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "mt-5 grid size-12 place-items-center rounded-lg border border-line bg-stone",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { className: "size-5 text-gold" })
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-5 text-[10px] uppercase tracking-[0.18em] text-faint",
+					children: slide.kicker
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+					className: "mt-2 font-display text-2xl leading-tight text-fg",
+					children: slide.title
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-3 text-sm leading-relaxed text-muted",
+					children: slide.body
+				}),
+				last && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+					className: "mt-5 block",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "text-[10px] uppercase tracking-[0.16em] text-faint",
+						children: "What should we call you"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						value: name,
+						onChange: (e) => setName(e.target.value),
+						placeholder: "Field name",
+						className: "mt-2 h-11 w-full rounded-md border border-line-strong bg-void px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-amethyst"
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "mt-6 flex items-center gap-2",
+					children: SLIDES.map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: `h-1 flex-1 rounded-full ${idx <= i ? "bg-amethyst" : "bg-fg/10"}` }, idx))
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-5 flex gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "ghost",
+						className: "flex-1",
+						onClick: () => complete(name),
+						children: "Skip"
+					}), last ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "gold",
+						className: "flex-1",
+						onClick: () => complete(name),
+						children: "Enter the field"
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "primary",
+						className: "flex-1",
+						onClick: () => setI((v) => v + 1),
+						children: "Continue"
+					})]
+				})
+			]
+		})
+	});
+}
+var VS = `
+attribute vec2 a_pos;
+varying vec2 vUv;
+void main() {
+  vUv = a_pos * 0.5 + 0.5;
+  gl_Position = vec4(a_pos, 0.0, 1.0);
+}
+`;
+var FS = `
+precision highp float;
+varying vec2 vUv;
+uniform float u_time;
+uniform float u_intensity;
+uniform float u_hue;
+uniform float u_speed;
+uniform float u_bio;
+uniform vec2 u_res;
+
+vec3 hsv2rgb(vec3 c) {
+  vec4 K = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+float vnoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+float fbm(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 5; i++) {
+    v += a * vnoise(p);
+    p *= 2.03;
+    a *= 0.52;
+  }
+  return v;
+}
+
+void main() {
+  vec2 uv = vUv - 0.5;
+  float d = length(uv);
+  if (d > 0.5) { gl_FragColor = vec4(0.0); return; }
+
+  float t = u_time * u_speed;
+
+  float ang = t * 0.22 + d * 1.4;
+  float ca = cos(ang), sa = sin(ang);
+  vec2 q = mat2(ca, -sa, sa, ca) * uv * 2.15;
+
+  vec2 w1 = vec2(fbm(q + vec2(t * 0.31, t * 0.19)), fbm(q + vec2(-t * 0.24, t * 0.27) + 4.1));
+  vec2 w2 = vec2(fbm(q + 1.85 * w1 + vec2(t * 0.28, 0.05)), fbm(q + 1.85 * w1 + vec2(0.0, -t * 0.33) + 2.7));
+  float flow = fbm(q + 2.4 * w2);
+
+  float band = flow * 5.2 + t * 0.55 + u_hue + length(w2) * 1.1;
+  float h = fract(0.78 + 0.16 * sin(band) + w1.x * 0.12);
+  float pool = smoothstep(0.12, 0.92, flow);
+  float shimmer = 0.5 + 0.5 * sin(flow * 9.0 + t * 1.6);
+
+  vec3 oil = hsv2rgb(vec3(h, 0.72, (pool * 0.62 + shimmer * 0.22) * u_intensity));
+
+  float crown = smoothstep(0.42, 0.0, length(uv - vec2(-0.16, 0.20)));
+  vec3 chrome = mix(vec3(0.05, 0.04, 0.10), vec3(0.32, 0.30, 0.48), crown);
+  chrome = mix(chrome, vec3(0.70, 0.82, 0.92), crown * crown * 0.5);
+
+  float fres = pow(smoothstep(0.18, 0.5, d), 1.6);
+  vec3 rim = hsv2rgb(vec3(fract(0.72 + t * 0.08 + u_hue), 0.45, 0.95));
+
+  vec3 col = chrome + oil * 0.78 + rim * fres * 0.42;
+
+  float core = smoothstep(0.16, 0.0, length(uv - vec2(0.02, 0.01)));
+
+  // Cold light from inside — ~480nm cyan, like dinoflagellates / photophores.
+  float breath = 0.55 + 0.45 * sin(t * 2.15);
+  float dusk = 0.55 + 0.45 * sin(t * 0.62 + 1.4);
+  vec3 bio = mix(vec3(0.18, 0.95, 0.88), vec3(0.42, 1.0, 0.58), dusk);
+
+  // Comb-row / mycelial filaments along the liquid ridges
+  float ridge = abs(sin(flow * 13.5 + t * 0.85));
+  float vein = pow(smoothstep(0.55, 0.98, ridge), 2.4) * (0.28 + 0.72 * breath);
+
+  // Discrete photophores that wander and flash independently
+  float photos = 0.0;
+  for (int i = 0; i < 9; i++) {
+    float fi = float(i);
+    vec2 seed = vec2(fi * 1.17, fi * 0.73);
+    vec2 p = vec2(hash(seed), hash(seed.yx + 2.4)) - 0.5;
+    p *= 0.58;
+    p += 0.13 * vec2(sin(t * 0.34 + fi), cos(t * 0.27 + fi * 1.37));
+    float pl = length(p);
+    if (pl > 0.40) p *= 0.40 / pl;
+    float rad = 0.016 + 0.014 * hash(seed + 8.1);
+    float flash = sin(t * (1.55 + fi * 0.33) + fi * 1.7);
+    flash = pow(max(flash, 0.0), 5.0);
+    photos += smoothstep(rad * 2.6, 0.0, length(uv - p)) * (0.22 + flash * 1.15);
+  }
+
+  // Drifting motes (plankton)
+  float motes = 0.0;
+  for (int j = 0; j < 7; j++) {
+    float fj = float(j);
+    vec2 m = vec2(hash(vec2(fj, 3.1)), hash(vec2(9.4, fj))) - 0.5;
+    m += 0.22 * vec2(sin(t * 0.21 + fj * 0.9), cos(t * 0.18 + fj * 1.2));
+    m *= 0.72;
+    motes += smoothstep(0.012, 0.0, length(uv - m));
+  }
+
+  float emit = (vein * 0.7 + photos * 1.05 + motes * 0.55 + core * 0.3) * u_bio * u_intensity;
+  col += bio * emit;
+  col += bio * emit * emit * 0.9;
+
+  // Subsurface scatter — light blooms through the metal, strongest at center
+  float sss = (1.0 - smoothstep(0.0, 0.48, d)) * emit * 0.35;
+  col += bio * sss;
+
+  float shade = smoothstep(0.5, 0.08, d);
+  col *= mix(0.48, 1.0, shade);
+
+  float a = smoothstep(0.5, 0.455, d);
+  gl_FragColor = vec4(col, a);
+}
+`;
+function compile(gl, type, src) {
+	const sh = gl.createShader(type);
+	if (!sh) return null;
+	gl.shaderSource(sh, src);
+	gl.compileShader(sh);
+	if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+		gl.deleteShader(sh);
+		return null;
+	}
+	return sh;
+}
+var STATE = {
+	idle: {
+		hue: 0,
+		speed: .55,
+		intensity: 1,
+		bio: .9
+	},
+	resting: {
+		hue: .02,
+		speed: .38,
+		intensity: .88,
+		bio: .55
+	},
+	listening: {
+		hue: -.16,
+		speed: .9,
+		intensity: 1.1,
+		bio: 1.25
+	},
+	thinking: {
+		hue: -.08,
+		speed: 1.15,
+		intensity: 1.05,
+		bio: 1.05
+	},
+	speaking: {
+		hue: .05,
+		speed: 1.32,
+		intensity: 1.18,
+		bio: 1.4
+	}
+};
+function OpalShader({ state = "idle" }) {
+	const canvasRef = (0, import_react.useRef)(null);
+	const stateRef = (0, import_react.useRef)(state);
+	stateRef.current = state;
+	(0, import_react.useEffect)(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+		const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const gl = canvas.getContext("webgl", {
+			alpha: true,
+			antialias: true,
+			premultipliedAlpha: false
+		});
+		if (!gl) return;
+		const vs = compile(gl, gl.VERTEX_SHADER, VS);
+		const fs = compile(gl, gl.FRAGMENT_SHADER, FS);
+		if (!vs || !fs) return;
+		const prog = gl.createProgram();
+		if (!prog) return;
+		gl.attachShader(prog, vs);
+		gl.attachShader(prog, fs);
+		gl.linkProgram(prog);
+		if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+		gl.useProgram(prog);
+		const buf = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+			-1,
+			-1,
+			1,
+			-1,
+			-1,
+			1,
+			1,
+			1
+		]), gl.STATIC_DRAW);
+		const loc = gl.getAttribLocation(prog, "a_pos");
+		gl.enableVertexAttribArray(loc);
+		gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+		const uTime = gl.getUniformLocation(prog, "u_time");
+		const uInt = gl.getUniformLocation(prog, "u_intensity");
+		const uHue = gl.getUniformLocation(prog, "u_hue");
+		const uSpeed = gl.getUniformLocation(prog, "u_speed");
+		const uBio = gl.getUniformLocation(prog, "u_bio");
+		const uRes = gl.getUniformLocation(prog, "u_res");
+		let raf = 0;
+		let alive = true;
+		const t0 = performance.now();
+		let last = 0;
+		const resize = () => {
+			const parent = canvas.parentElement;
+			const w = parent?.clientWidth || 160;
+			const h = parent?.clientHeight || 160;
+			const dpr = Math.min(window.devicePixelRatio || 1, 2);
+			canvas.width = Math.max(32, Math.floor(w * dpr));
+			canvas.height = Math.max(32, Math.floor(h * dpr));
+			canvas.style.width = "100%";
+			canvas.style.height = "100%";
+			gl.viewport(0, 0, canvas.width, canvas.height);
+			gl.uniform2f(uRes, canvas.width, canvas.height);
+		};
+		resize();
+		const ro = new ResizeObserver(resize);
+		if (canvas.parentElement) ro.observe(canvas.parentElement);
+		const draw = (now) => {
+			if (!alive) return;
+			raf = requestAnimationFrame(draw);
+			if (reduce && last > 0) return;
+			if (now - last < 30) return;
+			last = now;
+			const st = STATE[stateRef.current] ?? STATE.idle;
+			gl.uniform1f(uTime, (now - t0) / 1e3);
+			gl.uniform1f(uInt, st.intensity);
+			gl.uniform1f(uHue, st.hue);
+			gl.uniform1f(uSpeed, st.speed);
+			gl.uniform1f(uBio, st.bio);
+			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		};
+		raf = requestAnimationFrame(draw);
+		const onHide = () => {
+			if (document.hidden) cancelAnimationFrame(raf);
+			else raf = requestAnimationFrame(draw);
+		};
+		document.addEventListener("visibilitychange", onHide);
+		return () => {
+			alive = false;
+			cancelAnimationFrame(raf);
+			document.removeEventListener("visibilitychange", onHide);
+			ro.disconnect();
+			gl.deleteProgram(prog);
+			gl.deleteShader(vs);
+			gl.deleteShader(fs);
+			gl.deleteBuffer(buf);
+		};
+	}, []);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("canvas", {
+		ref: canvasRef,
+		className: "orb-shader",
+		"aria-hidden": true
+	});
+}
+function growthTier(level) {
+	if (level < 3) return 1;
+	if (level < 5) return 2;
+	return 3;
+}
+function LiquidMetalOrb({ size = 140, state = "idle", level = 1, className, interactive = true }) {
+	const wrapRef = (0, import_react.useRef)(null);
+	const poseRef = (0, import_react.useRef)(null);
+	const pose = (0, import_react.useRef)({
+		x: 0,
+		y: 0,
+		s: 1
+	});
+	const pointer = (0, import_react.useRef)({
+		x: 0,
+		y: 0
+	});
+	const stateRef = (0, import_react.useRef)(state);
+	stateRef.current = state;
+	const tier = growthTier(level);
+	const mini = size < 80;
+	(0, import_react.useEffect)(() => {
+		const el = wrapRef.current;
+		const poseEl = poseRef.current;
+		if (!el || !poseEl) return;
+		let raf = 0;
+		let alive = true;
+		const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const onMove = (e) => {
+			pointer.current.x = e.clientX;
+			pointer.current.y = e.clientY;
+		};
+		if (interactive && !mini) window.addEventListener("pointermove", onMove);
+		const tick = (now) => {
+			if (!alive) return;
+			raf = requestAnimationFrame(tick);
+			if (reduce) return;
+			const t = now * .001;
+			const st = stateRef.current;
+			const wobX = Math.sin(t * .7) * 3.2;
+			const wobY = Math.cos(t * .53) * 2.6;
+			const breath = 1 + Math.sin(t * (st === "speaking" ? 2.4 : st === "listening" ? 1.6 : .85)) * .018;
+			let leanX = 0;
+			let leanY = 0;
+			if (interactive && !mini) {
+				const r = el.getBoundingClientRect();
+				const dx = (pointer.current.x - (r.left + r.width / 2)) / Math.max(r.width, 1);
+				const dy = (pointer.current.y - (r.top + r.height / 2)) / Math.max(r.height, 1);
+				leanX = Math.max(-10, Math.min(10, dx * 8));
+				leanY = Math.max(-8, Math.min(8, dy * 6));
+			}
+			const p = pose.current;
+			p.x += (leanX + wobX - p.x) * .12;
+			p.y += (leanY + wobY - p.y) * .12;
+			p.s += (breath - p.s) * .16;
+			poseEl.style.transform = `translate(${p.x}px, ${p.y}px) scale(${p.s})`;
+		};
+		raf = requestAnimationFrame(tick);
+		return () => {
+			alive = false;
+			cancelAnimationFrame(raf);
+			window.removeEventListener("pointermove", onMove);
+		};
+	}, [interactive, mini]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		ref: wrapRef,
+		"data-state": state,
+		className: cn("orb-shell", mini && "orb-shell-mini", className),
+		style: {
+			width: size,
+			height: size
+		},
+		"aria-hidden": true,
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-glow" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-glow-bio" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-glow-mid" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-glow-core" }),
+			!mini && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "orb-motes",
+				"aria-hidden": true,
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {})
+				]
+			}),
+			tier >= 2 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+				className: "orb-ring orb-ring-a",
+				viewBox: "0 0 240 240",
+				width: size * 1.22,
+				height: size * 1.22,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", {
+					points: "120,18 210,72 210,168 120,222 30,168 30,72",
+					fill: "none",
+					stroke: "currentColor",
+					strokeWidth: "1.2"
+				})
+			}),
+			tier >= 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+				className: "orb-ring orb-ring-b",
+				viewBox: "0 0 240 240",
+				width: size * 1.38,
+				height: size * 1.38,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("polygon", {
+					points: "120,8 218,66 218,174 120,232 22,174 22,66",
+					fill: "none",
+					stroke: "currentColor",
+					strokeWidth: "0.8"
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				ref: poseRef,
+				className: "orb-pose",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "orb-body",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(OpalShader, { state }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-film" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-film-counter" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-caustic" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-rim" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-spec" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-glint" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "orb-ripple" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "orb-ripple delay-1" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "orb-ripple delay-2" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "orb-iris" })
+					]
+				})
+			})
+		]
+	});
+}
+var createSsrRpc = (functionId) => {
+	const url = "/_serverFn/" + functionId;
+	const serverFnMeta = { id: functionId };
+	const fn = async (...args) => {
+		return (await getServerFnById(functionId, { origin: "server" }))(...args);
+	};
+	return Object.assign(fn, {
+		url,
+		serverFnMeta,
+		[TSS_SERVER_FUNCTION]: true
+	});
+};
+function scoreMineral(m, key) {
+	let s = 0;
+	if (key.color) {
+		const c = key.color.toLowerCase();
+		if (m.colors.some((x) => x.toLowerCase().includes(c) || c.includes(x.toLowerCase()))) s += 3;
+		if (m.name.toLowerCase().includes(c)) s += 1;
+	}
+	if (key.hardness != null && m.hardnessMin != null && m.hardnessMax != null) {
+		if (key.hardness >= m.hardnessMin - .5 && key.hardness <= m.hardnessMax + .5) s += 3;
+		else if (Math.abs(key.hardness - (m.hardnessMin + m.hardnessMax) / 2) <= 1.5) s += 1;
+	}
+	if (key.luster) {
+		const l = key.luster.toLowerCase();
+		if (m.luster.some((x) => x.toLowerCase().includes(l))) s += 2;
+	}
+	if (key.streak) {
+		const st = key.streak.toLowerCase();
+		if (m.streak.toLowerCase().includes(st) || st.includes(m.streak.toLowerCase().split(" ")[0] || "___")) s += 2;
+	}
+	if (key.system) {
+		if (m.crystalSystem.toLowerCase().includes(key.system.toLowerCase())) s += 2;
+	}
+	return s;
+}
+function matchFieldKey(key) {
+	const ranked = MINERALS.map((m) => ({
+		m,
+		score: scoreMineral(m, key)
+	})).filter((x) => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+	if (!ranked.length) return [];
+	const top = ranked[0].score;
+	return ranked.map(({ m, score }) => mineralToResult(m, Math.max(.28, Math.min(.92, score / Math.max(top, 1) * .78)), "field-key"));
+}
+function mineralToResult(m, confidence, source) {
+	return {
+		name: m.name,
+		mineralId: m.id,
+		family: m.family,
+		formula: m.formula,
+		confidence,
+		rarity: m.rarity,
+		hardness: m.hardnessMin != null ? `${m.hardnessMin}${m.hardnessMax !== m.hardnessMin ? `–${m.hardnessMax}` : ""}` : void 0,
+		luster: m.luster[0],
+		crystalSystem: m.crystalSystem,
+		streak: m.streak,
+		color: m.colors.slice(0, 3).join(", "),
+		valueLow: m.valueLow,
+		valueHigh: m.valueHigh,
+		fieldNotes: m.blurb,
+		keyFeatures: m.keyFeatures.slice(0, 4),
+		alternatives: m.similar.slice(0, 3).map((s, i) => ({
+			name: s.name,
+			confidence: Math.max(.15, confidence - .18 - i * .08)
+		})),
+		notGeological: false,
+		source
+	};
+}
+var identifySpecimen = createServerFn({ method: "POST" }).validator((input) => input).handler(createSsrRpc("7e21a7c7dfbe6a11dec545ec79c9ac91890a8f328b0decb36744ebd1fc131d3a"));
+var askClover = createServerFn({ method: "POST" }).validator((input) => input).handler(createSsrRpc("c70c46c50fe1438464e51a0cdbbd58cd880dd95e147db9e66685ea9eb551bf66"));
+function companionFromField(input) {
+	const { level } = xpToNext(input.xp);
+	const hour = (/* @__PURE__ */ new Date()).getHours();
+	const today = todayKey();
+	const todaysFinds = input.specimens.filter((s) => todayKey(new Date(s.createdAt)) === today).length;
+	const collection = [...new Set(input.specimens.map((s) => s.name))].slice(0, 24);
+	const mood = todaysFinds > 0 ? "radiant" : hour >= 22 || hour < 6 ? "drowsy" : input.streak >= 3 ? "keen" : "calm";
+	const energy = Math.max(28, Math.min(100, 52 + input.streak * 6 + todaysFinds * 8 - (hour >= 22 ? 12 : 0)));
+	return {
+		name: input.displayName || "explorer",
+		level,
+		mood,
+		energy,
+		streak: input.streak,
+		todaysFinds,
+		collection
+	};
+}
+var FALLBACKS = [
+	{
+		keys: [
+			"pyrite",
+			"fool",
+			"gold"
+		],
+		text: "Pyrite vs gold: streak and hardness. Pyrite streaks green-black and shatters. Gold streaks yellow and flattens. Density is the rest of the story."
+	},
+	{
+		keys: [
+			"calcite",
+			"vinegar",
+			"acid",
+			"fizz"
+		],
+		text: "Vinegar is enough for calcite — it fizzes on a fresh face. Dolomite usually needs powdering first. Quartz never fizzes. That's the ten-second carbonate test."
+	},
+	{
+		keys: [
+			"pack",
+			"desert",
+			"kit",
+			"gear"
+		],
+		text: "Desert kit: water, sun, closed shoes, rock hammer, goggles, first aid, and a printed land-status note. Confirm access before you dig — an app is not a permit."
+	},
+	{
+		keys: [
+			"agate",
+			"jasper",
+			"superior"
+		],
+		text: "Lake Superior agate shows tight fortification banding and a waxy translucence. Jasper is opaque. Wet the face — banding is the tell."
+	},
+	{
+		keys: [
+			"hardness",
+			"mohs",
+			"scratch"
+		],
+		text: "Field Mohs: fingernail 2.5, penny 3, knife 5.5, glass 5.5, streak plate 7. Test a point, not a weathered skin."
+	}
+];
+function localCloverReply(question, companion) {
+	const q = question.toLowerCase();
+	const hit = FALLBACKS.find((f) => f.keys.some((k) => q.includes(k)));
+	if (hit) return hit.text;
+	const mineral = MINERALS.find((m) => q.includes(m.name.toLowerCase()));
+	if (mineral) return `${mineral.name}: ${mineral.blurb} Field test — ${mineral.fieldTests[0] ?? mineral.keyFeatures[0]}.`;
+	if (q.includes("log") || q.includes("found")) return "Tell me the species and roughly where you picked it. I'll log it to GeoDex so you can finish the ethics path later.";
+	if (q.includes("hunt") || q.includes("where") || q.includes("next")) return `${companion.name}, tap Hunt and I'll match gaps in your cabinet to mapped sites. I won't invent a legal locality.`;
+	return `I'm on field memory for a second, ${companion.name}. Ask a test, a packing list, or a lookalike — I'll stay practical.`;
+}
+function parseLoggedFind(details) {
+	const mineral = findMineralByName(details) ?? MINERALS.find((m) => details.toLowerCase().includes(m.name.toLowerCase()));
+	if (mineral) return {
+		name: mineral.name,
+		mineralId: mineral.id,
+		family: mineral.family,
+		formula: mineral.formula,
+		rarity: mineral.rarity
+	};
+	return {
+		name: (details.replace(/^(log|record|add|found|i found)\s+/i, "").split(/[,.]/)[0]?.trim() || "Unnamed specimen").slice(0, 48),
+		family: "Undetermined",
+		rarity: "common"
+	};
+}
+var speakClover = createServerFn({ method: "POST" }).validator((input) => input).handler(createSsrRpc("b2e0318fa02b334f5ed76157bb1657ac522da5d9d53a2faa5ef81db85048b334"));
+var transcribeClover = createServerFn({ method: "POST" }).validator((input) => input).handler(createSsrRpc("042763fd345a97f0345dc0cd42b9436661ff0d26a355cf8c24dd7b66626f4b22"));
+var SILENCE_MS = 1400;
+var MAX_RECORD_MS = 14e3;
+var WAIT_SPEECH_MS = 9e3;
+var VOICE_RMS = .038;
+var BARGE_RMS = .11;
+var BARGE_HOLD_MS = 220;
+function getSpeechRecognition() {
+	if (typeof window === "undefined") return null;
+	const w = window;
+	return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
+function pickBrowserVoice(voices) {
+	const score = (v) => {
+		const n = v.name.toLowerCase();
+		let s = 0;
+		if (/en[-_]?us/i.test(v.lang)) s += 4;
+		else if (v.lang.toLowerCase().startsWith("en")) s += 2;
+		if (/neural|natural|premium|enhanced|google/i.test(n)) s += 5;
+		if (/samantha|karen|moira|tessa|victoria|zira|siri|aria|jenny|female/i.test(n)) s += 4;
+		if (/male|david|daniel|alex|fred/i.test(n)) s -= 3;
+		return s;
+	};
+	return [...voices].sort((a, b) => score(b) - score(a))[0] ?? null;
+}
+function blobToDataUrl(blob) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve(String(reader.result || ""));
+		reader.onerror = () => reject(/* @__PURE__ */ new Error("read failed"));
+		reader.readAsDataURL(blob);
+	});
+}
+function rmsFrom(buf) {
+	let sum = 0;
+	for (let i = 0; i < buf.length; i++) {
+		const v = ((buf[i] ?? 128) - 128) / 128;
+		sum += v * v;
+	}
+	return Math.sqrt(sum / Math.max(buf.length, 1));
+}
+function useCloverVoice() {
+	const [speaking, setSpeaking] = (0, import_react.useState)(false);
+	const [listening, setListening] = (0, import_react.useState)(false);
+	const [micSupported, setMicSupported] = (0, import_react.useState)(false);
+	const [micError, setMicError] = (0, import_react.useState)(null);
+	const audioRef = (0, import_react.useRef)(null);
+	const recRef = (0, import_react.useRef)(null);
+	const mediaRecRef = (0, import_react.useRef)(null);
+	const streamRef = (0, import_react.useRef)(null);
+	const ctxRef = (0, import_react.useRef)(null);
+	const analyserRef = (0, import_react.useRef)(null);
+	const sourceRef = (0, import_react.useRef)(null);
+	const rafRef = (0, import_react.useRef)(0);
+	const listenGen = (0, import_react.useRef)(0);
+	const deliveredRef = (0, import_react.useRef)(false);
+	const bargeRef = (0, import_react.useRef)(false);
+	const speakingRef = (0, import_react.useRef)(false);
+	const liveRef = (0, import_react.useRef)(false);
+	const skipRef = (0, import_react.useRef)(false);
+	const holdOptsRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		const sr = !!getSpeechRecognition();
+		const rec = typeof window !== "undefined" && typeof MediaRecorder !== "undefined" && !!navigator.mediaDevices?.getUserMedia;
+		setMicSupported(sr || rec);
+		if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.getVoices();
+	}, []);
+	const killRaf = () => {
+		if (rafRef.current) cancelAnimationFrame(rafRef.current);
+		rafRef.current = 0;
+	};
+	const ensureContext = async () => {
+		if (typeof window === "undefined") return null;
+		const Ctx = window.AudioContext || window.webkitAudioContext;
+		if (!Ctx) return null;
+		if (!ctxRef.current) ctxRef.current = new Ctx();
+		if (ctxRef.current.state === "suspended") await ctxRef.current.resume();
+		return ctxRef.current;
+	};
+	const ensureStream = (0, import_react.useCallback)(async () => {
+		const existing = streamRef.current;
+		if (existing && existing.getAudioTracks().some((t) => t.readyState === "live")) {
+			setMicError(null);
+			return existing;
+		}
+		if (!navigator.mediaDevices?.getUserMedia) {
+			setMicError("This browser has no microphone access.");
+			return null;
+		}
+		try {
+			const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+				echoCancellation: true,
+				noiseSuppression: true,
+				autoGainControl: true
+			} });
+			streamRef.current = stream;
+			setMicError(null);
+			const ctx = await ensureContext();
+			if (ctx) {
+				try {
+					sourceRef.current?.disconnect();
+				} catch {}
+				const src = ctx.createMediaStreamSource(stream);
+				const analyser = ctx.createAnalyser();
+				analyser.fftSize = 512;
+				src.connect(analyser);
+				sourceRef.current = src;
+				analyserRef.current = analyser;
+			}
+			return stream;
+		} catch {
+			setMicError("Allow the microphone so Clover can hear you.");
+			return null;
+		}
+	}, []);
+	const unlock = (0, import_react.useCallback)(() => {
+		if (typeof window === "undefined") return;
+		if (!audioRef.current) audioRef.current = new Audio();
+		const silent = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=";
+		const a = audioRef.current;
+		a.src = silent;
+		a.volume = 0;
+		a.play().then(() => {
+			a.pause();
+			a.volume = 1;
+		}).catch(() => {
+			a.volume = 1;
+		});
+		ensureContext();
+		ensureStream();
+	}, [ensureStream]);
+	const stopSpeak = (0, import_react.useCallback)(() => {
+		bargeRef.current = false;
+		try {
+			audioRef.current?.pause();
+		} catch {}
+		if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+		setSpeaking(false);
+	}, []);
+	const releaseMic = (0, import_react.useCallback)(() => {
+		listenGen.current += 1;
+		killRaf();
+		try {
+			recRef.current?.abort?.();
+			recRef.current?.stop();
+		} catch {}
+		recRef.current = null;
+		try {
+			if (mediaRecRef.current?.state === "recording") mediaRecRef.current.stop();
+		} catch {}
+		mediaRecRef.current = null;
+		streamRef.current?.getTracks().forEach((t) => t.stop());
+		streamRef.current = null;
+		try {
+			sourceRef.current?.disconnect();
+		} catch {}
+		sourceRef.current = null;
+		analyserRef.current = null;
+		ctxRef.current?.close();
+		ctxRef.current = null;
+		setListening(false);
+	}, []);
+	const stopListen = (0, import_react.useCallback)(() => {
+		listenGen.current += 1;
+		killRaf();
+		try {
+			recRef.current?.abort?.();
+			recRef.current?.stop();
+		} catch {}
+		recRef.current = null;
+		try {
+			if (mediaRecRef.current?.state === "recording") mediaRecRef.current.stop();
+		} catch {}
+		mediaRecRef.current = null;
+		setListening(false);
+	}, []);
+	const speakBrowser = (0, import_react.useCallback)((text) => {
+		return new Promise((resolve) => {
+			if (typeof window === "undefined" || !window.speechSynthesis) {
+				resolve();
+				return;
+			}
+			const run = () => {
+				const utter = new SpeechSynthesisUtterance(text);
+				utter.lang = "en-US";
+				utter.rate = .92;
+				utter.pitch = 1.06;
+				const voice = pickBrowserVoice(window.speechSynthesis.getVoices());
+				if (voice) utter.voice = voice;
+				utter.onend = () => {
+					setSpeaking(false);
+					resolve();
+				};
+				utter.onerror = () => {
+					setSpeaking(false);
+					resolve();
+				};
+				setSpeaking(true);
+				window.speechSynthesis.cancel();
+				window.speechSynthesis.speak(utter);
+			};
+			if (window.speechSynthesis.getVoices().length) {
+				run();
+				return;
+			}
+			const t = window.setTimeout(run, 400);
+			window.speechSynthesis.onvoiceschanged = () => {
+				window.clearTimeout(t);
+				window.speechSynthesis.onvoiceschanged = null;
+				run();
+			};
+		});
+	}, []);
+	const watchBargeIn = (0, import_react.useCallback)((onBarge) => {
+		bargeRef.current = true;
+		const analyser = analyserRef.current;
+		if (!analyser) return;
+		const buf = new Uint8Array(analyser.frequencyBinCount);
+		const startAt = performance.now();
+		let loudSince = null;
+		const tick = () => {
+			if (!bargeRef.current) return;
+			analyser.getByteTimeDomainData(buf);
+			const now = performance.now();
+			if (now - startAt < 550) {
+				rafRef.current = requestAnimationFrame(tick);
+				return;
+			}
+			if (rmsFrom(buf) > BARGE_RMS) {
+				if (loudSince == null) loudSince = now;
+				if (now - loudSince > BARGE_HOLD_MS) {
+					bargeRef.current = false;
+					onBarge();
+					return;
+				}
+			} else loudSince = null;
+			rafRef.current = requestAnimationFrame(tick);
+		};
+		rafRef.current = requestAnimationFrame(tick);
+	}, []);
+	const speak = (0, import_react.useCallback)(async (text) => {
+		stopSpeak();
+		if (!text.trim()) return false;
+		setSpeaking(true);
+		speakingRef.current = true;
+		skipRef.current = true;
+		let settled = false;
+		let barged = false;
+		const finishSpeak = () => {
+			if (settled) return;
+			settled = true;
+			bargeRef.current = false;
+			speakingRef.current = false;
+			skipRef.current = barged ? false : false;
+			setSpeaking(false);
+		};
+		await new Promise((resolve) => {
+			const done = () => {
+				try {
+					audioRef.current?.pause();
+				} catch {}
+				if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+				finishSpeak();
+				resolve();
+			};
+			watchBargeIn(() => {
+				barged = true;
+				skipRef.current = false;
+				done();
+			});
+			(async () => {
+				try {
+					const res = await speakClover({ data: { text: text.slice(0, 800) } });
+					if (settled) return;
+					if (res.ok) {
+						const url = `data:audio/mpeg;base64,${res.audio}`;
+						const audio = audioRef.current ?? new Audio();
+						audioRef.current = audio;
+						audio.volume = 1;
+						audio.src = url;
+						audio.onended = done;
+						audio.onerror = done;
+						try {
+							await audio.play();
+						} catch {
+							done();
+						}
+						return;
+					}
+				} catch {}
+				if (settled) return;
+				await speakBrowser(text);
+				done();
+			})();
+		});
+		return barged;
+	}, [
+		speakBrowser,
+		stopSpeak,
+		watchBargeIn
+	]);
+	const startListen = (0, import_react.useCallback)((opts) => {
+		stopListen();
+		const gen = listenGen.current;
+		deliveredRef.current = false;
+		const deliver = (text) => {
+			if (gen !== listenGen.current || deliveredRef.current) return;
+			if (speakingRef.current || skipRef.current) return;
+			const clean = text.trim();
+			if (clean.length < 2) return;
+			deliveredRef.current = true;
+			opts.onInterim("");
+			opts.onResult(clean);
+		};
+		const finish = (got) => {
+			if (gen !== listenGen.current) return;
+			setListening(false);
+			opts.onEnd(got || deliveredRef.current);
+		};
+		(async () => {
+			const stream = await ensureStream();
+			if (gen !== listenGen.current) return;
+			if (!stream) {
+				finish(false);
+				return;
+			}
+			setListening(true);
+			const Ctor = getSpeechRecognition();
+			let srFinal = "";
+			if (Ctor) try {
+				const rec = new Ctor();
+				rec.continuous = true;
+				rec.interimResults = true;
+				rec.lang = "en-US";
+				rec.maxAlternatives = 1;
+				rec.onresult = (ev) => {
+					if (gen !== listenGen.current) return;
+					let interim = "";
+					let finalText = "";
+					for (let i = ev.resultIndex; i < ev.results.length; i++) {
+						const r = ev.results[i];
+						if (!r) continue;
+						if (r.isFinal) finalText += r[0]?.transcript ?? "";
+						else interim += r[0]?.transcript ?? "";
+					}
+					if (finalText) srFinal += `${srFinal ? " " : ""}${finalText.trim()}`;
+					const live = `${srFinal}${interim ? (srFinal ? " " : "") + interim : ""}`.trim();
+					if (live) opts.onInterim(live);
+				};
+				rec.onerror = (e) => {
+					if (e.error === "aborted" || e.error === "no-speech") return;
+					if (e.error === "not-allowed" || e.error === "service-not-allowed") setMicError("Allow the microphone so Clover can hear you.");
+				};
+				rec.onend = () => {
+					recRef.current = null;
+				};
+				recRef.current = rec;
+				rec.start();
+			} catch {
+				recRef.current = null;
+			}
+			if (typeof MediaRecorder === "undefined") {
+				if (!Ctor) finish(false);
+				return;
+			}
+			const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : "";
+			const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : void 0);
+			mediaRecRef.current = rec;
+			const chunks = [];
+			rec.ondataavailable = (e) => {
+				if (e.data?.size) chunks.push(e.data);
+			};
+			rec.onstop = async () => {
+				if (gen !== listenGen.current) return;
+				if (deliveredRef.current) {
+					finish(true);
+					return;
+				}
+				if (srFinal.trim().length >= 2) {
+					deliver(srFinal);
+					finish(true);
+					return;
+				}
+				if (!chunks.length) {
+					finish(false);
+					return;
+				}
+				try {
+					opts.onInterim("Hearing you…");
+					const blob = new Blob(chunks, { type: rec.mimeType || mime || "audio/webm" });
+					if (blob.size < 800) {
+						finish(false);
+						return;
+					}
+					const transcribed = await transcribeClover({ data: { audioDataUrl: await blobToDataUrl(blob) } });
+					if (gen !== listenGen.current) return;
+					if (transcribed.ok && transcribed.text.trim().length >= 2) {
+						deliver(transcribed.text);
+						finish(true);
+					} else finish(false);
+				} catch {
+					finish(false);
+				}
+			};
+			rec.start(250);
+			const analyser = analyserRef.current;
+			const buf = analyser ? new Uint8Array(analyser.frequencyBinCount) : null;
+			const startedAt = Date.now();
+			let spoke = false;
+			let lastVoice = Date.now();
+			const tick = () => {
+				if (gen !== listenGen.current) return;
+				if (deliveredRef.current) {
+					try {
+						if (rec.state === "recording") rec.stop();
+					} catch {}
+					try {
+						recRef.current?.stop();
+					} catch {}
+					return;
+				}
+				const now = Date.now();
+				if (buf && analyser) {
+					analyser.getByteTimeDomainData(buf);
+					if (rmsFrom(buf) > VOICE_RMS) {
+						spoke = true;
+						lastVoice = now;
+					}
+				}
+				if (spoke && now - lastVoice > SILENCE_MS || now - startedAt > MAX_RECORD_MS || !spoke && now - startedAt > WAIT_SPEECH_MS) {
+					try {
+						if (rec.state === "recording") rec.stop();
+					} catch {}
+					try {
+						recRef.current?.stop();
+					} catch {}
+					return;
+				}
+				rafRef.current = requestAnimationFrame(tick);
+			};
+			rafRef.current = requestAnimationFrame(tick);
+		})();
+	}, [ensureStream, stopListen]);
+	const holdListen = (0, import_react.useCallback)((opts) => {
+		liveRef.current = true;
+		holdOptsRef.current = opts;
+		const loop = () => {
+			if (!liveRef.current) return;
+			startListen({
+				onResult: opts.onResult,
+				onInterim: opts.onInterim,
+				onEnd: (got) => {
+					opts.onEnd(got);
+					if (liveRef.current && !speakingRef.current && !got) window.setTimeout(loop, 160);
+				}
+			});
+		};
+		loop();
+	}, [startListen]);
+	(0, import_react.useEffect)(() => () => {
+		stopSpeak();
+		releaseMic();
+	}, [releaseMic, stopSpeak]);
+	return {
+		speak,
+		stopSpeak,
+		startListen,
+		holdListen,
+		stopListen,
+		releaseMic,
+		speaking,
+		listening,
+		micSupported,
+		micError,
+		unlock
+	};
+}
+var REMARKS = [
+	"Still here. What did you pick up?",
+	"Name the rock. I'll take the lookalikes.",
+	"No rush. The ground isn't going anywhere.",
+	"I'm listening. Texture, streak, where you found it."
+];
+var GREETINGS = (c) => {
+	const hour = (/* @__PURE__ */ new Date()).getHours();
+	const time = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+	const pool = [
+		`Good ${time}, ${c.name}. I'm Clover. Just talk — I'm listening.`,
+		`Hey ${c.name}. I'm here. What are you seeing?`,
+		`I'm with you. Tell me about the rock, or just think out loud.`
+	];
+	if (c.streak >= 7) pool.unshift(`Seven days in a row. That's a real streak. What's the plan this ${time}?`);
+	else if (c.streak >= 3) pool.unshift(`Day ${c.streak} together. How's the ground treating you?`);
+	if (c.mood === "radiant") pool.unshift("You logged a find today. Tell me about it — I want the texture, not the trophy.");
+	if (c.mood === "drowsy") pool.unshift("No pressure. I'm just glad you opened the field kit.");
+	return pool;
+};
+function useCloverConversation() {
+	const [phase, setPhase] = (0, import_react.useState)("idle");
+	const [interim, setInterim] = (0, import_react.useState)("");
+	const [line, setLine] = (0, import_react.useState)("");
+	const activeRef = (0, import_react.useRef)(false);
+	const phaseRef = (0, import_react.useRef)("idle");
+	const quietTurnsRef = (0, import_react.useRef)(0);
+	const voice = useCloverVoice();
+	const companion = companionFromField({
+		displayName: useField((s) => s.displayName),
+		xp: useField((s) => s.xp),
+		streak: useField((s) => s.streak),
+		specimens: useField((s) => s.specimens)
+	});
+	const setOrbPhase = (0, import_react.useCallback)((next) => {
+		const y = typeof window !== "undefined" ? window.scrollY : 0;
+		setPhase(next);
+		if (typeof window === "undefined") return;
+		const restore = () => {
+			if (Math.abs(window.scrollY - y) > 1) window.scrollTo(0, y);
+		};
+		restore();
+		requestAnimationFrame(restore);
+		window.setTimeout(restore, 60);
+		window.setTimeout(restore, 220);
+	}, []);
+	(0, import_react.useEffect)(() => {
+		phaseRef.current = phase;
+	}, [phase]);
+	const beginListening = (0, import_react.useCallback)(() => {
+		if (!activeRef.current) return;
+		if (!voice.micSupported) {
+			setOrbPhase("listening");
+			return;
+		}
+		setInterim("");
+		setOrbPhase("listening");
+		voice.holdListen({
+			onResult: (text) => {
+				quietTurnsRef.current = 0;
+				sendRef.current?.(text, "voice");
+			},
+			onInterim: setInterim,
+			onEnd: (got) => {
+				if (!activeRef.current) return;
+				if (got) return;
+				if (voice.micError) return;
+				setOrbPhase("listening");
+			}
+		});
+	}, [voice, setOrbPhase]);
+	const send = (0, import_react.useCallback)(async (raw, mode = "voice") => {
+		const question = raw.trim();
+		if (!question || !activeRef.current) return;
+		setInterim("");
+		voice.stopListen();
+		const push = useField.getState().pushClover;
+		push({
+			role: "user",
+			text: question
+		});
+		setOrbPhase("thinking");
+		const history = useField.getState().clover.slice(-17, -1).map((m) => ({
+			role: m.role,
+			text: m.text
+		}));
+		let reply = localCloverReply(question, companion);
+		try {
+			const res = await askClover({ data: {
+				question,
+				history,
+				companion,
+				mode
+			} });
+			if (res.ok) {
+				reply = res.text;
+				if (res.logFind && res.findDetails) {
+					const parsed = parseLoggedFind(res.findDetails);
+					useField.getState().addSpecimen({
+						name: parsed.name,
+						mineralId: parsed.mineralId,
+						family: parsed.family,
+						formula: parsed.formula,
+						rarity: parsed.rarity,
+						confidence: .55,
+						notes: res.findDetails,
+						fieldNotes: "Logged by Clover from conversation.",
+						source: "manual",
+						disposition: "unknown",
+						collected: false,
+						leftInPlace: false,
+						legalStatus: "unknown",
+						ethicsPromptShown: false,
+						userConfirmedLegalAccess: false,
+						geoPrivacy: "hidden"
+					});
+					reply = `${reply} Logged ${parsed.name} to GeoDex.`;
+				}
+			}
+		} catch {}
+		if (!activeRef.current) return;
+		push({
+			role: "assistant",
+			text: reply
+		});
+		setLine(reply);
+		setOrbPhase("speaking");
+		const barged = await voice.speak(reply);
+		if (!activeRef.current) return;
+		window.setTimeout(() => {
+			if (activeRef.current) beginListening();
+		}, barged ? 80 : 220);
+	}, [
+		beginListening,
+		companion,
+		voice,
+		setOrbPhase
+	]);
+	const sendRef = (0, import_react.useRef)(send);
+	sendRef.current = send;
+	const remarkRef = (0, import_react.useRef)(async () => {});
+	const start = (0, import_react.useCallback)(() => {
+		activeRef.current = true;
+		quietTurnsRef.current = 0;
+		voice.unlock();
+		const pool = GREETINGS(companion);
+		const line = pool[Math.floor(Math.random() * pool.length)] ?? pool[0];
+		const existing = useField.getState().clover;
+		const opening = existing.length === 1 && existing[0]?.role === "assistant" ? existing[0].text : line;
+		if (!(existing.length === 1 && existing[0]?.role === "assistant")) useField.getState().pushClover({
+			role: "assistant",
+			text: opening
+		});
+		setLine(opening);
+		setOrbPhase("speaking");
+		(async () => {
+			await voice.speak(opening);
+			if (!activeRef.current) return;
+			window.setTimeout(() => {
+				if (activeRef.current) beginListening();
+			}, 280);
+		})();
+	}, [
+		beginListening,
+		companion,
+		voice,
+		setOrbPhase
+	]);
+	const end = (0, import_react.useCallback)(() => {
+		activeRef.current = false;
+		voice.stopListen();
+		voice.stopSpeak();
+		voice.releaseMic();
+		setOrbPhase("idle");
+		setInterim("");
+		setLine("");
+	}, [voice, setOrbPhase]);
+	remarkRef.current = (0, import_react.useCallback)(async () => {
+		if (!activeRef.current) return;
+		const remark = REMARKS[Math.floor(Math.random() * REMARKS.length)] ?? REMARKS[0];
+		setLine(remark);
+		setOrbPhase("speaking");
+		await voice.speak(remark);
+		if (!activeRef.current) return;
+		window.setTimeout(() => {
+			if (activeRef.current) beginListening();
+		}, 280);
+	}, [
+		beginListening,
+		voice,
+		setOrbPhase
+	]);
+	const nudge = (0, import_react.useCallback)(() => {
+		if (!activeRef.current) {
+			start();
+			return;
+		}
+		voice.stopSpeak();
+		voice.unlock();
+		quietTurnsRef.current = 0;
+		beginListening();
+	}, [
+		beginListening,
+		start,
+		voice
+	]);
+	(0, import_react.useEffect)(() => () => {
+		activeRef.current = false;
+	}, []);
+	return {
+		phase,
+		interim,
+		line,
+		start,
+		end,
+		nudge,
+		send,
+		ensureLive: (0, import_react.useCallback)(() => {
+			voice.unlock();
+		}, [voice]),
+		voiceSupported: voice.micSupported,
+		micError: voice.micError,
+		companion,
+		open: phase !== "idle",
+		beginListening
+	};
+}
+var ROUTE_TIPS = {
+	"/": [
+		"Find anything fun, or just wandering?",
+		"Every specimen has a legal path.",
+		"Pyrite versus gold. Ask me."
+	],
+	"/explore": [
+		"Public land is not a free-for-all.",
+		"Creek beds after a storm. Gravels reshuffle.",
+		"Granite contacts hide quartz veins."
+	],
+	"/vault": ["GeoDex is the cabinet. Provenance is the value."],
+	"/market": ["Rarity on a listing is a claim, not a lab report."],
+	"/quests": ["One scan, one log, one map look. That's a field day."],
+	"/pedia": ["Open a species before you trust a hunch."],
+	"/community": ["Don't post exact GPS for sensitive sites."]
+};
+var DEFAULT_TIPS = ["I'm Clover. Tap me when you want to talk."];
+var HIDDEN_PREFIX = ["/identify", "/clover"];
+function FloatingCloverOrb() {
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const onboarded = useField((s) => s.onboarded);
+	const openerSeen = useField((s) => s.openerSeen);
+	const fieldMode = useField((s) => s.fieldMode);
+	const clover = useCloverConversation();
+	const [tip, setTip] = (0, import_react.useState)("");
+	const [showTip, setShowTip] = (0, import_react.useState)(false);
+	const tipTimer = (0, import_react.useRef)(null);
+	const hidden = !onboarded || !openerSeen || HIDDEN_PREFIX.some((r) => pathname === r || pathname.startsWith(`${r}/`)) || pathname === "/" && !fieldMode;
+	(0, import_react.useEffect)(() => {
+		if (hidden || clover.open) {
+			setShowTip(false);
+			return;
+		}
+		const pick = () => {
+			const pool = ROUTE_TIPS[pathname] ?? DEFAULT_TIPS;
+			return pool[Math.floor(Math.random() * pool.length)] ?? DEFAULT_TIPS[0];
+		};
+		const arrival = window.setTimeout(() => {
+			setTip(pick());
+			setShowTip(true);
+			tipTimer.current = window.setTimeout(() => setShowTip(false), 4200);
+		}, 2800);
+		const periodic = window.setInterval(() => {
+			if (clover.open) return;
+			setTip(pick());
+			setShowTip(true);
+			if (tipTimer.current) window.clearTimeout(tipTimer.current);
+			tipTimer.current = window.setTimeout(() => setShowTip(false), 3800);
+		}, 42e3);
+		return () => {
+			window.clearTimeout(arrival);
+			window.clearInterval(periodic);
+			if (tipTimer.current) window.clearTimeout(tipTimer.current);
+		};
+	}, [
+		pathname,
+		hidden,
+		clover.open
+	]);
+	function handleTap(e) {
+		e.currentTarget.focus({ preventScroll: true });
+		setShowTip(false);
+		if (!clover.open) clover.start();
+		else clover.nudge();
+	}
+	if (hidden) return null;
+	const size = clover.open ? 68 : 64;
+	const spoken = clover.phase === "listening" && clover.interim ? clover.interim : clover.line && clover.phase !== "idle" ? clover.line : showTip ? tip : "";
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "pointer-events-none fixed z-[35] flex flex-col items-end",
+		style: {
+			bottom: "calc(5.75rem + env(safe-area-inset-bottom, 0px))",
+			right: 12
+		},
+		children: [spoken && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "orb-tip pointer-events-none mb-3 max-w-52 rh-rise",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "orb-tip-dot",
+				"data-mood": clover.companion.mood
+			}), spoken]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+			type: "button",
+			onMouseDown: (e) => e.preventDefault(),
+			onClick: handleTap,
+			"aria-label": clover.open ? "Talk to Clover" : "Wake Clover",
+			className: "orb-stage pointer-events-auto grid place-items-center transition-transform duration-150 ease-out active:scale-[0.96]",
+			style: {
+				width: size + 22,
+				height: size + 22
+			},
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LiquidMetalOrb, {
+				size,
+				state: clover.phase,
+				level: clover.companion.level
+			})
+		})]
+	});
+}
+var TABS = [
+	{
+		to: "/explore",
+		label: "Map",
+		icon: Map
+	},
+	{
+		to: "/vault",
+		label: "GeoDex",
+		icon: Gem
+	},
+	{
+		to: "/identify",
+		label: "Scan",
+		icon: Sparkles,
+		center: true
+	},
+	{
+		to: "/community",
+		label: "Feed",
+		icon: MessageSquare
+	},
+	{
+		to: "/market",
+		label: "Market",
+		icon: ShoppingBag
+	}
+];
+var MENU = [
+	{
+		to: "/",
+		label: "Command hub",
+		icon: House
+	},
+	{
+		to: "/pedia",
+		label: "Mineralpedia",
+		icon: BookOpen
+	},
+	{
+		to: "/quests",
+		label: "Daily quests",
+		icon: Target
+	},
+	{
+		to: "/trips",
+		label: "Trip planner",
+		icon: Compass
+	},
+	{
+		to: "/safety",
+		label: "Safety & land",
+		icon: Shield
+	},
+	{
+		to: "/clover",
+		label: "Clover AGI",
+		icon: Sparkles
+	},
+	{
+		to: "/profile",
+		label: "Progress",
+		icon: User
+	}
+];
+function AppShell({ children }) {
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const [menu, setMenu] = (0, import_react.useState)(false);
+	const onboarded = useField((s) => s.onboarded);
+	const openerSeen = useField((s) => s.openerSeen);
+	const fieldMode = useField((s) => s.fieldMode);
+	const setFieldMode = useField((s) => s.setFieldMode);
+	(0, import_react.useEffect)(() => {
+		useField.getState().hydrateDay();
+	}, []);
+	(0, import_react.useEffect)(() => {
+		setMenu(false);
+	}, [pathname]);
+	(0, import_react.useEffect)(() => {
+		if (!menu) return;
+		const handleKeyDown = (e) => {
+			if (e.key === "Escape") setMenu(false);
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [menu]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		"data-mode": fieldMode ? "field" : "home",
+		className: "min-h-dvh bg-void text-fg",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "rh-grain min-h-dvh",
+			children: [
+				!onboarded && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Onboarding, {}),
+				onboarded && !openerSeen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CinematicOpener, {}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("header", {
+					className: "sticky top-0 z-30 border-b border-line bg-void/80 backdrop-blur-md",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "mx-auto flex h-14 max-w-lg items-center gap-3 px-4",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								"aria-label": menu ? "Close menu" : "Open menu",
+								"aria-expanded": menu,
+								"aria-controls": "main-menu",
+								onClick: () => setMenu((v) => !v),
+								className: "grid size-11 place-items-center rounded-md text-muted hover:bg-fg/5 hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+								children: menu ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { className: "size-5" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, { className: "size-5" })
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+								to: "/",
+								className: "flex min-w-0 flex-1 items-baseline gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "font-display text-[17px] font-semibold tracking-tight text-fg",
+									children: "RockHound"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "font-display text-[17px] font-semibold text-amethyst",
+									children: "GO"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								"aria-label": fieldMode ? "Switch to Hub mode" : "Switch to Field mode",
+								onClick: () => setFieldMode(!fieldMode),
+								className: cn("h-8 rounded-full border px-3 text-[10px] font-medium uppercase tracking-[0.14em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void", fieldMode ? "border-field/40 bg-field/15 text-field" : "border-line text-muted hover:text-fg"),
+								children: fieldMode ? "Field" : "Hub"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
+								to: "/clover",
+								"aria-label": "Clover AGI Assistant",
+								className: "grid size-11 place-items-center rounded-md text-cyan hover:bg-cyan/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sparkles, { className: "size-5" })
+							})
+						]
+					})
+				}),
+				menu && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "fixed inset-0 z-40 bg-void/70",
+					onClick: () => setMenu(false),
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
+						id: "main-menu",
+						"aria-label": "Main menu navigation",
+						className: "absolute left-0 top-14 w-[min(100%,20rem)] border-r border-line bg-obsidian p-3 pb-8 shadow-panel",
+						onClick: (e) => e.stopPropagation(),
+						children: [MENU.map((item) => {
+							const Icon = item.icon;
+							const active = pathname === item.to;
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+								to: item.to,
+								"aria-current": active ? "page" : void 0,
+								className: cn("flex min-h-12 items-center gap-3 rounded-md px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void", active ? "bg-fg/10 text-fg" : "text-muted hover:bg-fg/5 hover:text-fg"),
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { className: "size-4" }), item.label]
+							}, item.to);
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+							className: "mt-4 flex items-center gap-2 px-3 text-[10px] uppercase tracking-[0.14em] text-faint",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(WifiOff, { className: "size-3" }), " Local cache · no account"]
+						})]
+					})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", {
+					className: "mx-auto w-full max-w-lg overflow-x-clip px-4 pb-28 pt-5",
+					children
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(FloatingCloverOrb, {}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", {
+					className: "fixed inset-x-0 bottom-0 z-30 border-t border-line bg-void/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "mx-auto flex max-w-lg items-end px-2",
+						children: TABS.map((tab) => {
+							const Icon = tab.icon;
+							const active = pathname === tab.to || pathname.startsWith(`${tab.to}/`);
+							if ("center" in tab && tab.center) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+								to: tab.to,
+								"aria-label": "Scan specimen",
+								"aria-current": active ? "page" : void 0,
+								className: "-mt-5 flex flex-1 flex-col items-center gap-1 pb-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: cn("grid size-14 place-items-center rounded-full border border-gold/50 bg-gold text-void shadow-[0_8px_24px_rgb(212_175_55_/_0.28)]", active && "ring-2 ring-gold/40"),
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { className: "size-6" })
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-[10px] font-medium uppercase tracking-[0.14em] text-gold",
+									children: "Scan"
+								})]
+							}, tab.to);
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+								to: tab.to,
+								"aria-current": active ? "page" : void 0,
+								className: "flex min-h-[64px] flex-1 flex-col items-center justify-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { className: cn("size-[18px]", active ? "text-fg" : "text-faint") }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: cn("text-[10px] font-medium uppercase tracking-[0.12em]", active ? "text-fg" : "text-faint"),
+									children: tab.label
+								})]
+							}, tab.to);
+						})
+					})
+				})
+			]
+		})
+	});
+}
+function XpRibbon() {
+	const xp = useField((s) => s.xp);
+	const streak = useField((s) => s.streak);
+	const collector = useField((s) => s.collectorXp);
+	const steward = useField((s) => s.stewardXp);
+	const scientist = useField((s) => s.scientistXp);
+	const explorer = useField((s) => s.explorerXp);
+	const { level, pct, into, need } = xpToNext(xp);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "rh-panel rh-hairline rounded-xl px-4 py-3",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center justify-between text-[11px] text-muted",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					className: "font-display text-sm text-fg",
+					children: ["Level ", level]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					className: "tabular-nums",
+					children: [
+						into,
+						"/",
+						need,
+						" XP · ",
+						streak,
+						"d streak"
+					]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				role: "progressbar",
+				"aria-label": `Level ${level} progress`,
+				"aria-valuenow": into,
+				"aria-valuemin": 0,
+				"aria-valuemax": need,
+				"aria-valuetext": `${into} of ${need} XP to level ${level + 1}`,
+				className: "mt-2 h-1.5 overflow-hidden rounded-full bg-fg/10",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "h-full rounded-full bg-amethyst",
+					style: { width: `${Math.round(pct * 100)}%` }
+				})
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mt-3 grid grid-cols-4 gap-1 text-center text-[9px] uppercase tracking-[0.12em] text-faint",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "block tabular-nums text-fg",
+						children: collector ?? 0
+					}), "Collector"] }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "block tabular-nums text-field",
+						children: steward ?? 0
+					}), "Steward"] }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "block tabular-nums text-cyan",
+						children: scientist ?? 0
+					}), "Scientist"] }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "block tabular-nums text-gold",
+						children: explorer ?? 0
+					}), "Explorer"] })
+				]
+			})
+		]
+	});
+}
+var styles_default = "/assets/styles-C2NkIrQd.css";
+var APP_NAME = "RockHound-GO";
+var Route$15 = createRootRoute({
+	head: () => ({
+		meta: [
+			{ charSet: "utf-8" },
+			{
+				name: "viewport",
+				content: "width=device-width, initial-scale=1, viewport-fit=cover"
+			},
+			{ title: APP_NAME },
+			{
+				name: "description",
+				content: "AI mineral identification, rockhounding map, specimen vault, and field tools. The operating system for modern rockhounding."
+			},
+			{
+				name: "theme-color",
+				content: "#07060F"
+			}
+		],
+		links: [
+			{
+				rel: "icon",
+				type: "image/svg+xml",
+				href: "/favicon.svg"
+			},
+			{
+				rel: "stylesheet",
+				href: styles_default
+			},
+			{
+				rel: "manifest",
+				href: "/__grok/manifest.webmanifest"
+			},
+			{
+				rel: "apple-touch-icon",
+				href: "/__grok/icon-180.png"
+			},
+			{
+				rel: "preconnect",
+				href: "https://fonts.googleapis.com"
+			},
+			{
+				rel: "stylesheet",
+				href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&family=Syne:wght@500;600;700&display=swap"
+			}
+		]
+	}),
+	component: Root
+});
+function Root() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("html", {
+		lang: "en",
+		suppressHydrationWarning: true,
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("head", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HeadContent, {}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("body", {
+			className: "bg-void text-fg antialiased",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PreviewHostBridge, {}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(AuthProvider, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppShell, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Outlet, {}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {
+					theme: "dark",
+					position: "top-center",
+					toastOptions: { style: {
+						background: "#171427",
+						border: "1px solid rgb(236 232 247 / 0.12)",
+						color: "#ece8f7"
+					} }
+				})] }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Scripts, {})
+			]
+		})]
+	});
+}
+var $$splitComponentImporter$14 = () => import("./routes-DIvWlDnO.mjs");
+var Route$14 = createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter$14, "component") });
+var $$splitComponentImporter$13 = () => import("./clover-BM0OnT8W.mjs");
+var Route$13 = createFileRoute("/clover")({ component: lazyRouteComponent($$splitComponentImporter$13, "component") });
+var $$splitComponentImporter$12 = () => import("./community-CEjqtmns.mjs");
+var Route$12 = createFileRoute("/community")({ component: lazyRouteComponent($$splitComponentImporter$12, "component") });
+var $$splitComponentImporter$11 = () => import("./explore-CeXR2_rd.mjs");
+var Route$11 = createFileRoute("/explore")({ component: lazyRouteComponent($$splitComponentImporter$11, "component") });
+var $$splitComponentImporter$10 = () => import("./identify-C2Ue-Rw9.mjs");
+var Route$10 = createFileRoute("/identify")({ component: lazyRouteComponent($$splitComponentImporter$10, "component") });
+var $$splitComponentImporter$9 = () => import("./market-DyU4gvfK.mjs");
+var Route$9 = createFileRoute("/market")({ component: lazyRouteComponent($$splitComponentImporter$9, "component") });
+var $$splitComponentImporter$8 = () => import("./pedia-Bx5z68Mz.mjs");
+var Route$8 = createFileRoute("/pedia")({ component: lazyRouteComponent($$splitComponentImporter$8, "component") });
+var $$splitComponentImporter$7 = () => import("./profile-DUC1QVfM.mjs");
+var Route$7 = createFileRoute("/profile")({ component: lazyRouteComponent($$splitComponentImporter$7, "component") });
+var $$splitComponentImporter$6 = () => import("./quests-BO5AKlfh.mjs");
+var Route$6 = createFileRoute("/quests")({ component: lazyRouteComponent($$splitComponentImporter$6, "component") });
+var $$splitComponentImporter$5 = () => import("./safety-CM8RSzYH.mjs");
+var Route$5 = createFileRoute("/safety")({ component: lazyRouteComponent($$splitComponentImporter$5, "component") });
+var $$splitComponentImporter$4 = () => import("./trips-Us7Zfmib.mjs");
+var Route$4 = createFileRoute("/trips")({ component: lazyRouteComponent($$splitComponentImporter$4, "component") });
+var $$splitComponentImporter$3 = () => import("./vault-CVzyZSZ7.mjs");
+var Route$3 = createFileRoute("/vault")({ component: lazyRouteComponent($$splitComponentImporter$3, "component") });
+var $$splitComponentImporter$2 = () => import("./explore._id-DuBzDwq8.mjs");
+var Route$2 = createFileRoute("/explore/$id")({ component: lazyRouteComponent($$splitComponentImporter$2, "component") });
+var $$splitComponentImporter$1 = () => import("./pedia._id-D8TXfSlV.mjs");
+var Route$1 = createFileRoute("/pedia/$id")({ component: lazyRouteComponent($$splitComponentImporter$1, "component") });
+var $$splitComponentImporter = () => import("./vault._id-CmcrI56Y.mjs");
+var Route = createFileRoute("/vault/$id")({ component: lazyRouteComponent($$splitComponentImporter, "component") });
+var IndexRoute = Route$14.update({
+	id: "/",
+	path: "/",
+	getParentRoute: () => Route$15
+});
+var CloverRoute = Route$13.update({
+	id: "/clover",
+	path: "/clover",
+	getParentRoute: () => Route$15
+});
+var CommunityRoute = Route$12.update({
+	id: "/community",
+	path: "/community",
+	getParentRoute: () => Route$15
+});
+var ExploreRoute = Route$11.update({
+	id: "/explore",
+	path: "/explore",
+	getParentRoute: () => Route$15
+});
+var IdentifyRoute = Route$10.update({
+	id: "/identify",
+	path: "/identify",
+	getParentRoute: () => Route$15
+});
+var MarketRoute = Route$9.update({
+	id: "/market",
+	path: "/market",
+	getParentRoute: () => Route$15
+});
+var PediaRoute = Route$8.update({
+	id: "/pedia",
+	path: "/pedia",
+	getParentRoute: () => Route$15
+});
+var ProfileRoute = Route$7.update({
+	id: "/profile",
+	path: "/profile",
+	getParentRoute: () => Route$15
+});
+var QuestsRoute = Route$6.update({
+	id: "/quests",
+	path: "/quests",
+	getParentRoute: () => Route$15
+});
+var SafetyRoute = Route$5.update({
+	id: "/safety",
+	path: "/safety",
+	getParentRoute: () => Route$15
+});
+var TripsRoute = Route$4.update({
+	id: "/trips",
+	path: "/trips",
+	getParentRoute: () => Route$15
+});
+var VaultRoute = Route$3.update({
+	id: "/vault",
+	path: "/vault",
+	getParentRoute: () => Route$15
+});
+var ExploreIdRoute = Route$2.update({
+	id: "/$id",
+	path: "/$id",
+	getParentRoute: () => ExploreRoute
+});
+var PediaIdRoute = Route$1.update({
+	id: "/$id",
+	path: "/$id",
+	getParentRoute: () => PediaRoute
+});
+var VaultIdRoute = Route.update({
+	id: "/$id",
+	path: "/$id",
+	getParentRoute: () => VaultRoute
+});
+var ExploreRouteChildren = { ExploreIdRoute };
+var ExploreRouteWithChildren = ExploreRoute._addFileChildren(ExploreRouteChildren);
+var PediaRouteChildren = { PediaIdRoute };
+var PediaRouteWithChildren = PediaRoute._addFileChildren(PediaRouteChildren);
+var VaultRouteChildren = { VaultIdRoute };
+var rootRouteChildren = {
+	IndexRoute,
+	CloverRoute,
+	CommunityRoute,
+	ExploreRoute: ExploreRouteWithChildren,
+	IdentifyRoute,
+	MarketRoute,
+	PediaRoute: PediaRouteWithChildren,
+	ProfileRoute,
+	QuestsRoute,
+	SafetyRoute,
+	TripsRoute,
+	VaultRoute: VaultRoute._addFileChildren(VaultRouteChildren)
+};
+var routeTree = Route$15._addFileChildren(rootRouteChildren)._addFileTypes();
+var router_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
+function getRouter() {
+	return createRouter({
+		routeTree,
+		defaultErrorComponent: AppErrorComponent
+	});
+}
+//#endregion
+export { XpRibbon as a, matchFieldKey as c, useCloverConversation as d, Route$2 as i, mineralToResult as l, Route as n, getRouter as o, Route$1 as r, identifySpecimen as s, LiquidMetalOrb as t, router_exports as u };

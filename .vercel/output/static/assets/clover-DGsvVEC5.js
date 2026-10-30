@@ -1,0 +1,1 @@
+import{o as e}from"./utils-D8luiKx4.js";import{t}from"./hero-orb-BgJ1X9CQ.js";var n=e();function r(){return(0,n.jsx)(`div`,{className:`flex min-h-[70vh] flex-col items-center justify-center`,children:(0,n.jsx)(t,{size:196})})}export{r as component};
