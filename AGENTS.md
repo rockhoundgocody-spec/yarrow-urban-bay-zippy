@@ -340,3 +340,37 @@ auth/db: OFF by default — sign-in, @/lib/db or migrations ONLY on an accounts 
 never:   build an app for a greeting/number/question; invent imagine_* calls;
          ask the user to run commands; delete or abandon /workspace/startup.sh
 ```
+
+---
+
+## Base44 sandbox (imported-app runtime)
+
+This repo also runs under Base44, which drives it through `docker-compose.base44.yml`
+instead of `/workspace/startup.sh`. Non-obvious things a future session needs:
+
+- **Run it:** `docker compose -f docker-compose.base44.yml up -d`. The web service is a
+  plain `node:22`, mounts the repo at `/app`, installs from `package-lock.json` into a
+  named `node_modules` volume on startup, then runs `npm run dev`. Host **port 3000**
+  maps to the Vite dev server's `0.0.0.0:8080`, so the app is served from source —
+  edits apply without a rebuild.
+- **Database:** `DATABASE_URL` is unset, so `src/lib/db.ts` uses the embedded PGLite
+  fallback. `migrations/` holds only `auth/`, which the non-recursive glob skips: there
+  is no app schema to migrate, and PGLite state resets when the dev server restarts.
+- **Secrets:** `XAI_API_KEY` reaches the app from `/run/base44/app.env` (never a repo
+  `.env`). Without it mineral identification and Clover answers return their "not
+  available in this environment" messages — the app still boots.
+- **Preview flag:** `BASE44_PREVIEW_MODE` is passed through to the service, but this app
+  needs no sandbox-only code overrides. Preview hosts are handled by
+  `__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS`, which the platform sets.
+- **Checks that work here**, run inside the container:
+  `docker compose -f docker-compose.base44.yml exec -T web sh -c 'npm run typecheck'`
+  (also `npm run lint`, and the tests under `src/lib/**/*.test.ts` + `scripts/**/*.test.mjs`).
+  Playwright's browser is not preinstalled here; `npx playwright install --with-deps chromium`
+  inside the container enables real-browser checks such as `scripts/browser-smoke.mjs`.
+- **Hydration rule:** anything derived from the visitor's clock — greetings, "today's"
+  rotations, relative timestamps — renders through `src/components/client-time.tsx`
+  (`useMounted`, `RelativeTime`). Computing it during SSR makes the client's first pass
+  differ from the server HTML, React throws "Hydration failed because the server
+  rendered text didn't match the client", and the tree is regenerated on the client on
+  every load. The server renders in UTC, so local-time text is a mismatch waiting to
+  happen for any visitor outside UTC.

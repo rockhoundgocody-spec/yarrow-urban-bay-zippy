@@ -1,0 +1,12 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "XAI_API_KEY",
+      "description": "xAI API key used for AI mineral identification (src/lib/identify.ts) and Clover's answers (src/lib/speak.ts). Get it from https://console.x.ai/. Not required at boot: without it those two features reply that AI is unavailable.",
+      "requiredAtBoot": false
+    }
+  ]
+}

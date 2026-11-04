@@ -1,0 +1,53 @@
+# Base44 sandbox runtime for RockHound-GO.
+#
+# Development-oriented on purpose: the repo is bind-mounted into a plain `node:22`
+# runtime and the app is started from source with `npm run dev` (Vite dev server
+# + TanStack Start), so every edit is visible in the preview without rebuilding.
+# Dependencies live in a named volume and are (re)installed from the committed
+# lockfile on startup, so the repo working copy stays clean.
+#
+# The user-facing preview is host port 3000 (the compose stack maps it onto the
+# Vite dev server's 0.0.0.0:8080 contract).
+services:
+  web:
+    image: node:22
+    working_dir: /app
+    command:
+      - sh
+      - -ec
+      - |
+        npm install --no-audit --no-fund --prefer-offline
+        exec npm run dev
+    environment:
+      # Platform-provided sandbox flag; passed through bare so it is only set
+      # when Base44 exports it (never hardcoded to a value).
+      - BASE44_PREVIEW_MODE
+      - NODE_ENV=development
+      # Host/origin allowlist for the preview proxy: the platform sets this to
+      # the preview host and Vite >= 6.1 appends it to `server.allowedHosts`.
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
+    env_file:
+      # Managed by Base44 (secrets such as XAI_API_KEY). Listed LAST so values
+      # the user sets in the dashboard always win.
+      - /run/base44/app.env
+    ports:
+      - "3000:8080"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    healthcheck:
+      # Probes real app responsiveness (SSR document from the Vite dev server),
+      # not just an open port. Uses node's built-in fetch — nothing extra needed.
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:8080/',{headers:{accept:'text/html'}})
+          .then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 300s
+    restart: on-failure
+
+volumes:
+  node_modules:
