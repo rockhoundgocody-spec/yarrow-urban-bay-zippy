@@ -276,14 +276,19 @@ function IdentifyPage() {
           <p className="text-sm text-muted">No photo needed. Score the catalog with field tests.</p>
           <FieldChips label="Color" options={COLORS} value={key.color} onPick={(v) => setKey({ ...key, color: v })} />
           <div>
-            <SectionLabel>Mohs hardness {key.hardness ?? ""}</SectionLabel>
+            <label htmlFor="mohs-hardness">
+              <SectionLabel>Mohs hardness {key.hardness ?? ""}</SectionLabel>
+            </label>
             <input
+              id="mohs-hardness"
               type="range"
               min={1}
               max={10}
               step={0.5}
               value={key.hardness ?? 5}
               onChange={(e) => setKey({ ...key, hardness: Number(e.target.value) })}
+              aria-label="Mohs hardness"
+              aria-valuetext={`Mohs hardness ${key.hardness ?? 5}`}
               className="w-full accent-amethyst"
             />
             <div className="mt-1 flex justify-between text-[10px] text-faint">
