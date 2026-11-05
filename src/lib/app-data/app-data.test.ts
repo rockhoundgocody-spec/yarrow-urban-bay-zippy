@@ -203,6 +203,35 @@ describe("redirectToLoginIfRequired", () => {
     assert.equal(target, "");
   });
 
+  it("rejects data: and blob: URI schemes to prevent DOM XSS", () => {
+    for (const unsafeUrl of [
+      "data:text/html,<script>alert(1)</script>",
+      "blob:https://my-app.grok.me/uuid",
+      "vbscript:msgbox(1)",
+    ]) {
+      let target = "";
+      const did = withWindow(
+        {
+          location: {
+            assign: (u) => {
+              target = u;
+            },
+            href: "https://my-app.grok.me/current",
+          },
+        },
+        () =>
+          redirectToLoginIfRequired({
+            ok: false,
+            data: null,
+            loginRequired: true,
+            loginUrl: unsafeUrl,
+          }),
+      );
+      assert.equal(did, false);
+      assert.equal(target, "");
+    }
+  });
+
   it("navigates to the server-built loginUrl in the browser", () => {
     let target = "";
     const did = withWindow(
