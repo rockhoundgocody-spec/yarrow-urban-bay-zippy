@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { SectionLabel } from "@/components/ui";
+import { Panel, SectionLabel } from "@/components/ui";
 import { SITES, projectSite, type AccessType, type Difficulty } from "@/data/locations";
 import { useField } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -85,15 +86,28 @@ function ExplorePage() {
         </p>
       </div>
 
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search sites, states, minerals"
-        aria-label="Search field sites, states, or minerals"
-        className="h-11 w-full rounded-md border border-line bg-obsidian px-3 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
-      />
+      <div className="relative block">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search sites, states, minerals"
+          aria-label="Search field sites, states, or minerals"
+          className="h-11 w-full rounded-md border border-line bg-obsidian pl-10 pr-10 text-sm text-fg outline-none placeholder:text-faint focus:border-field"
+        />
+        {q && (
+          <button
+            type="button"
+            onClick={() => setQ("")}
+            aria-label="Clear search"
+            className="absolute right-2 top-1/2 -translate-y-1/2 grid size-7 place-items-center rounded-md text-faint hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
+          >
+            <X className="size-4" />
+          </button>
+        )}
+      </div>
 
-      <div className="flex gap-1.5 overflow-x-auto">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by access type">
         {ACCESS.map((a) => (
           <button
             key={a.k}
@@ -101,15 +115,15 @@ function ExplorePage() {
             aria-pressed={access === a.k}
             onClick={() => setAccess(a.k)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
-              access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              access === a.k ? "border-field/40 bg-field/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {a.l}
           </button>
         ))}
       </div>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Filter by difficulty">
         {(["all", "easy", "moderate", "hard"] as const).map((d) => (
           <button
             key={d}
@@ -117,8 +131,8 @@ function ExplorePage() {
             aria-pressed={diff === d}
             onClick={() => setDiff(d)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
-              diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted",
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst focus-visible:ring-offset-2 focus-visible:ring-offset-void",
+              diff === d ? "border-fg/30 bg-fg/10 text-fg" : "border-line text-muted hover:text-fg",
             )}
           >
             {d}
@@ -127,29 +141,46 @@ function ExplorePage() {
       </div>
 
       <SectionLabel>Localities</SectionLabel>
-      <ul className="space-y-2">
-        {list.map((s) => (
-          <li key={s.id}>
-            <Link
-              to="/explore/$id"
-              params={{ id: s.id }}
-              className={cn("rh-panel block rounded-xl p-4", picked === s.id && "border-amethyst/40")}
-              onClick={() => setPicked(s.id)}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-fg">{s.name}</p>
-                  <p className="mt-0.5 text-xs text-muted">
-                    {s.state} · {s.access.replace("_", " ")} · {s.difficulty}
-                  </p>
+      {list.length === 0 ? (
+        <Panel className="p-6 text-center">
+          <p className="text-sm text-muted">No localities match those filters.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setAccess("all");
+              setDiff("all");
+            }}
+            className="mt-4 inline-flex min-h-11 items-center rounded-md px-3 text-sm text-field hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amethyst"
+          >
+            Reset filters
+          </button>
+        </Panel>
+      ) : (
+        <ul className="space-y-2">
+          {list.map((s) => (
+            <li key={s.id}>
+              <Link
+                to="/explore/$id"
+                params={{ id: s.id }}
+                className={cn("rh-panel block rounded-xl p-4", picked === s.id && "border-amethyst/40")}
+                onClick={() => setPicked(s.id)}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-display text-fg">{s.name}</p>
+                    <p className="mt-0.5 text-xs text-muted">
+                      {s.state} · {s.access.replace("_", " ")} · {s.difficulty}
+                    </p>
+                  </div>
+                  {saved.includes(s.id) && <span className="text-[10px] uppercase tracking-[0.14em] text-gold">Saved</span>}
                 </div>
-                {saved.includes(s.id) && <span className="text-[10px] uppercase tracking-[0.14em] text-gold">Saved</span>}
-              </div>
-              <p className="mt-2 text-xs text-faint">{s.finds.slice(0, 4).join(" · ")}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+                <p className="mt-2 text-xs text-faint">{s.finds.slice(0, 4).join(" · ")}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
